@@ -1,0 +1,524 @@
+SF:/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Program.cs
+FN:6,System.Void Program::<Main>$(System.String[])
+FNDA:0,System.Void Program::<Main>$(System.String[])
+DA:7,0
+DA:11,0
+DA:13,0
+DA:14,0
+DA:15,0
+DA:17,0
+DA:18,0
+DA:22,0
+DA:24,0
+DA:26,0
+DA:28,0
+DA:29,0
+DA:30,0
+DA:33,0
+DA:34,0
+DA:37,0
+DA:39,0
+DA:41,0
+DA:43,0
+DA:45,0
+BRDA:33,156,0,0
+BRDA:33,156,1,0
+LF:20
+LH:0
+BRF:2
+BRH:0
+FNF:1
+FNH:0
+end_of_record
+SF:/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/WeatherForecast.cs
+FN:4,System.DateOnly Amg_ingressos_aqui_carrinho_api.WeatherForecast::get_Date()
+FNDA:0,System.DateOnly Amg_ingressos_aqui_carrinho_api.WeatherForecast::get_Date()
+DA:5,0
+FN:6,System.Int32 Amg_ingressos_aqui_carrinho_api.WeatherForecast::get_TemperatureC()
+FNDA:0,System.Int32 Amg_ingressos_aqui_carrinho_api.WeatherForecast::get_TemperatureC()
+DA:7,0
+FN:8,System.Int32 Amg_ingressos_aqui_carrinho_api.WeatherForecast::get_TemperatureF()
+FNDA:0,System.Int32 Amg_ingressos_aqui_carrinho_api.WeatherForecast::get_TemperatureF()
+DA:9,0
+FN:10,System.String Amg_ingressos_aqui_carrinho_api.WeatherForecast::get_Summary()
+FNDA:0,System.String Amg_ingressos_aqui_carrinho_api.WeatherForecast::get_Summary()
+DA:11,0
+LF:4
+LH:0
+BRF:0
+BRH:0
+FNF:4
+FNH:0
+end_of_record
+SF:/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Utils/ExtensionMethods.cs
+FN:11,System.Void Amg_ingressos_aqui_carrinho_api.Utils.ExtensionMethods::ValidateIdMongo(System.String,System.String)
+FNDA:44,System.Void Amg_ingressos_aqui_carrinho_api.Utils.ExtensionMethods::ValidateIdMongo(System.String,System.String)
+DA:12,44
+DA:13,44
+DA:14,6
+DA:15,38
+DA:16,2
+DA:17,36
+BRDA:13,9,0,6
+BRDA:13,9,1,38
+BRDA:15,40,0,2
+BRDA:15,40,1,36
+LF:6
+LH:6
+BRF:4
+BRH:4
+FNF:1
+FNH:1
+end_of_record
+SF:/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Services/TransactionPaymentService.cs
+FN:70,System.Void Amg_ingressos_aqui_carrinho_api.Services.TransactionPaymentService::ValidateTransactionPayment(Amg_ingressos_aqui_carrinho_api.Model.TransactionPayment)
+FNDA:6,System.Void Amg_ingressos_aqui_carrinho_api.Services.TransactionPaymentService::ValidateTransactionPayment(Amg_ingressos_aqui_carrinho_api.Model.TransactionPayment)
+DA:71,6
+DA:72,6
+DA:73,5
+DA:75,4
+DA:76,1
+DA:77,3
+BRDA:75,54,0,1
+BRDA:75,54,1,3
+FN:18,System.Void Amg_ingressos_aqui_carrinho_api.Services.TransactionPaymentService::.ctor(Amg_ingressos_aqui_carrinho_api.Repository.Interfaces.ITransactionPaymentRepository,Amg_ingressos_aqui_carrinho_api.Infra.ICieloClient)
+FNDA:7,System.Void Amg_ingressos_aqui_carrinho_api.Services.TransactionPaymentService::.ctor(Amg_ingressos_aqui_carrinho_api.Repository.Interfaces.ITransactionPaymentRepository,Amg_ingressos_aqui_carrinho_api.Infra.ICieloClient)
+DA:19,7
+DA:20,7
+DA:21,7
+DA:22,7
+DA:23,7
+DA:24,7
+DA:25,7
+DA:26,7
+FN:52,System.Void Amg_ingressos_aqui_carrinho_api.Services.TransactionPaymentService/<Payment>d__5::MoveNext()
+FNDA:1,System.Void Amg_ingressos_aqui_carrinho_api.Services.TransactionPaymentService/<Payment>d__5::MoveNext()
+DA:53,1
+DA:55,1
+DA:56,1
+DA:57,1
+DA:58,1
+DA:60,1
+DA:61,1
+DA:62,1
+DA:64,1
+DA:65,1
+DA:67,1
+DA:68,1
+FN:28,System.Void Amg_ingressos_aqui_carrinho_api.Services.TransactionPaymentService/<SaveAsync>d__4::MoveNext()
+FNDA:6,System.Void Amg_ingressos_aqui_carrinho_api.Services.TransactionPaymentService/<SaveAsync>d__4::MoveNext()
+DA:29,6
+DA:31,6
+DA:32,6
+DA:33,3
+DA:34,2
+DA:35,2
+DA:36,2
+DA:37,2
+DA:38,2
+DA:39,2
+DA:40,1
+DA:41,1
+DA:42,1
+DA:43,1
+DA:44,1
+DA:45,1
+DA:46,1
+DA:49,5
+DA:50,5
+LF:45
+LH:45
+BRF:2
+BRH:2
+FNF:4
+FNH:4
+end_of_record
+SF:/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Services/TransactionService.cs
+FN:78,System.Void Amg_ingressos_aqui_carrinho_api.Services.TransactionService::ValidateTransactionIten(Amg_ingressos_aqui_carrinho_api.Model.TransactionIten)
+FNDA:6,System.Void Amg_ingressos_aqui_carrinho_api.Services.TransactionService::ValidateTransactionIten(Amg_ingressos_aqui_carrinho_api.Model.TransactionIten)
+DA:79,6
+DA:80,6
+DA:81,5
+DA:83,4
+DA:84,1
+DA:85,3
+DA:86,1
+DA:87,2
+BRDA:83,54,0,1
+BRDA:83,54,1,3
+BRDA:85,86,0,1
+BRDA:85,86,1,2
+FN:14,System.Void Amg_ingressos_aqui_carrinho_api.Services.TransactionService::.ctor(Amg_ingressos_aqui_carrinho_api.Repository.Interfaces.ITransactionRepository)
+FNDA:14,System.Void Amg_ingressos_aqui_carrinho_api.Services.TransactionService::.ctor(Amg_ingressos_aqui_carrinho_api.Repository.Interfaces.ITransactionRepository)
+DA:15,14
+DA:16,14
+DA:17,14
+DA:18,14
+DA:19,14
+FN:52,System.Void Amg_ingressos_aqui_carrinho_api.Services.TransactionService/<>c__DisplayClass4_0::<SaveTransactionItenAsync>b__0(Amg_ingressos_aqui_carrinho_api.Model.TransactionIten)
+FNDA:6,System.Void Amg_ingressos_aqui_carrinho_api.Services.TransactionService/<>c__DisplayClass4_0::<SaveTransactionItenAsync>b__0(Amg_ingressos_aqui_carrinho_api.Model.TransactionIten)
+DA:53,6
+DA:54,6
+DA:55,6
+DA:57,2
+DA:58,7
+FN:21,System.Void Amg_ingressos_aqui_carrinho_api.Services.TransactionService/<SaveAsync>d__3::MoveNext()
+FNDA:9,System.Void Amg_ingressos_aqui_carrinho_api.Services.TransactionService/<SaveAsync>d__3::MoveNext()
+DA:22,9
+DA:24,9
+DA:25,9
+DA:26,7
+DA:28,5
+DA:29,2
+DA:30,4
+DA:31,4
+DA:32,4
+DA:33,4
+DA:34,0
+DA:35,0
+DA:36,0
+DA:37,0
+DA:38,3
+DA:39,3
+DA:40,3
+DA:43,6
+DA:44,6
+FN:46,System.Void Amg_ingressos_aqui_carrinho_api.Services.TransactionService/<SaveTransactionItenAsync>d__4::MoveNext()
+FNDA:6,System.Void Amg_ingressos_aqui_carrinho_api.Services.TransactionService/<SaveTransactionItenAsync>d__4::MoveNext()
+DA:47,6
+DA:49,6
+DA:50,6
+DA:52,6
+DA:56,6
+DA:60,1
+DA:61,1
+DA:62,2
+DA:63,2
+DA:64,2
+DA:65,2
+DA:66,2
+DA:67,2
+DA:68,2
+DA:69,2
+DA:70,1
+DA:71,1
+DA:72,1
+DA:75,5
+DA:76,5
+LF:57
+LH:53
+BRF:4
+BRH:4
+FNF:5
+FNH:5
+end_of_record
+SF:/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Model/Transaction.cs
+FN:13,System.String Amg_ingressos_aqui_carrinho_api.Model.Transaction::get_Id()
+FNDA:20,System.String Amg_ingressos_aqui_carrinho_api.Model.Transaction::get_Id()
+DA:14,20
+FN:19,System.String Amg_ingressos_aqui_carrinho_api.Model.Transaction::get_IdEvent()
+FNDA:17,System.String Amg_ingressos_aqui_carrinho_api.Model.Transaction::get_IdEvent()
+DA:20,17
+FN:25,System.String Amg_ingressos_aqui_carrinho_api.Model.Transaction::get_IdPerson()
+FNDA:15,System.String Amg_ingressos_aqui_carrinho_api.Model.Transaction::get_IdPerson()
+DA:26,15
+FN:31,System.String Amg_ingressos_aqui_carrinho_api.Model.Transaction::get_IdPaymentMethod()
+FNDA:2,System.String Amg_ingressos_aqui_carrinho_api.Model.Transaction::get_IdPaymentMethod()
+DA:32,2
+FN:36,System.Collections.Generic.List`1<Amg_ingressos_aqui_carrinho_api.Model.TransactionIten> Amg_ingressos_aqui_carrinho_api.Model.Transaction::get_TransactionItens()
+FNDA:16,System.Collections.Generic.List`1<Amg_ingressos_aqui_carrinho_api.Model.TransactionIten> Amg_ingressos_aqui_carrinho_api.Model.Transaction::get_TransactionItens()
+DA:37,16
+LF:5
+LH:5
+BRF:0
+BRH:0
+FNF:5
+FNH:5
+end_of_record
+SF:/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Model/TransactionItens.cs
+FN:16,System.String Amg_ingressos_aqui_carrinho_api.Model.TransactionIten::get_Id()
+FNDA:4,System.String Amg_ingressos_aqui_carrinho_api.Model.TransactionIten::get_Id()
+DA:17,4
+FN:23,System.String Amg_ingressos_aqui_carrinho_api.Model.TransactionIten::get_IdTransaction()
+FNDA:10,System.String Amg_ingressos_aqui_carrinho_api.Model.TransactionIten::get_IdTransaction()
+DA:24,10
+FN:29,System.String Amg_ingressos_aqui_carrinho_api.Model.TransactionIten::get_IdVariante()
+FNDA:15,System.String Amg_ingressos_aqui_carrinho_api.Model.TransactionIten::get_IdVariante()
+DA:30,15
+FN:35,System.String Amg_ingressos_aqui_carrinho_api.Model.TransactionIten::get_IdLote()
+FNDA:16,System.String Amg_ingressos_aqui_carrinho_api.Model.TransactionIten::get_IdLote()
+DA:36,16
+FN:40,System.Boolean Amg_ingressos_aqui_carrinho_api.Model.TransactionIten::get_HalfPrice()
+FNDA:10,System.Boolean Amg_ingressos_aqui_carrinho_api.Model.TransactionIten::get_HalfPrice()
+DA:41,10
+FN:45,System.Decimal Amg_ingressos_aqui_carrinho_api.Model.TransactionIten::get_TicketPrice()
+FNDA:14,System.Decimal Amg_ingressos_aqui_carrinho_api.Model.TransactionIten::get_TicketPrice()
+DA:46,14
+FN:49,System.Decimal Amg_ingressos_aqui_carrinho_api.Model.TransactionIten::get_AmoutTicket()
+FNDA:13,System.Decimal Amg_ingressos_aqui_carrinho_api.Model.TransactionIten::get_AmoutTicket()
+DA:50,13
+FN:53,System.Decimal Amg_ingressos_aqui_carrinho_api.Model.TransactionIten::get_Tax()
+FNDA:6,System.Decimal Amg_ingressos_aqui_carrinho_api.Model.TransactionIten::get_Tax()
+DA:54,6
+LF:8
+LH:8
+BRF:0
+BRH:0
+FNF:8
+FNH:8
+end_of_record
+SF:/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Model/TransactionPayment.cs
+FN:17,System.String Amg_ingressos_aqui_carrinho_api.Model.TransactionPayment::get_Id()
+FNDA:1,System.String Amg_ingressos_aqui_carrinho_api.Model.TransactionPayment::get_Id()
+DA:18,1
+FN:22,System.String Amg_ingressos_aqui_carrinho_api.Model.TransactionPayment::get_IdTransaction()
+FNDA:14,System.String Amg_ingressos_aqui_carrinho_api.Model.TransactionPayment::get_IdTransaction()
+DA:23,14
+FN:26,Amg_ingressos_aqui_carrinho_api.Enum.StatusPayment Amg_ingressos_aqui_carrinho_api.Model.TransactionPayment::get_Status()
+FNDA:8,Amg_ingressos_aqui_carrinho_api.Enum.StatusPayment Amg_ingressos_aqui_carrinho_api.Model.TransactionPayment::get_Status()
+DA:27,8
+FN:30,System.Decimal Amg_ingressos_aqui_carrinho_api.Model.TransactionPayment::get_TotalValue()
+FNDA:12,System.Decimal Amg_ingressos_aqui_carrinho_api.Model.TransactionPayment::get_TotalValue()
+DA:31,12
+FN:36,System.String Amg_ingressos_aqui_carrinho_api.Model.TransactionPayment::get_IdPaymentMethod()
+FNDA:13,System.String Amg_ingressos_aqui_carrinho_api.Model.TransactionPayment::get_IdPaymentMethod()
+DA:37,13
+LF:5
+LH:5
+BRF:0
+BRH:0
+FNF:5
+FNH:5
+end_of_record
+SF:/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Infra/CieloClient.cs
+FN:20,System.Net.Http.HttpClient Amg_ingressos_aqui_carrinho_api.Infra.CieloClient::CreateClient()
+FNDA:0,System.Net.Http.HttpClient Amg_ingressos_aqui_carrinho_api.Infra.CieloClient::CreateClient()
+DA:21,0
+DA:22,0
+DA:23,0
+DA:24,0
+DA:25,0
+DA:26,0
+DA:27,0
+DA:28,0
+DA:29,0
+DA:30,0
+DA:32,0
+DA:33,0
+FN:13,System.Void Amg_ingressos_aqui_carrinho_api.Infra.CieloClient::.ctor(Microsoft.Extensions.Options.IOptions`1<Amg_ingressos_aqui_carrinho_api.Infra.CieloSettings>,System.Net.Http.HttpClient)
+FNDA:0,System.Void Amg_ingressos_aqui_carrinho_api.Infra.CieloClient::.ctor(Microsoft.Extensions.Options.IOptions`1<Amg_ingressos_aqui_carrinho_api.Infra.CieloSettings>,System.Net.Http.HttpClient)
+DA:14,0
+DA:15,0
+DA:16,0
+DA:17,0
+DA:18,0
+LF:17
+LH:0
+BRF:0
+BRH:0
+FNF:2
+FNH:0
+end_of_record
+SF:/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Infra/CieloSettings.cs
+FN:7,System.String Amg_ingressos_aqui_carrinho_api.Infra.CieloSettings::get_MerchantIdHomolog()
+FNDA:0,System.String Amg_ingressos_aqui_carrinho_api.Infra.CieloSettings::get_MerchantIdHomolog()
+DA:8,0
+FN:11,System.String Amg_ingressos_aqui_carrinho_api.Infra.CieloSettings::get_MerchantKeyHomolog()
+FNDA:0,System.String Amg_ingressos_aqui_carrinho_api.Infra.CieloSettings::get_MerchantKeyHomolog()
+DA:12,0
+FN:15,System.String Amg_ingressos_aqui_carrinho_api.Infra.CieloSettings::get_UrlApiHomolog()
+FNDA:0,System.String Amg_ingressos_aqui_carrinho_api.Infra.CieloSettings::get_UrlApiHomolog()
+DA:16,0
+LF:3
+LH:0
+BRF:0
+BRH:0
+FNF:3
+FNH:0
+end_of_record
+SF:/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Infra/DbConnection.cs
+FN:14,MongoDB.Driver.IMongoCollection`1<Amg_ingressos_aqui_carrinho_api.Model.Transaction> Amg_ingressos_aqui_carrinho_api.Infra.DbConnection::GetConnection()
+FNDA:0,MongoDB.Driver.IMongoCollection`1<Amg_ingressos_aqui_carrinho_api.Model.Transaction> Amg_ingressos_aqui_carrinho_api.Infra.DbConnection::GetConnection()
+DA:15,0
+DA:17,0
+DA:18,0
+DA:19,0
+DA:21,0
+DA:22,0
+FN:22,MongoDB.Driver.IMongoCollection`1<Amg_ingressos_aqui_carrinho_api.Model.TransactionPayment> Amg_ingressos_aqui_carrinho_api.Infra.DbConnection::GetConnectionPayment()
+FNDA:0,MongoDB.Driver.IMongoCollection`1<Amg_ingressos_aqui_carrinho_api.Model.TransactionPayment> Amg_ingressos_aqui_carrinho_api.Infra.DbConnection::GetConnectionPayment()
+DA:23,0
+DA:25,0
+DA:26,0
+DA:27,0
+DA:29,0
+DA:30,0
+FN:9,System.Void Amg_ingressos_aqui_carrinho_api.Infra.DbConnection::.ctor(Microsoft.Extensions.Options.IOptions`1<Amg_ingressos_aqui_carrinho_api.Infra.TransactionDatabaseSettings>)
+FNDA:0,System.Void Amg_ingressos_aqui_carrinho_api.Infra.DbConnection::.ctor(Microsoft.Extensions.Options.IOptions`1<Amg_ingressos_aqui_carrinho_api.Infra.TransactionDatabaseSettings>)
+DA:10,0
+DA:11,0
+DA:12,0
+DA:13,0
+LF:16
+LH:0
+BRF:0
+BRH:0
+FNF:3
+FNH:0
+end_of_record
+SF:/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Infra/TransactionDatabaseSettings.cs
+FN:7,System.String Amg_ingressos_aqui_carrinho_api.Infra.TransactionDatabaseSettings::get_ConnectionString()
+FNDA:0,System.String Amg_ingressos_aqui_carrinho_api.Infra.TransactionDatabaseSettings::get_ConnectionString()
+DA:8,0
+FN:11,System.String Amg_ingressos_aqui_carrinho_api.Infra.TransactionDatabaseSettings::get_DatabaseName()
+FNDA:0,System.String Amg_ingressos_aqui_carrinho_api.Infra.TransactionDatabaseSettings::get_DatabaseName()
+DA:12,0
+FN:15,System.String Amg_ingressos_aqui_carrinho_api.Infra.TransactionDatabaseSettings::get_TransactionCollectionName()
+FNDA:0,System.String Amg_ingressos_aqui_carrinho_api.Infra.TransactionDatabaseSettings::get_TransactionCollectionName()
+DA:16,0
+LF:3
+LH:0
+BRF:0
+BRH:0
+FNF:3
+FNH:0
+end_of_record
+SF:/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Exceptions/IdMongoException.cs
+FN:5,System.Void Amg_ingressos_aqui_carrinho_api.Exceptions.IdMongoException::.ctor()
+FNDA:0,System.Void Amg_ingressos_aqui_carrinho_api.Exceptions.IdMongoException::.ctor()
+DA:6,0
+DA:7,0
+DA:8,0
+FN:10,System.Void Amg_ingressos_aqui_carrinho_api.Exceptions.IdMongoException::.ctor(System.String)
+FNDA:8,System.Void Amg_ingressos_aqui_carrinho_api.Exceptions.IdMongoException::.ctor(System.String)
+DA:11,8
+DA:12,8
+DA:13,8
+FN:15,System.Void Amg_ingressos_aqui_carrinho_api.Exceptions.IdMongoException::.ctor(System.String,System.Exception)
+FNDA:0,System.Void Amg_ingressos_aqui_carrinho_api.Exceptions.IdMongoException::.ctor(System.String,System.Exception)
+DA:16,0
+DA:17,0
+DA:18,0
+LF:9
+LH:3
+BRF:0
+BRH:0
+FNF:3
+FNH:1
+end_of_record
+SF:/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Exceptions/SaveTransactionException.cs
+FN:5,System.Void Amg_ingressos_aqui_carrinho_api.Exceptions.SaveTransactionException::.ctor()
+FNDA:0,System.Void Amg_ingressos_aqui_carrinho_api.Exceptions.SaveTransactionException::.ctor()
+DA:6,0
+DA:7,0
+DA:8,0
+FN:10,System.Void Amg_ingressos_aqui_carrinho_api.Exceptions.SaveTransactionException::.ctor(System.String)
+FNDA:3,System.Void Amg_ingressos_aqui_carrinho_api.Exceptions.SaveTransactionException::.ctor(System.String)
+DA:11,3
+DA:12,3
+DA:13,3
+FN:15,System.Void Amg_ingressos_aqui_carrinho_api.Exceptions.SaveTransactionException::.ctor(System.String,System.Exception)
+FNDA:0,System.Void Amg_ingressos_aqui_carrinho_api.Exceptions.SaveTransactionException::.ctor(System.String,System.Exception)
+DA:16,0
+DA:17,0
+DA:18,0
+LF:9
+LH:3
+BRF:0
+BRH:0
+FNF:3
+FNH:1
+end_of_record
+SF:/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Controllers/HealthCheckController.cs
+FN:22,System.Collections.Generic.IEnumerable`1<Amg_ingressos_aqui_carrinho_api.WeatherForecast> Amg_ingressos_aqui_carrinho_api.Controllers.HealthCheckController::Get()
+FNDA:0,System.Collections.Generic.IEnumerable`1<Amg_ingressos_aqui_carrinho_api.WeatherForecast> Amg_ingressos_aqui_carrinho_api.Controllers.HealthCheckController::Get()
+DA:23,0
+DA:24,0
+DA:25,0
+DA:26,0
+DA:27,0
+DA:28,0
+DA:29,0
+DA:30,0
+DA:31,0
+FN:15,System.Void Amg_ingressos_aqui_carrinho_api.Controllers.HealthCheckController::.ctor(Microsoft.Extensions.Logging.ILogger`1<Amg_ingressos_aqui_carrinho_api.Controllers.HealthCheckController>)
+FNDA:0,System.Void Amg_ingressos_aqui_carrinho_api.Controllers.HealthCheckController::.ctor(Microsoft.Extensions.Logging.ILogger`1<Amg_ingressos_aqui_carrinho_api.Controllers.HealthCheckController>)
+DA:16,0
+DA:17,0
+DA:18,0
+DA:19,0
+FN:8,System.Void Amg_ingressos_aqui_carrinho_api.Controllers.HealthCheckController::.cctor()
+FNDA:0,System.Void Amg_ingressos_aqui_carrinho_api.Controllers.HealthCheckController::.cctor()
+DA:9,0
+DA:10,0
+DA:11,0
+DA:12,0
+LF:17
+LH:0
+BRF:0
+BRH:0
+FNF:3
+FNH:0
+end_of_record
+SF:/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Controllers/TransactionController.cs
+FN:14,System.Void Amg_ingressos_aqui_carrinho_api.Controllers.TransactionController::.ctor(Microsoft.Extensions.Logging.ILogger`1<Amg_ingressos_aqui_carrinho_api.Controllers.TransactionController>,Amg_ingressos_aqui_carrinho_api.Services.Interfaces.ITransactionService,Amg_ingressos_aqui_carrinho_api.Services.Interfaces.ITransactionPaymentService)
+FNDA:2,System.Void Amg_ingressos_aqui_carrinho_api.Controllers.TransactionController::.ctor(Microsoft.Extensions.Logging.ILogger`1<Amg_ingressos_aqui_carrinho_api.Controllers.TransactionController>,Amg_ingressos_aqui_carrinho_api.Services.Interfaces.ITransactionService,Amg_ingressos_aqui_carrinho_api.Services.Interfaces.ITransactionPaymentService)
+DA:15,2
+DA:16,2
+DA:17,2
+DA:18,2
+DA:19,2
+DA:20,2
+DA:21,2
+DA:22,2
+DA:23,2
+FN:61,System.Void Amg_ingressos_aqui_carrinho_api.Controllers.TransactionController/<PayTransactionAsync>d__5::MoveNext()
+FNDA:0,System.Void Amg_ingressos_aqui_carrinho_api.Controllers.TransactionController/<PayTransactionAsync>d__5::MoveNext()
+DA:62,0
+DA:64,0
+DA:65,0
+DA:66,0
+DA:67,0
+DA:68,0
+DA:69,0
+DA:72,0
+DA:73,0
+DA:74,0
+DA:75,0
+DA:76,0
+DA:79,0
+DA:81,0
+DA:82,0
+DA:83,0
+DA:84,0
+DA:86,0
+BRDA:66,192,0,0
+BRDA:66,192,1,0
+BRDA:73,404,0,0
+BRDA:73,404,1,0
+FN:33,System.Void Amg_ingressos_aqui_carrinho_api.Controllers.TransactionController/<SaveTransactionAsync>d__4::MoveNext()
+FNDA:3,System.Void Amg_ingressos_aqui_carrinho_api.Controllers.TransactionController/<SaveTransactionAsync>d__4::MoveNext()
+DA:34,3
+DA:36,3
+DA:37,3
+DA:38,1
+DA:39,0
+DA:40,0
+DA:41,0
+DA:44,1
+DA:46,2
+DA:47,2
+DA:48,2
+DA:49,2
+DA:51,3
+BRDA:38,171,0,0
+BRDA:38,171,1,1
+BRDA:38,196,0,0
+BRDA:38,196,1,1
+LF:40
+LH:19
+BRF:8
+BRH:2
+FNF:3
+FNH:2
+end_of_record
