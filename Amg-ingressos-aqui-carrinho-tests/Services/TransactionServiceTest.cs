@@ -31,18 +31,16 @@ namespace Prime.UnitTests.Services
         }
 
         [Test]
-        public void Given_IdPerson_and_IdEvent_When_save_Then_return_Id_Transaction()
+        public void Given_IdPerson_and_TransactionItesn_When_save_Then_return_Id_Transaction()
         {
             //Arrange
-            TransactionDto transaction = new TransactionDto()
-            {
-                IdCustomer = "6442dcb6523d52533aeb1ae4"
-            };
+            var transactionDto = FactoryTransaction.SimpleTransactionDto();
             var messageReturn = "6442dcb6523d52533aeb1ae4";
-            _transactionServiceMock.Setup(x => x.Save<object>(transaction)).Returns(Task.FromResult(messageReturn as object));
+            _transactionServiceMock.Setup(x => x.Save<object>(It.IsAny<Transaction>()))
+                .Returns(Task.FromResult(messageReturn as object));
 
             //Act
-            var resultMethod = _transactionService.SaveAsync(transaction);
+            var resultMethod = _transactionService.SaveAsync(transactionDto);
 
             //Assert
             Assert.AreEqual(messageReturn, resultMethod.Result.Data);

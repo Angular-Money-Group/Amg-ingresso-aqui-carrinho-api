@@ -70,6 +70,10 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 {
                     //retorna todos tickets para o idLote
                     var listTickets = GetTicketsAsync(i.IdLot);
+                    if(listTickets.Result.Count< i.AmountTicket)
+                    {
+                        throw new SaveTransactionException("Numero de tickets invalido");
+                    }
 
                     //pra cada compra carimbar o ticket e criar transactio item
                     for (int amount = 0; amount < i.AmountTicket; amount++)

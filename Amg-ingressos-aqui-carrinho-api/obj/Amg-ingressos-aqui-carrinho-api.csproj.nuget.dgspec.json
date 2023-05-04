@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api.csproj": {}
+    "C:\\projetos\\Amg-ingresso-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-api.csproj": {}
   },
   "projects": {
-    "/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api.csproj": {
+    "C:\\projetos\\Amg-ingresso-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api.csproj",
+        "projectUniqueName": "C:\\projetos\\Amg-ingresso-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-api.csproj",
         "projectName": "Amg-ingressos-aqui-carrinho-api",
-        "projectPath": "/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api.csproj",
-        "packagesPath": "/home/robert/.nuget/packages/",
-        "outputPath": "/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/obj/",
+        "projectPath": "C:\\projetos\\Amg-ingresso-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-api.csproj",
+        "packagesPath": "C:\\Users\\rober\\.nuget\\packages\\",
+        "outputPath": "C:\\projetos\\Amg-ingresso-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/robert/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\rober\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
@@ -78,7 +78,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/7.0.203/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.203\\RuntimeIdentifierGraph.json"
         }
       }
     }
