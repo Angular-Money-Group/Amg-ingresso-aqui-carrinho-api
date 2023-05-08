@@ -20,10 +20,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Dtos
         /// </summary>
         public string IdCustomer { get; set; }
 
-        /// <summary>
-        /// estagio da transaction
-        /// </summary>
-        public StageTransactionEnum Stage { get; set; }
         
         /// <summary>
         /// TransactionItens

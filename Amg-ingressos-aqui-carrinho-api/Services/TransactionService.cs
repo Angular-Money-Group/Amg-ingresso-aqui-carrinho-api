@@ -124,6 +124,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 {
                     IdPerson = transactionDto.IdCustomer,
                     Status = Enum.StatusPaymentEnum.InProgress,
+                    Stage = Enum.StageTransactionEnum.Confirm
                 };
 
                 _messageReturn.Data = await _transactionRepository.Save<object>(transaction);
@@ -155,8 +156,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     try
                     {
                         //retorna todos tickets para o idLote
-                        //var messageTicket = _ticketService.GetTicketsAsync(i.IdLot).Result;
-                        var messageTicket = new MessageReturn(){ Data= SimpleListTicketNotSoldAndWithoutValue()};
+                        var messageTicket = _ticketService.GetTicketsAsync(i.IdLot).Result;
+                        //var messageTicket = new MessageReturn(){ Data= SimpleListTicketNotSoldAndWithoutValue()};
                         if (messageTicket.Message != null && messageTicket.Message.Any())
                             throw new Exception("Erro ao buscar Ingressos");
 

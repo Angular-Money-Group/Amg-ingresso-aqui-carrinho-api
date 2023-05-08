@@ -93,13 +93,13 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         public async Task Given_transaction_When_UpdateStage_Then_return_message_updated_Async()
         {
             // Arrange
-            var transactionDto = FactoryTransaction.SimpleStagePersonDataDTo();
             var messageReturn = "Transação alterada";
+            var id = "6442dcb6523d52533aeb1ae4";
             _transactionRepositoryMock.Setup(x => x.Update<object>(It.IsAny<Transaction>()))
                 .Returns(Task.FromResult(messageReturn as object));
 
             // Act
-            var result = (await _transactionController.UpdateTransactionPersonDataAsync(transactionDto) as OkObjectResult);
+            var result = (await _transactionController.UpdateTransactionPersonDataAsync(id) as OkObjectResult);
 
             // Assert
             Assert.AreEqual(messageReturn, result?.Value);
@@ -109,13 +109,13 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         public async Task Given_transaction_When_UpdateStage_Then_return_status_code_500_Async()
         {
             // Arrange
-            var transactionDto = FactoryTransaction.SimpleStagePersonDataDTo();
+            var id = "6442dcb6523d52533aeb1ae4";
             var espectedReturn = MessageLogErrors.updateTransactionMessage;
             _transactionRepositoryMock.Setup(x => x.Update<object>(It.IsAny<Transaction>()))
                 .Throws(new Exception("error conection database"));
 
             // Act
-            var result = (await _transactionController.UpdateTransactionPersonDataAsync(transactionDto) as ObjectResult);
+            var result = (await _transactionController.UpdateTransactionPersonDataAsync(id) as ObjectResult);
 
             // Assert
             Assert.AreEqual(500, result.StatusCode);
@@ -126,12 +126,11 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         public async Task Given_transaction_When_UpdateStage_Then_return_NotFound_Async()
         {
             // Arrange
-            var transactionDto = FactoryTransaction.SimpleStagePersonDataDTo();
-            transactionDto.Id = string.Empty;
             var espectedReturn = "Transação é obrigatório";
+            var id = "";
 
             // Act
-            var result = (await _transactionController.UpdateTransactionPersonDataAsync(transactionDto) as ObjectResult);
+            var result = (await _transactionController.UpdateTransactionPersonDataAsync(id) as ObjectResult);
 
             // Assert
             Assert.AreEqual(404, result.StatusCode);

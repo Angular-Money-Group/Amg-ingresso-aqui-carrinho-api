@@ -4,6 +4,7 @@ using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Mappers;
 using Microsoft.AspNetCore.Mvc;
+using Amg_ingressos_aqui_carrinho_api.Model.Querys;
 
 namespace Amg_ingressos_aqui_carrinho_api.Controllers
 {
@@ -28,7 +29,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// <returns>200 Transação</returns>
         /// <returns>500 Erro inesperado</returns>
         /// <returns>404 Erro tratado</returns>
-        [HttpPost]
+        [HttpGet]
         [Route("getById")]
         public async Task<IActionResult> GetByIdTransactionAsync(string idTransaction)
         {
@@ -92,8 +93,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         {
             try
             {
+                var transactionDb = (_transactionService
+                    .GetByIdAsync(idTransaction).Result.Data as List<GetTransaction>).FirstOrDefault();
                 var transaction = new Transaction(){
                     Id = idTransaction,
+                    IdPerson= transactionDb.IdPerson,
                     Stage = Enum.StageTransactionEnum.PersonData
                 };
                 var result = await _transactionService.UpdateAsync(transaction);
@@ -126,6 +130,10 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
             try
             {
                 var transaction = transactionDto.StageTicketDataDtoToTransaction();
+                var transactionDb = (_transactionService
+                    .GetByIdAsync(transaction.Id).Result.Data as List<GetTransaction>).FirstOrDefault();
+
+                transaction.IdPerson = transactionDb.IdPerson;
                 var result = await _transactionService.UpdateAsync(transaction);
                 if (result.Message != null && result.Message.Any())
                 {
@@ -155,8 +163,15 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         {
             try
             {
-                var transction = transactionDto.StagePaymentDataDtoToTransaction();
-                var result = await _transactionService.UpdateAsync(transction);
+
+                var transaction = transactionDto.StagePaymentDataDtoToTransaction();
+                var transactionDb = (_transactionService
+                    .GetByIdAsync(transaction.Id).Result.Data as List<GetTransaction>).FirstOrDefault();
+                transaction.IdPerson = transactionDb.IdPerson;
+                transaction.Discount = transactionDb.Discount;
+                transaction.Tax = transactionDb.Tax;
+
+                var result = await _transactionService.UpdateAsync(transaction);
                 if (result.Message != null && result.Message.Any())
                 {
                     _logger.LogInformation(result.Message);
@@ -178,7 +193,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// <param name="transaction">Corpo Transação a ser Gravado</param>
         /// <returns>200 Transação criado</returns>
         /// <returns>500 Erro inesperado</returns>
-        [HttpPost]
+        [HttpPut]
         [Route("paymentTransaction")]
         public async Task<IActionResult> PaymentTransactionAsync(string idTransaction)
         {
@@ -213,7 +228,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// <param name="transaction">Corpo Transação a ser Gravado</param>
         /// <returns>200 Transação criado</returns>
         /// <returns>500 Erro inesperado</returns>
-        [HttpPost]
+        [HttpPut]
         [Route("finishedTransaction")]
         public async Task<IActionResult> FinishedTransactionAsync(string idTransaction)
         {

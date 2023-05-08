@@ -7,7 +7,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Dtos
 {
     public class StagePaymentDataDto
     {
-        public string Id;
-        public string IdPaymentMethod;
+        public string Id { get; set; }
+        public string IdPaymentMethod { get; set; }
     }
 }

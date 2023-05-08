@@ -50,45 +50,10 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
             return new TransactionDto()
             {
                 IdCustomer = "6442dcb6523d52533aeb1ae4",
-                Stage = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.Confirm,
                 TransactionItensDto = SimpleListTransactionItensDto()
             };
         }
-        internal static TransactionDto SimpleTransactionDtoStagePersonData()
-        {
-            return new TransactionDto()
-            {
-                Id = "6442dcb6523d52533aeb1ae4",
-                Stage = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.PersonData
-            };
-        }
-        internal static TransactionDto SimpleTransactionDtoStagePaymentData()
-        {
-            return new TransactionDto()
-            {
-                IdCustomer = "6442dcb6523d52533aeb1ae4",
-                Stage = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.PaymentData,
-                TransactionItensDto = SimpleListTransactionItensDto()
-            };
-        }
-        internal static TransactionDto SimpleTransactionDtoStagePaymentTransaction()
-        {
-            return new TransactionDto()
-            {
-                IdCustomer = "6442dcb6523d52533aeb1ae4",
-                Stage = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.PaymentTransaction,
-                TransactionItensDto = SimpleListTransactionItensDto()
-            };
-        }
-        internal static TransactionDto SimpleTransactionDtoStageFinished()
-        {
-            return new TransactionDto()
-            {
-                IdCustomer = "6442dcb6523d52533aeb1ae4",
-                Stage = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.Finished,
-                TransactionItensDto = SimpleListTransactionItensDto()
-            };
-        }
+        
         internal static List<TransactionItenDto> SimpleListTransactionItensDto()
         {
             return new List<TransactionItenDto>()
@@ -103,11 +68,6 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                     HalfPrice = true,
                     AmountTicket =1
                 },
-            };
-        }
-        internal static StagePersonDataDto SimpleStagePersonDataDTo(){
-            return new StagePersonDataDto(){
-                Id ="6442dcb6523d52533aeb1ae4"  
             };
         }
         internal static StageTicketDataDto SimpleStageTicketDataDTo(){
