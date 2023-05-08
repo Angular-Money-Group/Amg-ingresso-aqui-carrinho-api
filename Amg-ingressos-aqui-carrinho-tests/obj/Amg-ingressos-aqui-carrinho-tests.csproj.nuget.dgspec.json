@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-tests/Amg-ingressos-aqui-carrinho-tests.csproj": {}
+    "C:\\projetos\\Amg-ingresso-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-tests\\Amg-ingressos-aqui-carrinho-tests.csproj": {}
   },
   "projects": {
-    "/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api.csproj": {
+    "C:\\projetos\\Amg-ingresso-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api.csproj",
+        "projectUniqueName": "C:\\projetos\\Amg-ingresso-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-api.csproj",
         "projectName": "Amg-ingressos-aqui-carrinho-api",
-        "projectPath": "/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api.csproj",
-        "packagesPath": "/home/robert/.nuget/packages/",
-        "outputPath": "/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/obj/",
+        "projectPath": "C:\\projetos\\Amg-ingresso-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-api.csproj",
+        "packagesPath": "C:\\Users\\rober\\.nuget\\packages\\",
+        "outputPath": "C:\\projetos\\Amg-ingresso-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-api\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/robert/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\rober\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
@@ -50,6 +50,10 @@
               "target": "Package",
               "version": "[2.19.1, )"
             },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.2.3, )"
@@ -74,21 +78,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/7.0.203/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.203\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-tests/Amg-ingressos-aqui-carrinho-tests.csproj": {
+    "C:\\projetos\\Amg-ingresso-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-tests\\Amg-ingressos-aqui-carrinho-tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-tests/Amg-ingressos-aqui-carrinho-tests.csproj",
+        "projectUniqueName": "C:\\projetos\\Amg-ingresso-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-tests\\Amg-ingressos-aqui-carrinho-tests.csproj",
         "projectName": "Amg-ingressos-aqui-carrinho-tests",
-        "projectPath": "/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-tests/Amg-ingressos-aqui-carrinho-tests.csproj",
-        "packagesPath": "/home/robert/.nuget/packages/",
-        "outputPath": "/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-tests/obj/",
+        "projectPath": "C:\\projetos\\Amg-ingresso-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-tests\\Amg-ingressos-aqui-carrinho-tests.csproj",
+        "packagesPath": "C:\\Users\\rober\\.nuget\\packages\\",
+        "outputPath": "C:\\projetos\\Amg-ingresso-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-tests\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/robert/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\rober\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
@@ -100,8 +104,8 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api.csproj": {
-                "projectPath": "/home/robert/Projetos/AMG/Amg-ingresso-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api/Amg-ingressos-aqui-carrinho-api.csproj"
+              "C:\\projetos\\Amg-ingresso-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-api.csproj": {
+                "projectPath": "C:\\projetos\\Amg-ingresso-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-api\\Amg-ingressos-aqui-carrinho-api.csproj"
               }
             }
           }
@@ -155,7 +159,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/7.0.203/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.203\\RuntimeIdentifierGraph.json"
         }
       }
     }

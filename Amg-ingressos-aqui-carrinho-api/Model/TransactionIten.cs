@@ -16,24 +16,17 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
-         /// <summary>
+        /// <summary>
         /// Id Transaction
         /// </summary>
-        [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string IdTransaction { get; set; }
 
         /// <summary>
-        /// Id Variante
+        /// Id Ticket
         /// </summary>
         [BsonRepresentation(BsonType.ObjectId)]
-        public string IdVariante { get; set; }
-
-        /// <summary>
-        /// Id Lote
-        /// </summary>
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string IdLote { get; set; }
+        public string IdTicket { get; set; }
 
         /// <summary>
         /// Meia entrada
@@ -44,14 +37,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// Preco Ingresso
         /// </summary>
         public decimal TicketPrice { get; set; }
-        /// <summary>
-        /// Quantidade de ingressos
-        /// </summary>
-        public decimal AmoutTicket { get; set; }
-        /// <summary>
-        /// Taxa de Compra
-        /// </summary>
-        public decimal Tax { get; set; }
 
     }
 }
