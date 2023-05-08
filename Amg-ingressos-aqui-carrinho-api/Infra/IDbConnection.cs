@@ -3,9 +3,8 @@ using MongoDB.Driver;
 
 namespace Amg_ingressos_aqui_carrinho_api.Infra
 {
-    public interface IDbConnection
+    public interface IDbConnection<T>
     {
-        IMongoCollection<Transaction> GetConnection();
-        IMongoCollection<TransactionPayment> GetConnectionPayment();
+        IMongoCollection<T> GetConnection(string colletionName);
     }
 }

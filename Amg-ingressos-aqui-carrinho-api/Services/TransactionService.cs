@@ -1,31 +1,118 @@
-using System.Text;
-using System.Text.Json;
 using Amg_ingressos_aqui_carrinho_api.Dtos;
 using Amg_ingressos_aqui_carrinho_api.Exceptions;
-using Amg_ingressos_aqui_carrinho_api.Infra;
 using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Repository.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Utils;
-using Amg_ingressos_aqui_eventos_api.Model;
-using Newtonsoft.Json;
-using static System.Net.Mime.MediaTypeNames;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Amg_ingressos_aqui_carrinho_api.Services
 {
     public class TransactionService : ITransactionService
     {
         private ITransactionRepository _transactionRepository;
+        private ITransactionItenRepository _transactionItenRepository;
         private MessageReturn _messageReturn;
-        private HttpClient _HttpClient;
+        private ITicketService _ticketService;
+        private IPaymentService _paymentService;
 
-        public TransactionService(ITransactionRepository transactionRepository,
-            ICieloClient cieloClient)
+        public TransactionService(
+            ITransactionRepository transactionRepository,
+            ITransactionItenRepository transactionItenRepository,
+            ITicketService ticketService,
+            IPaymentService paymentService)
         {
             _transactionRepository = transactionRepository;
-            _HttpClient = cieloClient.CreateClient();
+            _ticketService = ticketService;
+            _paymentService = paymentService;
+            _transactionItenRepository = transactionItenRepository;
             _messageReturn = new MessageReturn();
+        }
+
+        public async Task<MessageReturn> FinishedTransactionAsync(Transaction transaction)
+        {
+            try
+            {
+                transaction.Id.ValidateIdMongo("Transação");
+                var tickets= transaction.TransactionItens
+                    .Select(i=> new Ticket(){ Id = i.IdTicket} ).ToList();
+                
+            }
+            catch (IdMongoException ex)
+            {
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
+            catch (UpdateTransactionException ex)
+            {
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return _messageReturn;
+        }
+
+        public async Task<MessageReturn> GetByIdAsync(string idTransaction)
+        {
+            try
+            {
+                idTransaction.ValidateIdMongo("Transação");
+
+                _messageReturn.Data = await _transactionRepository.GetById(idTransaction);
+
+            }
+            catch (IdMongoException ex)
+            {
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
+            catch (GetByIdTransactionException ex)
+            {
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return _messageReturn;
+        }
+
+        public async Task<MessageReturn> Payment(Transaction transaction)
+        {
+            try
+            {
+                transaction.Id.ValidateIdMongo("Transação");
+                var resultPayment = await _paymentService.Payment(transaction);
+                if(resultPayment.Message != null && resultPayment.Message.Any())
+                    throw new PaymentTransactionException(resultPayment.Message);
+
+                transaction.Stage = Enum.StageTransactionEnum.PaymentTransaction;
+                transaction.Status = Enum.StatusPaymentEnum.Aproved;
+                UpdateAsync(transaction);
+                _messageReturn.Data= "Transação Efetivada";
+
+            }
+            catch (IdMongoException ex)
+            {
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
+            catch (PaymentTransactionException ex)
+            {
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return _messageReturn;
         }
 
         public async Task<MessageReturn> SaveAsync(TransactionDto transactionDto)
@@ -36,7 +123,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 var transaction = new Transaction()
                 {
                     IdPerson = transactionDto.IdCustomer,
-                    Status = Enum.StatusPayment.InProgress,
+                    Status = Enum.StatusPaymentEnum.InProgress,
                 };
 
                 _messageReturn.Data = await _transactionRepository.Save<object>(transaction);
@@ -47,10 +134,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (IdMongoException ex)
             {
-                _messageReturn.Message = ex.Message;
-            }
-            catch (SaveTransactionException ex)
-            {
+                _messageReturn.Data = string.Empty;
                 _messageReturn.Message = ex.Message;
             }
             catch (Exception ex)
@@ -61,45 +145,64 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             return _messageReturn;
         }
 
-        public async Task<MessageReturn> SaveTransactionItenAsync(string IdTransaction,string IdCustomer, List<TransactionItenDto> transactionItens)
+        public async Task<MessageReturn> SaveTransactionItenAsync(string IdTransaction, string IdCustomer, List<TransactionItenDto> transactionItens)
         {
             try
             {
                 IdTransaction.ValidateIdMongo("Id Transação");
-                transactionItens.ForEach(async i =>
+                transactionItens.ForEach(i =>
                 {
-                    //retorna todos tickets para o idLote
-                    var listTickets = GetTicketsAsync(i.IdLot);
-                    if(listTickets.Result.Count< i.AmountTicket)
+                    try
                     {
-                        throw new SaveTransactionException("Numero de tickets invalido");
-                    }
+                        //retorna todos tickets para o idLote
+                        //var messageTicket = _ticketService.GetTicketsAsync(i.IdLot).Result;
+                        var messageTicket = new MessageReturn(){ Data= SimpleListTicketNotSoldAndWithoutValue()};
+                        if (messageTicket.Message != null && messageTicket.Message.Any())
+                            throw new Exception("Erro ao buscar Ingressos");
 
-                    //pra cada compra carimbar o ticket e criar transactio item
-                    for (int amount = 0; amount < i.AmountTicket; amount++)
-                    {
-                        var ticket = listTickets.Result.FirstOrDefault(i => i.isSold == false);
-                        var valueTicket = i.HalfPrice == true ? (ticket.Value / 2) : ticket.Value;
-                        var transactionItem = new TransactionIten()
+                        var listTickets = (List<Ticket>)messageTicket.Data;
+                        if (listTickets?.Count == 0 || listTickets?.Count < i.AmountTicket)
+                            throw new SaveTransactionException("Número de ingressos inválido");
+
+
+                        //pra cada compra carimbar o ticket e criar transaction item
+                        for (int amount = 0; amount < i.AmountTicket; amount++)
                         {
-                            HalfPrice = i.HalfPrice,
-                            IdTransaction = IdTransaction,
-                            IdTicket = ticket.Id,
-                            TicketPrice = valueTicket
-                        };
-                        //cria transaction iten
-                        ValidateTransactionIten(transactionItem);
-                        _transactionRepository.SaveTransactionIten<object>(transactionItem);
+                            var ticket = listTickets?.FirstOrDefault(i => i.isSold == false);
+                            if (ticket.Value == 0)
+                                throw new SaveTransactionException("Valor do Ingresso inválido.");
 
-                        //atualiza Ticket
-                        ticket.isSold = true;
-                        ticket.IdUser = IdCustomer;
-                        ticket.Value = valueTicket;
-                        UpdateTicketsAsync(ticket);
+                            var valueTicket = i.HalfPrice == true ? (ticket.Value / 2) : ticket.Value;
+                            var transactionItem = new TransactionIten()
+                            {
+                                HalfPrice = i.HalfPrice,
+                                IdTransaction = IdTransaction,
+                                IdTicket = ticket?.Id,
+                                TicketPrice = valueTicket
+                            };
+                            //cria transaction iten
+                            ValidateTransactionIten(transactionItem);
+                            _transactionItenRepository.Save<object>(transactionItem);
+
+                            //atualiza Ticket
+                            ticket.isSold = true;
+                            ticket.IdUser = IdCustomer;
+                            ticket.Value = valueTicket;
+                            _ticketService.UpdateTicketsAsync(ticket);
+                        }
                     }
-                });
+                    catch (SaveTransactionException ex)
+                    {
+                        _messageReturn.Data = string.Empty;
+                        throw ex;
+                    }
+                    catch (System.Exception ex)
+                    {
+                        _messageReturn.Data = string.Empty;
+                        throw ex;
+                    }
 
-                _messageReturn.Data = "Tikets Criados";
+                });
             }
             catch (IdMongoException ex)
             {
@@ -116,18 +219,54 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
             return _messageReturn;
         }
-        public async Task<MessageReturn> Payment(Transaction transaction)
+
+        internal static List<Ticket> SimpleListTicketNotSoldAndWithoutValue()
         {
+            return new List<Ticket>(){
+                new Ticket()
+                {
+                    Id = "6442dcb6523d52533aeb1ae4",
+                    IdLot = "6442dcb6523d52533aeb1ae4",
+                    IdUser = "6442dcb6523d52533aeb1ae4",
+                    isSold = false,
+                    Position= "A1",
+                    Value= new decimal(110)
+                },
+                new Ticket()
+                {
+                    Id = "6552dcb6523d52533aeb1ae4",
+                    IdLot = "6552dcb6523d52533aeb1ae4",
+                    IdUser = "6552dcb6523d52533aeb1ae4",
+                    isSold = false,
+                    Position= "A2",
+                    Value= new decimal(110)
+                }
+            };
+        }
 
-            var transactionJson = new StringContent(JsonSerializer.Serialize(transaction),
-            Encoding.UTF8, Application.Json); // using static System.Net.Mime.MediaTypeNames;
+        public async Task<MessageReturn> UpdateAsync(Transaction transaction)
+        {
+            try
+            {
+                transaction.Id.ValidateIdMongo("Transação");
 
-            using var httpResponseMessage =
-                await _HttpClient.PostAsync("https://apisandbox.cieloecommerce.cielo.com.br/1/sales",
-                 transactionJson);
+                _messageReturn.Data = await _transactionRepository.Update<object>(transaction);
 
-            var result = httpResponseMessage.EnsureSuccessStatusCode();
-            _messageReturn.Data = "Ticket criado";
+            }
+            catch (IdMongoException ex)
+            {
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
+            catch (UpdateTransactionException ex)
+            {
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
 
             return _messageReturn;
         }
@@ -141,25 +280,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 throw new SaveTransactionException("Valor do Ingresso é obrigatório");
         }
 
-        private async Task<List<Ticket>> GetTicketsAsync(string idLote)
-        {
-            var url = new Uri("api.ingressosaqui.com.br:3002/v1/eventos/lote/" + idLote);
-            using var httpResponseMessage = await _HttpClient.GetAsync(url);
-            var result = httpResponseMessage.EnsureSuccessStatusCode();
-            string jsonContent = result.Content.ReadAsStringAsync().Result;
 
-            return JsonConvert.DeserializeObject<List<Ticket>>(jsonContent);
-        }
-        private async Task UpdateTicketsAsync(Ticket ticket)
-        {
-            var transactionJson = new StringContent(JsonSerializer.Serialize(ticket),
-            Encoding.UTF8, Application.Json); // using static System.Net.Mime.MediaTypeNames;
-
-            using var httpResponseMessage =
-                await _HttpClient.PostAsync("api.ingressosaqui.com.br:3002/v1/eventos/lote/" + ticket.Id,
-                 transactionJson);
-
-            var result = httpResponseMessage.EnsureSuccessStatusCode();
-        }
     }
 }

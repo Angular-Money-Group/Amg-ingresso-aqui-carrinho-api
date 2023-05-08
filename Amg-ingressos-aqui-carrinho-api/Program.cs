@@ -1,4 +1,5 @@
 using Amg_ingressos_aqui_carrinho_api.Infra;
+using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Repository;
 using Amg_ingressos_aqui_carrinho_api.Repository.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Services;
@@ -16,14 +17,23 @@ builder.Services.AddHttpClient();
 // Add services to the container.
 builder.Services.Configure<TransactionDatabaseSettings>(
     builder.Configuration.GetSection("CarrinhoDatabase"));
+builder.Services.Configure<CieloSettings>(
+    builder.Configuration.GetSection("CieloSettings"));
+    
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // injecao de dependencia
 //services
 builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<ITicketService, TicketService>();
 //repository
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository<object>>();
+builder.Services.AddScoped<ITransactionItenRepository, TransactionItenRepository<object>>();
 //infra
-builder.Services.AddScoped<IDbConnection, DbConnection>();
+builder.Services.AddScoped<IDbConnection<Transaction>, DbConnection<Transaction>>();
+builder.Services.AddScoped<IDbConnection<TransactionIten>, DbConnection<TransactionIten>>();
+builder.Services.AddScoped<ICieloClient, CieloClient>();
 
 var app = builder.Build();
 app.UseSwagger();

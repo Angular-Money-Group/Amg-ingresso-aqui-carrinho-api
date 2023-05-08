@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Text.Json;
-using System.Threading.Tasks;
-using Amg_ingressos_aqui_eventos_api.Model;
+using Amg_ingressos_aqui_carrinho_api.Model;
 using Moq;
 using Moq.Protected;
 

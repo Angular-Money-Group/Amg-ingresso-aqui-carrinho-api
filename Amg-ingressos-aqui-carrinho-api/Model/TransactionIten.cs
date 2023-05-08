@@ -19,7 +19,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// <summary>
         /// Id Transaction
         /// </summary>
-        [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string IdTransaction { get; set; }
 

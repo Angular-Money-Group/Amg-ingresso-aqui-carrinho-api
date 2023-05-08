@@ -6,7 +6,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
-namespace Amg_ingressos_aqui_eventos_api.Model
+namespace Amg_ingressos_aqui_carrinho_api.Model
 {
     public class Ticket
     {

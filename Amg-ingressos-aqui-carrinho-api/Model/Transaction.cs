@@ -32,6 +32,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         public decimal Tax { get; set; }
 
         /// <summary>
+        /// Desconto
+        /// </summary>
+        public decimal Discount { get; set; }
+
+        /// <summary>
         /// Lista de itens de pedido
         /// </summary>
         [BsonIgnore]
@@ -40,7 +45,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// <summary>
         /// Status Transacao
         /// </summary>
-        public StatusPayment Status { get; set; }
+        public StatusPaymentEnum Status { get; set; }
+        /// <summary>
+        /// Etapa de transacao
+        /// </summary>
+        public StageTransactionEnum Stage { get; set; }
         
     }
 }
