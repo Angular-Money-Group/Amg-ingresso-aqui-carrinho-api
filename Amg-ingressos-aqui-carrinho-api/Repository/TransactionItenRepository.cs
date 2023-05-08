@@ -8,20 +8,20 @@ using MongoDB.Driver;
 namespace Amg_ingressos_aqui_carrinho_api.Repository
 {
     [ExcludeFromCodeCoverage]
-    public class TransactionPaymentRepository<T> : ITransactionPaymentRepository
+    public class TransactionItenRepository<T> : ITransactionItenRepository
     {
-        private readonly IMongoCollection<TransactionPayment> _transactionCollection;
-        public TransactionPaymentRepository(IDbConnection dbconnection)
+        private readonly IMongoCollection<TransactionIten> _transactionItenCollection;
+        public TransactionItenRepository(IDbConnection<TransactionIten> dbconnectionIten)
         {
-            _transactionCollection = dbconnection.GetConnectionPayment();
+            _transactionItenCollection= dbconnectionIten.GetConnection("transactionIten");
         }
 
-        public async Task<object> Save<T>(object transactionComplet)
+        public async Task<object> Save<T>(object transaction)
         {
             try
             {
-                await _transactionCollection.InsertOneAsync(transactionComplet as TransactionPayment);
-                return "Transaction criado";
+                await _transactionItenCollection.InsertOneAsync(transaction as TransactionIten);
+                return (transaction as TransactionIten).Id;
             }
             catch (SaveTransactionException ex)
             {

@@ -1,44 +1,73 @@
 using Amg_ingressos_aqui_carrinho_api.Consts;
+using Amg_ingressos_aqui_carrinho_api.Dtos;
 using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
+using Amg_ingressos_aqui_carrinho_api.Mappers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Amg_ingressos_aqui_carrinho_api.Controllers
 {
-    [Route("v1/transactionos")]
+    [Route("v1/transaction")]
     public class TransactionController : ControllerBase
     {
         private readonly ILogger<TransactionController> _logger;
         private readonly ITransactionService _transactionService;
-        private readonly ITransactionPaymentService _transactionPaymentService;
 
         public TransactionController(
             ILogger<TransactionController> logger,
-            ITransactionService transactionService,
-            ITransactionPaymentService transactionPaymentService)
+            ITransactionService transactionService)
         {
             _logger = logger;
             _transactionService = transactionService;
-            _transactionPaymentService = transactionPaymentService;
+        }
+
+        /// <summary>
+        /// Busca Transação por id
+        /// </summary>
+        /// <param name="idTransaction">id da transacao</param>
+        /// <returns>200 Transação</returns>
+        /// <returns>500 Erro inesperado</returns>
+        /// <returns>404 Erro tratado</returns>
+        [HttpPost]
+        [Route("getById")]
+        public async Task<IActionResult> GetByIdTransactionAsync(string idTransaction)
+        {
+            try
+            {
+                var result = await _transactionService.GetByIdAsync(idTransaction);
+                if (result.Message != null && result.Message.Any())
+                {
+                    _logger.LogInformation(result.Message);
+                    return NotFound(result.Message);
+                }
+
+                return Ok(result.Data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(MessageLogErrors.getByIdTransactionMessage, ex);
+                return StatusCode(500, MessageLogErrors.getByIdTransactionMessage);
+            }
         }
 
         /// <summary>
         /// Grava Transação
         /// </summary>
-        /// <param name="transaction">Corpo Transação a ser Gravado</param>
+        /// <param name="transaction">Dados para criar Transacao</param>
         /// <returns>200 Transação criado</returns>
         /// <returns>500 Erro inesperado</returns>
+        /// <returns>404 Erro tratado</returns>
         [HttpPost]
-        [Route("createTransaction")]
-        public async Task<IActionResult> SaveTransactionAsync(Transaction transaction)
+        [Route("confirm")]
+        public async Task<IActionResult> SaveTransactionAsync([FromBody]TransactionDto transaction)
         {
             try
             {
                 var result = await _transactionService.SaveAsync(transaction);
-                if (result.Message!= null && result.Message.Any())
+                if (result.Message != null && result.Message.Any())
                 {
                     _logger.LogInformation(result.Message);
-                    return NoContent();
+                    return NotFound(result.Message);
                 }
 
                 return Ok(result.Data);
@@ -53,30 +82,152 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// <summary>
         /// Grava Transação
         /// </summary>
-        /// <param name="payment">Corpo Transação a ser Gravado</param>
-        /// <returns>200 Transação criado</returns>
+        /// <param name="transactionDto">Dados para atualizar transacao no stage de person DAta</param>
+        /// <returns>200 Transação atualizada</returns>
         /// <returns>500 Erro inesperado</returns>
-        [HttpPost]
-        [Route("PayTransaction")]
-        public async Task<IActionResult> PayTransactionAsync(TransactionPayment payment)
+        /// <returns>404 Erro tratado</returns>
+        [HttpPut]
+        [Route("confirmPersonData")]
+        public async Task<IActionResult> UpdateTransactionPersonDataAsync(string idTransaction)
         {
             try
             {
-                var resultSave = await _transactionPaymentService.SaveAsync(payment);
-                if (resultSave.Message.Any())
+                var transaction = new Transaction(){
+                    Id = idTransaction,
+                    Stage = Enum.StageTransactionEnum.PersonData
+                };
+                var result = await _transactionService.UpdateAsync(transaction);
+                if (result.Message != null && result.Message.Any())
                 {
-                    _logger.LogInformation(resultSave.Message);
-                    return NoContent();
+                    _logger.LogInformation(result.Message);
+                    return NotFound(result.Message);
                 }
 
-                var resultPayment = await _transactionPaymentService.Payment(payment);
-                if (resultPayment.Message.Any())
+                return Ok(result.Data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(MessageLogErrors.updateTransactionMessage, ex);
+                return StatusCode(500, MessageLogErrors.updateTransactionMessage);
+            }
+        }
+
+        /// <summary>
+        /// Grava Transação
+        /// </summary>
+        /// <param name="transactionDto">Dados para atualizar transacao no stage de person DAta</param>
+        /// <returns>200 Transação atualizada</returns>
+        /// <returns>500 Erro inesperado</returns>
+        /// <returns>404 Erro tratado</returns>
+        [HttpPut]
+        [Route("confirmTicketsData")]
+        public async Task<IActionResult> UpdateTransactionTicketsDataAsync([FromBody]StageTicketDataDto transactionDto)
+        {
+            try
+            {
+                var transaction = transactionDto.StageTicketDataDtoToTransaction();
+                var result = await _transactionService.UpdateAsync(transaction);
+                if (result.Message != null && result.Message.Any())
+                {
+                    _logger.LogInformation(result.Message);
+                    return NotFound(result.Message);
+                }
+
+                return Ok(result.Data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(MessageLogErrors.updateTransactionMessage, ex);
+                return StatusCode(500, MessageLogErrors.updateTransactionMessage);
+            }
+        }
+
+        /// <summary>
+        /// Grava Transação
+        /// </summary>
+        /// <param name="transactionDto">Dados para atualizar transacao no stage de person DAta</param>
+        /// <returns>200 Transação atualizada</returns>
+        /// <returns>500 Erro inesperado</returns>
+        /// <returns>404 Erro tratado</returns>
+        [HttpPut]
+        [Route("confirmPaymentData")]
+        public async Task<IActionResult> UpdateTransactionPaymentDataAsync([FromBody]StagePaymentDataDto transactionDto)
+        {
+            try
+            {
+                var transction = transactionDto.StagePaymentDataDtoToTransaction();
+                var result = await _transactionService.UpdateAsync(transction);
+                if (result.Message != null && result.Message.Any())
+                {
+                    _logger.LogInformation(result.Message);
+                    return NotFound(result.Message);
+                }
+
+                return Ok(result.Data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(MessageLogErrors.updateTransactionMessage, ex);
+                return StatusCode(500, MessageLogErrors.updateTransactionMessage);
+            }
+        }
+
+        /// <summary>
+        /// Grava Transação
+        /// </summary>
+        /// <param name="transaction">Corpo Transação a ser Gravado</param>
+        /// <returns>200 Transação criado</returns>
+        /// <returns>500 Erro inesperado</returns>
+        [HttpPost]
+        [Route("paymentTransaction")]
+        public async Task<IActionResult> PaymentTransactionAsync(string idTransaction)
+        {
+            try
+            {
+                var transaction = await _transactionService.GetByIdAsync(idTransaction);
+                if (transaction.Message != null && transaction.Message.Any())
+                {
+                    _logger.LogInformation(transaction.Message);
+                    return NotFound(transaction.Message);
+                }
+
+                var resultPayment = await _transactionService.Payment(transaction.Data as Transaction);
+                if (resultPayment.Message != null && resultPayment.Message.Any())
                 {
                     _logger.LogInformation(resultPayment.Message);
-                    return NoContent();
+                    return NotFound(resultPayment.Message);
                 }
 
                 return Ok("Transação Efetivada");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(MessageLogErrors.paymentTransactionMessage, ex);
+                return StatusCode(500, MessageLogErrors.paymentTransactionMessage);
+            }
+        }
+
+        /// <summary>
+        /// Grava Transação
+        /// </summary>
+        /// <param name="transaction">Corpo Transação a ser Gravado</param>
+        /// <returns>200 Transação criado</returns>
+        /// <returns>500 Erro inesperado</returns>
+        [HttpPost]
+        [Route("finishedTransaction")]
+        public async Task<IActionResult> FinishedTransactionAsync(string idTransaction)
+        {
+            try
+            {
+                var transaction = await _transactionService.GetByIdAsync(idTransaction);
+                var resultQrcode = await _transactionService.FinishedTransactionAsync(transaction.Data as Transaction);
+                if (resultQrcode.Message.Any())
+                {
+                    _logger.LogInformation(resultQrcode.Message);
+                    return NotFound(resultQrcode.Message);
+                }
+
+                return Ok(resultQrcode.Data);
             }
             catch (Exception ex)
             {
