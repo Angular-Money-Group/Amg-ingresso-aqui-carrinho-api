@@ -5,5 +5,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository.Interfaces
         Task<object> Save<T>(object transactionComplet);
         Task<object> Update<T>(object transactionComplet);
         Task<object> GetById(string idTransaction);
+        Task<object> GetByPerson(string idPerson);
     }
 }

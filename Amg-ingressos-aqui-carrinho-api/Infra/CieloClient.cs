@@ -28,6 +28,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 "MerchantId", _config.Value.MerchantIdHomolog);
             _httpClient.DefaultRequestHeaders.Add(
                 "MerchantKey", _config.Value.MerchantKeyHomolog);
+            _httpClient.Timeout = TimeSpan.FromMinutes(10);
 
             return _httpClient;
         }

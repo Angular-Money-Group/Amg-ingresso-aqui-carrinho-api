@@ -19,12 +19,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Mappers
                 
             };
         }
-        public static Transaction StagePersonDataDtoToTransaction(this StagePersonDataDto stagePerson){
-            return new Transaction(){
-                Id = stagePerson.Id,
-                Stage = Enum.StageTransactionEnum.PersonData
-            };
-        }
 
         public static Transaction StagePaymentDataDtoToTransaction(this StagePaymentDataDto stagePayment){
             return new Transaction(){

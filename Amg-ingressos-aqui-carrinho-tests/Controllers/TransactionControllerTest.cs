@@ -93,13 +93,13 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         public async Task Given_transaction_When_UpdateStage_Then_return_message_updated_Async()
         {
             // Arrange
-            var transactionDto = FactoryTransaction.SimpleStagePersonDataDTo();
+            var idTransaction = "6442dcb6523d52533aeb1ae4";
             var messageReturn = "Transação alterada";
             _transactionRepositoryMock.Setup(x => x.Update<object>(It.IsAny<Transaction>()))
                 .Returns(Task.FromResult(messageReturn as object));
 
             // Act
-            var result = (await _transactionController.UpdateTransactionPersonDataAsync(transactionDto) as OkObjectResult);
+            var result = (await _transactionController.UpdateTransactionPersonDataAsync(idTransaction) as OkObjectResult);
 
             // Assert
             Assert.AreEqual(messageReturn, result?.Value);
@@ -109,13 +109,13 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         public async Task Given_transaction_When_UpdateStage_Then_return_status_code_500_Async()
         {
             // Arrange
-            var transactionDto = FactoryTransaction.SimpleStagePersonDataDTo();
             var espectedReturn = MessageLogErrors.updateTransactionMessage;
+            var idTransaction = "6442dcb6523d52533aeb1ae4";
             _transactionRepositoryMock.Setup(x => x.Update<object>(It.IsAny<Transaction>()))
                 .Throws(new Exception("error conection database"));
 
             // Act
-            var result = (await _transactionController.UpdateTransactionPersonDataAsync(transactionDto) as ObjectResult);
+            var result = (await _transactionController.UpdateTransactionPersonDataAsync(idTransaction) as ObjectResult);
 
             // Assert
             Assert.AreEqual(500, result.StatusCode);
@@ -126,12 +126,12 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         public async Task Given_transaction_When_UpdateStage_Then_return_NotFound_Async()
         {
             // Arrange
-            var transactionDto = FactoryTransaction.SimpleStagePersonDataDTo();
-            transactionDto.Id = string.Empty;
+            var idTransaction = string.Empty;
             var espectedReturn = "Transação é obrigatório";
+            var id = "";
 
             // Act
-            var result = (await _transactionController.UpdateTransactionPersonDataAsync(transactionDto) as ObjectResult);
+            var result = (await _transactionController.UpdateTransactionPersonDataAsync(idTransaction) as ObjectResult);
 
             // Assert
             Assert.AreEqual(404, result.StatusCode);
@@ -350,6 +350,54 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
 
             // Act
             var result = (await _transactionController.PaymentTransactionAsync(idTransaction) as ObjectResult);
+
+            // Assert
+            Assert.AreEqual(404, result.StatusCode);
+            Assert.AreEqual(espectedReturn, result.Value);
+        }
+
+        [Test]
+        public async Task Given_idPerson_When_GetByPerson_Then_return_transaction_Async()
+        {
+            // Arrange
+            var idPerson = "6442dcb6523d52533aeb1ae4";
+            _transactionRepositoryMock.Setup(x => x.GetByPerson(idPerson))
+                .Returns(Task.FromResult(FactoryTransaction.SimpleTransaction() as object));
+
+            // Act
+            var result = (await _transactionController.GetByPersonAsync(idPerson) as OkObjectResult);
+
+            // Assert
+            Assert.AreEqual(200, result.StatusCode);
+            Assert.IsNotNull(result?.Value);
+        }
+
+        [Test]
+        public async Task Given_idPerson_When_GetByPerson_Then_return_status_code_500_Async()
+        {
+            // Arrange
+            var idTransaction = "6442dcb6523d52533aeb1ae4";
+            var espectedReturn = MessageLogErrors.getByPersonTransactionMessage;
+            _transactionRepositoryMock.Setup(x => x.GetByPerson(idTransaction))
+                .Throws(new Exception("error conection database"));
+
+            // Act
+            var result = (await _transactionController.GetByPersonAsync(idTransaction) as ObjectResult);
+
+            // Assert
+            Assert.AreEqual(500, result.StatusCode);
+            Assert.AreEqual(espectedReturn, result.Value);
+        }
+
+        [Test]
+        public async Task Given_idPerson_When_GetByPerson_Then_return_NotFound_Async()
+        {
+            // Arrange
+            var idTransaction= string.Empty;
+            var espectedReturn = "Usuário é obrigatório";
+
+            // Act
+            var result = (await _transactionController.GetByPersonAsync(idTransaction) as ObjectResult);
 
             // Assert
             Assert.AreEqual(404, result.StatusCode);
