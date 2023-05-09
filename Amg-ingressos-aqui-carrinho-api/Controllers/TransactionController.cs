@@ -25,7 +25,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// <summary>
         /// Busca Transação por id
         /// </summary>
-        /// <param name="idPerson">id da transacao</param>
+        /// <param name="idTransaction">id da transacao</param>
         /// <returns>200 Transação</returns>
         /// <returns>500 Erro inesperado</returns>
         /// <returns>404 Erro tratado</returns>
