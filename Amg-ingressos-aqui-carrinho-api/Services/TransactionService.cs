@@ -124,6 +124,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 {
                     IdPerson = transactionDto.IdCustomer,
                     Status = Enum.StatusPaymentEnum.InProgress,
+                    Stage = Enum.StageTransactionEnum.Confirm
                 };
 
                 _messageReturn.Data = await _transactionRepository.Save<object>(transaction);
@@ -155,8 +156,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     try
                     {
                         //retorna todos tickets para o idLote
-                        //var messageTicket = _ticketService.GetTicketsAsync(i.IdLot).Result;
-                        var messageTicket = new MessageReturn(){ Data= SimpleListTicketNotSoldAndWithoutValue()};
+                        var messageTicket = _ticketService.GetTicketsAsync(i.IdLot).Result;
+
                         if (messageTicket.Message != null && messageTicket.Message.Any())
                             throw new Exception("Erro ao buscar Ingressos");
 
@@ -220,30 +221,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             return _messageReturn;
         }
 
-        internal static List<Ticket> SimpleListTicketNotSoldAndWithoutValue()
-        {
-            return new List<Ticket>(){
-                new Ticket()
-                {
-                    Id = "6442dcb6523d52533aeb1ae4",
-                    IdLot = "6442dcb6523d52533aeb1ae4",
-                    IdUser = "6442dcb6523d52533aeb1ae4",
-                    isSold = false,
-                    Position= "A1",
-                    Value= new decimal(110)
-                },
-                new Ticket()
-                {
-                    Id = "6552dcb6523d52533aeb1ae4",
-                    IdLot = "6552dcb6523d52533aeb1ae4",
-                    IdUser = "6552dcb6523d52533aeb1ae4",
-                    isSold = false,
-                    Position= "A2",
-                    Value= new decimal(110)
-                }
-            };
-        }
-
         public async Task<MessageReturn> UpdateAsync(Transaction transaction)
         {
             try
@@ -280,6 +257,31 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 throw new SaveTransactionException("Valor do Ingresso é obrigatório");
         }
 
+        public async Task<MessageReturn> GetByPersonAsync(string idPerson)
+        {
+            try
+            {
+                idPerson.ValidateIdMongo("Usuário");
 
+                _messageReturn.Data = await _transactionRepository.GetByPerson(idPerson);
+
+            }
+            catch (IdMongoException ex)
+            {
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
+            catch (GetByPersonTransactionException ex)
+            {
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return _messageReturn;
+        }
     }
 }

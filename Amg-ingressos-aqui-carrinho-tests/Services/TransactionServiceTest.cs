@@ -265,7 +265,7 @@ namespace Prime.UnitTests.Services
         }
 
         [Test]
-        public void Given_idTransaction_When_UpdateTransaction_Then_return_Miss_TransactionId_in_Db()
+        public void Given_idTransaction_When_GetById_Then_return_Miss_TransactionId_in_Db()
         {
             //Arrange
             var idTransaction = "6442dcb6523d52533aeb1ae4";
@@ -353,6 +353,67 @@ namespace Prime.UnitTests.Services
 
             //Act
             var result = _transactionService.Payment(transaction);
+
+            //Assert
+            Assert.IsNotEmpty(result.Exception.Message);
+        }
+
+        [Test]
+        public void Given_idPerson_When_GetByIdPerson_Then_return_Ok()
+        {
+            //Arrange
+            var idPerson = "6442dcb6523d52533aeb1ae4";
+            _transactionRepositoryMock.Setup(x => x.GetByPerson(idPerson))
+                .Returns(Task.FromResult(FactoryTransaction.SimpleTransaction() as object));
+
+            //Act
+            var result = _transactionService.GetByPersonAsync(idPerson);
+
+            //Assert
+            Assert.IsNotNull(result.Result.Data);
+        }
+
+        [Test]
+        public void Given_idPerson_When_GetByPerson_Then_return_Miss_TransactionPerson()
+        {
+            //Arrange
+            var idPerson = string.Empty;
+            var messageReturn = "Usuário é obrigatório";
+            _transactionRepositoryMock.Setup(x => x.GetByPerson(idPerson))
+                .Returns(Task.FromResult(FactoryTransaction.SimpleTransaction() as object));
+
+            //Act
+            var result = _transactionService.GetByPersonAsync(idPerson);
+
+            //Assert
+            Assert.AreEqual(messageReturn, result.Result.Message);
+        }
+
+        [Test]
+        public void Given_idPerson_When_GetByPerson_Then_return_Miss_Person_in_Db()
+        {
+            //Arrange
+            var idTransaction = "6442dcb6523d52533aeb1ae4";
+            var messageReturn = "Transação não encontrada";
+            _transactionRepositoryMock.Setup(x => x.GetByPerson(idTransaction))
+                .Throws(new GetByPersonTransactionException(messageReturn));
+
+            //Act
+            var result = _transactionService.GetByPersonAsync(idTransaction);
+            //Assert
+            Assert.AreEqual(messageReturn, result.Result.Message);
+        }
+
+        [Test]
+        public void Given_idPerson_When_GetByPerson_Then_return_internal_error()
+        {
+            //Arrange
+            var idTransaction = "6442dcb6523d52533aeb1ae4";
+             _transactionRepositoryMock.Setup(x => x.GetById(idTransaction))
+                .Throws(new Exception("erro ao conectar na base de dados"));
+
+            //Act
+            var result = _transactionService.GetByIdAsync(idTransaction);
 
             //Assert
             Assert.IsNotEmpty(result.Exception.Message);
