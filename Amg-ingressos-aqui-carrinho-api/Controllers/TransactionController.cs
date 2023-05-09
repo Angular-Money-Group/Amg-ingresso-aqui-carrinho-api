@@ -24,7 +24,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// <summary>
         /// Busca Transação por id
         /// </summary>
-        /// <param name="idTransaction">id da transacao</param>
+        /// <param name="idPerson">id da transacao</param>
         /// <returns>200 Transação</returns>
         /// <returns>500 Erro inesperado</returns>
         /// <returns>404 Erro tratado</returns>
@@ -47,6 +47,35 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
             {
                 _logger.LogError(MessageLogErrors.getByIdTransactionMessage, ex);
                 return StatusCode(500, MessageLogErrors.getByIdTransactionMessage);
+            }
+        }
+
+        /// <summary>
+        /// Busca Transação por id
+        /// </summary>
+        /// <param name="idPerson">id do usuário</param>
+        /// <returns>200 Transação</returns>
+        /// <returns>500 Erro inesperado</returns>
+        /// <returns>404 Erro tratado</returns>
+        [HttpPost]
+        [Route("person")]
+        public async Task<IActionResult> GetByPersonAsync(string idPerson)
+        {
+            try
+            {
+                var result = await _transactionService.GetByPersonAsync(idPerson);
+                if (result.Message != null && result.Message.Any())
+                {
+                    _logger.LogInformation(result.Message);
+                    return NotFound(result.Message);
+                }
+
+                return Ok(result.Data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(MessageLogErrors.getByPersonTransactionMessage, ex);
+                return StatusCode(500, MessageLogErrors.getByPersonTransactionMessage);
             }
         }
 
