@@ -32,6 +32,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             _messageReturn.Data = JsonConvert.DeserializeObject<List<Ticket>>(jsonContent);
             return _messageReturn;
         }
+
         public async Task<MessageReturn> UpdateTicketsAsync(Ticket ticket)
         {
             try
@@ -53,7 +54,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             {
                 throw;
             }
-
         }
     }
 }
