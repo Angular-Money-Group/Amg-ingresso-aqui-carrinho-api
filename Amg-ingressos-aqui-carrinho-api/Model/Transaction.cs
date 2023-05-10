@@ -20,11 +20,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         [BsonRepresentation(BsonType.ObjectId)]
         public string IdPerson { get; set; }
 
-        /// <summary>
-        /// Id Metodo Pagamento
-        /// </summary>
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string IdPaymentMethod { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
 
         /// <summary>
         /// Taxa de Compra
@@ -50,6 +46,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// Etapa de transacao
         /// </summary>
         public StageTransactionEnum Stage { get; set; }
+        /// <summary>
+        /// Url de Retorno Transacao
+        /// </summary>
+        public string ReturnUrl { get; set; }
         
+
     }
 }

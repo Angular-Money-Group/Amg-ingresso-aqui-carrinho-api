@@ -240,7 +240,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         public async Task Given_transactionPaymentMethod_When_UpdateStage_Then_return_message_updated_Async()
         {
             // Arrange
-            var transactionDto = FactoryTransaction.SimpleStagePaymentDataDTo();
+            var transactionDto = FactoryTransaction.SimpleStagePaymentDataDToCreditCard();
             var messageReturn = "Transação alterada";
             _transactionRepositoryMock.Setup(x => x.Update<object>(It.IsAny<Transaction>()))
                 .Returns(Task.FromResult(messageReturn as object));
@@ -256,7 +256,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         public async Task Given_transactionPaymentMethod_When_UpdateStage_Then_return_status_code_500_Async()
         {
             // Arrange
-            var transactionDto = FactoryTransaction.SimpleStagePaymentDataDTo();
+            var transactionDto = FactoryTransaction.SimpleStagePaymentDataDToCreditCard();
             var espectedReturn = MessageLogErrors.updateTransactionMessage;
             _transactionRepositoryMock.Setup(x => x.Update<object>(It.IsAny<Transaction>()))
                 .Throws(new Exception("error conection database"));
@@ -273,7 +273,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         public async Task Given_transactionPaymentMethod_When_UpdateStage_Then_return_NotFound_Async()
         {
             // Arrange
-            var transactionDto = FactoryTransaction.SimpleStagePaymentDataDTo();
+            var transactionDto = FactoryTransaction.SimpleStagePaymentDataDToCreditCard();
             transactionDto.Id = string.Empty;
             var espectedReturn = "Transação é obrigatório";
 

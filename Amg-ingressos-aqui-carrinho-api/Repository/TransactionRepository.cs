@@ -136,7 +136,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                 var transactionModel = (transaction as Transaction);
                 var update = Builders<Transaction>.Update
                    .Set(transactionMongo => transactionMongo.Status, transactionModel.Status)
-                   .Set(transactionMongo => transactionMongo.IdPaymentMethod, transactionModel.IdPaymentMethod)
+                   //.Set(transactionMongo => transactionMongo.IdPaymentMethod, transactionModel.IdPaymentMethod)
                    .Set(transactionMongo => transactionMongo.IdPerson, transactionModel.IdPerson)
                    .Set(transactionMongo => transactionMongo.Stage, transactionModel.Stage)
                    .Set(transactionMongo => transactionMongo.Tax, transactionModel.Tax)

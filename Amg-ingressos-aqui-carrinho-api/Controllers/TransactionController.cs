@@ -5,6 +5,7 @@ using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Mappers;
 using Microsoft.AspNetCore.Mvc;
 using Amg_ingressos_aqui_carrinho_api.Model.Querys;
+using Amg_ingressos_aqui_carrinho_api.Enum;
 
 namespace Amg_ingressos_aqui_carrinho_api.Controllers
 {
@@ -196,6 +197,10 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
                 var transaction = transactionDto.StagePaymentDataDtoToTransaction();
                 var transactionDb = (_transactionService
                     .GetByIdAsync(transaction.Id).Result.Data as List<GetTransaction>).FirstOrDefault();
+
+                if(transactionDb.Stage != StageTransactionEnum.PaymentData)
+                    return NotFound("Estágio fora do padrão");
+
                 transaction.IdPerson = transactionDb.IdPerson;
                 transaction.Discount = transactionDb.Discount;
                 transaction.Tax = transactionDb.Tax;

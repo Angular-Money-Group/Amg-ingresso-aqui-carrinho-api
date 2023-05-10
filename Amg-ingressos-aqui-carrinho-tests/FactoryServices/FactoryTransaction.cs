@@ -10,7 +10,17 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
             return new Transaction()
             {
                 Id = "6442dcb6523d52533aeb1ae4",
-                IdPaymentMethod = "6442dcb6523d52533aeb1ae4",
+                PaymentMethod = new PaymentMethod()
+                {
+                    IdPaymentMethod = "6442dcb6523d52533aeb1ae4",
+                    Brand = "VISA",
+                    CardNumber = "4551870000000183",
+                    ExpirationDate = "12/2021",
+                    SecurityCode = "SecurityCode",
+                    Holder = "Teste Holder",
+                    SaveCard = false,
+                    TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePaymentEnum.CreditCard
+                },
                 IdPerson = "6442dcb6523d52533aeb1ae4",
                 Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
                 Tax = new decimal(10.0),
@@ -53,7 +63,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                 TransactionItensDto = SimpleListTransactionItensDto()
             };
         }
-        
+
         internal static List<TransactionItenDto> SimpleListTransactionItensDto()
         {
             return new List<TransactionItenDto>()
@@ -70,17 +80,45 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                 },
             };
         }
-        internal static StageTicketDataDto SimpleStageTicketDataDTo(){
-            return new StageTicketDataDto(){
-                Id ="6442dcb6523d52533aeb1ae4",
-                Discount= new decimal(0),
+        internal static StageTicketDataDto SimpleStageTicketDataDTo()
+        {
+            return new StageTicketDataDto()
+            {
+                Id = "6442dcb6523d52533aeb1ae4",
+                Discount = new decimal(0),
                 Tax = new decimal(50)
             };
         }
-        internal static StagePaymentDataDto SimpleStagePaymentDataDTo(){
-            return new StagePaymentDataDto(){
-                Id ="6442dcb6523d52533aeb1ae4",
-                IdPaymentMethod= "6442dcb6523d52533aeb1ae4"
+        internal static StagePaymentDataDto SimpleStagePaymentDataDToCreditCard()
+        {
+            return new StagePaymentDataDto()
+            {
+                Id = "6442dcb6523d52533aeb1ae4",
+                IdPaymentMethod = "6442dcb6523d52533aeb1ae4",
+                Brand = "VISA",
+                CardNumber = "4551870000000183",
+                ExpirationDate = "12/2021",
+                SecurityCode = "SecurityCode",
+                Holder = "Teste Holder",
+                SaveCard = false,
+                TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePaymentEnum.CreditCard,
+                Installments=1
+            };
+        }
+        internal static StagePaymentDataDto SimpleStagePaymentDataDToDebitCard()
+        {
+            return new StagePaymentDataDto()
+            {
+                Id = "6442dcb6523d52533aeb1ae4",
+                IdPaymentMethod = "6442dcb6523d52533aeb1ae4",
+                Brand = "VISA",
+                CardNumber = "4551870000000183",
+                ExpirationDate = "12/2021",
+                SecurityCode = "SecurityCode",
+                Holder = "Teste Holder",
+                SaveCard = false,
+                TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePaymentEnum.DebitCard,
+                Installments=1
             };
         }
     }

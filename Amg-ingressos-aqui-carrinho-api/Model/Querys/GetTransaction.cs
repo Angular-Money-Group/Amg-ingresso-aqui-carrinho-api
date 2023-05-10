@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Amg_ingressos_aqui_carrinho_api.Enum;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -18,7 +19,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Querys
         public decimal Tax { get; set; }
         public decimal Discount { get; set; }
         public int Status { get; set; }
-        public int Stage { get; set; }
+        public StageTransactionEnum Stage { get; set; }
         public List<TransactionItens> transactionItens { get; set; }
     }
 
