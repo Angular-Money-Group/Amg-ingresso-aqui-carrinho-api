@@ -289,9 +289,9 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         public async Task Given_transactionPayment_When_Payment_Then_return_message_updated_Async()
         {
             // Arrange
-            var idTransaction = "6442dcb6523d52533aeb1ae4";
+            var transaction = FactoryTransaction.SimpleStagePaymentDataDToCreditCard();
             var messageReturn = "Transação Efetivada";
-            _transactionRepositoryMock.Setup(x => x.GetById(idTransaction))
+            _transactionRepositoryMock.Setup(x => x.GetById(transaction.Id))
                 .Returns(Task.FromResult(FactoryTransaction.SimpleTransaction() as object));
             _paymentServiceMock.Setup(x => x.Payment(It.IsAny<Transaction>()))
                 .Returns(Task.FromResult( new MessageReturn(){ Data = "OK"} ));
@@ -299,7 +299,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
                 .Returns(Task.FromResult("Transação alterada" as object));
 
             // Act
-            var result = (await _transactionController.PaymentTransactionAsync(idTransaction) as OkObjectResult);
+            var result = (await _transactionController.PaymentTransactionAsync(transaction) as OkObjectResult);
 
             // Assert
             Assert.AreEqual(messageReturn, result?.Value);
@@ -309,13 +309,13 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         public async Task Given_transactionPayment_When_Payment_Then_return_status_code_500_Async()
         {
             // Arrange
-            var idTransaction = "6442dcb6523d52533aeb1ae4";
+            var transaction = FactoryTransaction.SimpleStagePaymentDataDToCreditCard();
             var messageReturn = MessageLogErrors.paymentTransactionMessage;
-            _transactionRepositoryMock.Setup(x => x.GetById(idTransaction))
+            _transactionRepositoryMock.Setup(x => x.GetById(transaction.Id))
                 .Throws(new Exception("error conection database"));
 
             // Act
-            var result = (await _transactionController.PaymentTransactionAsync(idTransaction) as ObjectResult);
+            var result = (await _transactionController.PaymentTransactionAsync(transaction) as ObjectResult);
 
             // Assert
             Assert.AreEqual(500, result.StatusCode);
@@ -326,11 +326,11 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         public async Task Given_transactionPayment_When_Payment_Then_return_NotFound_Async()
         {
             // Arrange
-            var idTransaction = string.Empty;
+            var transaction = FactoryTransaction.SimpleStagePaymentDataDToCreditCard();
             var espectedReturn = "Transação é obrigatório";
 
             // Act
-            var result = (await _transactionController.PaymentTransactionAsync(idTransaction) as ObjectResult);
+            var result = (await _transactionController.PaymentTransactionAsync(transaction) as ObjectResult);
 
             // Assert
             Assert.AreEqual(404, result.StatusCode);
@@ -341,15 +341,15 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         public async Task Given_transactionPayment_When_Payment_Then_return_NotFound_Cielo_Async()
         {
             // Arrange
-            var idTransaction = "6442dcb6523d52533aeb1ae4";
+            var transaction = FactoryTransaction.SimpleStagePaymentDataDToCreditCard();
             var espectedReturn = "Transação é Obrigatório";
-            _transactionRepositoryMock.Setup(x => x.GetById(idTransaction))
+            _transactionRepositoryMock.Setup(x => x.GetById(transaction.Id))
                 .Returns(Task.FromResult(FactoryTransaction.SimpleTransaction() as object));
             _paymentServiceMock.Setup(x => x.Payment(It.IsAny<Transaction>()))
                 .Returns(Task.FromResult( new MessageReturn(){ Message = "Transação é Obrigatório"} ));
 
             // Act
-            var result = (await _transactionController.PaymentTransactionAsync(idTransaction) as ObjectResult);
+            var result = (await _transactionController.PaymentTransactionAsync(transaction) as ObjectResult);
 
             // Assert
             Assert.AreEqual(404, result.StatusCode);

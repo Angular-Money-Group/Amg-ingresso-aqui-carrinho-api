@@ -224,23 +224,24 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// <summary>
         /// Grava Transação
         /// </summary>
-        /// <param name="transaction">Corpo Transação a ser Gravado</param>
+        /// <param name="transactionDto">Corpo Transação a ser Gravado</param>
         /// <returns>200 Transação criado</returns>
         /// <returns>500 Erro inesperado</returns>
         [HttpPut]
         [Route("paymentTransaction")]
-        public async Task<IActionResult> PaymentTransactionAsync(string idTransaction)
+        public async Task<IActionResult> PaymentTransactionAsync(StagePaymentDataDto transactionDto)
         {
             try
             {
-                var transaction = await _transactionService.GetByIdAsync(idTransaction);
-                if (transaction.Message != null && transaction.Message.Any())
+                var transaction = transactionDto.StagePaymentDataDtoToTransaction();
+                var transactionDb = await _transactionService.GetByIdAsync(transactionDto.Id);
+                if (transactionDb.Message != null && transactionDb.Message.Any())
                 {
-                    _logger.LogInformation(transaction.Message);
-                    return NotFound(transaction.Message);
+                    _logger.LogInformation(transactionDb.Message);
+                    return NotFound(transactionDb.Message);
                 }
 
-                var resultPayment = await _transactionService.Payment(transaction.Data as Transaction);
+                var resultPayment = await _transactionService.Payment(transactionDb.Data as Transaction);
                 if (resultPayment.Message != null && resultPayment.Message.Any())
                 {
                     _logger.LogInformation(resultPayment.Message);

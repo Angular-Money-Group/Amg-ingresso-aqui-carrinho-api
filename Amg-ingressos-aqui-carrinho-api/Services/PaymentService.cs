@@ -81,7 +81,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             using var httpResponseMessage =
                 await _HttpClient.PostAsync("https://apisandbox.cieloecommerce.cielo.com.br/1/sales",
                  transactionJson);
-
+            
+            
+            string jsonContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
             var result = httpResponseMessage.EnsureSuccessStatusCode();
             _messageReturn.Data = "Ticket criado";
 
