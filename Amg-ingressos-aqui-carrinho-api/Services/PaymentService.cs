@@ -32,7 +32,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     MerchantOrderId = transaction.Id,
                     Payment = new Model.Cielo.CreditCard.Payment()
                     {
-                        Amount = (int)transaction.TransactionItens.Sum(i => i.TicketPrice),
+                        Amount = 500,//(int)transaction.TransactionItens.Sum(i => i.TicketPrice),
                         CreditCard = new CreditCard()
                         {
                             Brand = transaction.PaymentMethod.Brand,
@@ -77,10 +77,24 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
             //var transactionJson = new StringContent(JsonSerializer.Serialize(transaction),
             //Encoding.UTF8, Application.Json); // using static System.Net.Mime.MediaTypeNames;
+            var requestMessage = new HttpRequestMessage(HttpMethod.Post, "https://apisandbox.cieloecommerce.cielo.com.br/1/sales");
+            requestMessage.Headers.Add("Accept", "*/*");
+            requestMessage.Headers.Add("Accept-Encoding", "gzip, deflate, br");
+            requestMessage.Headers.Add("Connection", "keep-alive");
+            requestMessage.Headers.Add("MerchantId", "e3169e28-d8e5-4f90-8db2-3c54af7d361a");
+            requestMessage.Headers.Add("MerchantKey", "GNOWRLOKZITAJZTNKLDTZNEAUDHFQTRCTAKMWQEP");
+            requestMessage.Content = transactionJson;
 
-            using var httpResponseMessage =
-                await _HttpClient.PostAsync("https://apisandbox.cieloecommerce.cielo.com.br/1/sales",
-                 transactionJson);
+            //_HttpClient.DefaultRequestHeaders.Add("Accept", "*/*");
+            //_HttpClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
+            //_HttpClient.DefaultRequestHeaders.Add("Connection", "keep-alive");
+            //_HttpClient.DefaultRequestHeaders.Add("MerchantId", "e3169e28-d8e5-4f90-8db2-3c54af7d361a");
+            //_HttpClient.DefaultRequestHeaders.Add("MerchantKey", "GNOWRLOKZITAJZTNKLDTZNEAUDHFQTRCTAKMWQEP");
+
+            using var httpResponseMessage = 
+             await _HttpClient.SendAsync(requestMessage);
+                //await _HttpClient.PostAsync("https://apisandbox.cieloecommerce.cielo.com.br/1/sales",
+                 //transactionJson);
             
             
             string jsonContent = httpResponseMessage.Content.ReadAsStringAsync().Result;

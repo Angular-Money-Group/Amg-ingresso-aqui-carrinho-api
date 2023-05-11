@@ -234,14 +234,20 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
             try
             {
                 var transaction = transactionDto.StagePaymentDataDtoToTransaction();
-                var transactionDb = await _transactionService.GetByIdAsync(transactionDto.Id);
-                if (transactionDb.Message != null && transactionDb.Message.Any())
+                var result = await _transactionService.GetByIdAsync(transactionDto.Id);
+                if (result.Message != null && result.Message.Any())
                 {
-                    _logger.LogInformation(transactionDb.Message);
-                    return NotFound(transactionDb.Message);
+                    _logger.LogInformation(result.Message);
+                    return NotFound(result.Message);
+                }
+                var transactionDb = (result.Data as Transaction);
+                if(transactionDb != null){
+                    transaction.Discount= transactionDb.Discount;
+                    transaction.IdPerson = transaction.IdPerson;
+                    transaction.Tax = transaction.Tax;
                 }
 
-                var resultPayment = await _transactionService.Payment(transactionDb.Data as Transaction);
+                var resultPayment = await _transactionService.Payment(transaction);
                 if (resultPayment.Message != null && resultPayment.Message.Any())
                 {
                     _logger.LogInformation(resultPayment.Message);

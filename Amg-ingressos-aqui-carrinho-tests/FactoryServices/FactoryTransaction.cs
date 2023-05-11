@@ -102,7 +102,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                 Holder = "Teste Holder",
                 SaveCard = false,
                 TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePaymentEnum.CreditCard,
-                Installments=1
+                Installments = 1
             };
         }
         internal static StagePaymentDataDto SimpleStagePaymentDataDToDebitCard()
@@ -118,7 +118,32 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                 Holder = "Teste Holder",
                 SaveCard = false,
                 TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePaymentEnum.DebitCard,
-                Installments=1
+                Installments = 1
+            };
+        }
+        internal static Transaction SimpleTransactionCreditCard()
+        {
+            return new Transaction()
+            {
+                Id = "6442dcb6523d52533aeb1ae4",
+                PaymentMethod = new PaymentMethod()
+                {
+                    IdPaymentMethod = "6442dcb6523d52533aeb1ae4",
+                    Brand = "VISA",
+                    CardNumber = "4551870000000183",
+                    ExpirationDate = "12/2021",
+                    SecurityCode = "123",
+                    Holder = "Teste Holder",
+                    SaveCard = false,
+                    TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePaymentEnum.CreditCard,
+                    Installments = 1
+                },
+                Discount = 0,
+                IdPerson = "6442dcb6523d52533aeb1ae4",
+                ReturnUrl="",
+                Stage= Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.PaymentTransaction,
+                Status= Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.InProgress,
+                Tax = 30
             };
         }
     }

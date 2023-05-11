@@ -20,12 +20,21 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         [BsonRepresentation(BsonType.ObjectId)]
         public string IdPerson { get; set; }
 
+        /// <summary>
+        /// Meio de pagamento
+        /// </summary>
+
         public PaymentMethod PaymentMethod { get; set; }
 
         /// <summary>
         /// Taxa de Compra
         /// </summary>
         public decimal Tax { get; set; }
+
+        /// <summary>
+        /// Valor total sem desconto ou taxas
+        /// </summary>
+        public decimal TotalValue { get; set; }
 
         /// <summary>
         /// Desconto
