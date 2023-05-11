@@ -31,12 +31,12 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// <returns>500 Erro inesperado</returns>
         /// <returns>404 Erro tratado</returns>
         [HttpGet]
-        [Route("getById")]
-        public async Task<IActionResult> GetByIdTransactionAsync(string idTransaction)
+        [Route("{id}")]
+        public async Task<IActionResult> GetByIdTransactionAsync(string id)
         {
             try
             {
-                var result = await _transactionService.GetByIdAsync(idTransaction);
+                var result = await _transactionService.GetByIdAsync(id);
                 if (result.Message != null && result.Message.Any())
                 {
                     _logger.LogInformation(result.Message);
@@ -119,7 +119,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// <returns>404 Erro tratado</returns>
         [HttpPut]
         [Route("confirmPersonData")]
-        public async Task<IActionResult> UpdateTransactionPersonDataAsync(string idTransaction)
+        public async Task<IActionResult> UpdateTransactionPersonDataAsync([FromRoute]string idTransaction)
         {
             try
             {
@@ -229,25 +229,20 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// <returns>500 Erro inesperado</returns>
         [HttpPut]
         [Route("paymentTransaction")]
-        public async Task<IActionResult> PaymentTransactionAsync(StagePaymentDataDto transactionDto)
+        public async Task<IActionResult> PaymentTransactionAsync([FromRoute]string id)
         {
             try
             {
-                var transaction = transactionDto.StagePaymentDataDtoToTransaction();
-                var result = await _transactionService.GetByIdAsync(transactionDto.Id);
+                var result = await _transactionService.GetByIdAsync(id);
                 if (result.Message != null && result.Message.Any())
                 {
                     _logger.LogInformation(result.Message);
                     return NotFound(result.Message);
                 }
                 var transactionDb = (result.Data as Transaction);
-                if(transactionDb != null){
-                    transaction.Discount= transactionDb.Discount;
-                    transaction.IdPerson = transaction.IdPerson;
-                    transaction.Tax = transaction.Tax;
-                }
+                
 
-                var resultPayment = await _transactionService.Payment(transaction);
+                var resultPayment = await _transactionService.Payment(transactionDb);
                 if (resultPayment.Message != null && resultPayment.Message.Any())
                 {
                     _logger.LogInformation(resultPayment.Message);

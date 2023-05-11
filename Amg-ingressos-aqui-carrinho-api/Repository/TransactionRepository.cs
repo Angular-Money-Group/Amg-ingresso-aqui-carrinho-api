@@ -34,11 +34,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                     documentFilter1,
                     document
                 };
+                var result = _transactionCollection
+                                                .Aggregate<object>(pipeline).ToList();
+
                 List<GetTransaction> pResults = _transactionCollection
                                                 .Aggregate<GetTransaction>(pipeline).ToList();
 
-                var result = _transactionCollection
-                                                .Aggregate<object>(pipeline).ToList();
+                
                 //var result = await _eventCollection.FindAsync<Event>(x => x._Id == id as string)
                 //    .Result.FirstOrDefaultAsync();
 

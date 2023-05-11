@@ -132,6 +132,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 await SaveTransactionItenAsync(_messageReturn.Data.ToString(),
                                         transactionDto.IdCustomer,
                                          transactionDto.TransactionItensDto);
+                transaction.TotalValue = Convert.ToDecimal(_messageReturn.Data);
             }
             catch (IdMongoException ex)
             {
@@ -151,6 +152,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             try
             {
                 IdTransaction.ValidateIdMongo("Id Transação");
+                var valueTransaction = new decimal(0);
                 transactionItens.ForEach(i =>
                 {
                     try
@@ -174,6 +176,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                                 throw new SaveTransactionException("Valor do Ingresso inválido.");
 
                             var valueTicket = i.HalfPrice == true ? (ticket.Value / 2) : ticket.Value;
+                            valueTransaction = valueTransaction + valueTicket;
                             var transactionItem = new TransactionIten()
                             {
                                 HalfPrice = i.HalfPrice,
@@ -204,6 +207,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     }
 
                 });
+                _messageReturn.Data = valueTransaction;
             }
             catch (IdMongoException ex)
             {
@@ -283,5 +287,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
             return _messageReturn;
         }
+    
     }
 }

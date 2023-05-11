@@ -14,8 +14,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Querys
         public string _id { get; set; }
         [BsonRepresentation(BsonType.ObjectId)]
         public string IdPerson { get; set; }
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string IdPaymentMethod { get; set; }
         public decimal Tax { get; set; }
         public decimal Discount { get; set; }
         public int Status { get; set; }
