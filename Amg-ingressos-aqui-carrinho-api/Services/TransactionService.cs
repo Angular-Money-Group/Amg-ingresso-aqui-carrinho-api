@@ -84,7 +84,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
         public async Task<MessageReturn> Payment(Transaction transaction)
         {
-            try
+            await _paymentService.Payment(transaction);
+            /*try
             {
                 transaction.Id.ValidateIdMongo("Transação");
                 var resultPayment = await _paymentService.Payment(transaction);
@@ -110,7 +111,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             catch (Exception ex)
             {
                 throw ex;
-            }
+            }*/
 
             return _messageReturn;
         }

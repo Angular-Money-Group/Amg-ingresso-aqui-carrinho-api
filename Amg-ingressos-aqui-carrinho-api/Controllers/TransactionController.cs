@@ -286,5 +286,27 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
                 return StatusCode(500, MessageLogErrors.saveTransactionMessage);
             }
         }
+
+        /// <summary>
+        /// Grava Transação
+        /// </summary>
+        /// <param name="transaction">Corpo Transação a ser Gravado</param>
+        /// <returns>200 Transação criado</returns>
+        /// <returns>500 Erro inesperado</returns>
+        [HttpPut]
+        [Route("payment")]
+        public async Task<IActionResult> PaymentAsync()
+        {
+            try
+            {
+                _transactionService.Payment(new Transaction());
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(MessageLogErrors.saveTransactionMessage, ex);
+                return StatusCode(500, MessageLogErrors.saveTransactionMessage);
+            }
+        }
     }
 }
