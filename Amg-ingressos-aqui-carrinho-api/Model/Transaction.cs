@@ -59,6 +59,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// Url de Retorno Transacao
         /// </summary>
         public string ReturnUrl { get; set; }
+        /// <summary>
+        /// PaymentId Cielo
+        /// </summary>
+        public string PaymentIdService { get; set; }
+        /// <summary>
+        /// Detalhes de transacao
+        /// </summary>
+        public string Details { get; set; }
         
 
     }

@@ -22,7 +22,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         public async Task<MessageReturn> GetTicketsAsync(string idLote)
         {
             //var url = new Uri(@);
-            var url = "http://api.ingressosaqui.com:3002/";
+            var url = "http://172.17.0.2:80/";
             var uri = "v1/tickets/getTicketsRemaining?idLote=" + idLote;
             using var httpResponseMessage = await _HttpClient
                 .GetAsync(url + uri);

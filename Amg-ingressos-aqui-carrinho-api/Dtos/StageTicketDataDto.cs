@@ -8,7 +8,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Dtos
 {
     public class StageTicketDataDto
     {
-        public string Id { get; set; }
         public decimal Tax { get; set; }
         public decimal Discount { get; set; }
     }

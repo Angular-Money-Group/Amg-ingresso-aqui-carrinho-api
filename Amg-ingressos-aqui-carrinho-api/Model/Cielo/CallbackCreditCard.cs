@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Amg_ingressos_aqui_carrinho_api.Enum;
 
 namespace Amg_ingressos_aqui_carrinho_api.Model.Cielo.Callback
 {
@@ -61,7 +62,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Cielo.Callback
         public int Status { get; set; }
         public bool IsSplitted { get; set; }
         public string ReturnMessage { get; set; }
-        public string ReturnCode { get; set; }
+        public StatusCallbackCielo ReturnCode { get; set; }
         public string PaymentId { get; set; }
         public string Type { get; set; }
         public string Currency { get; set; }

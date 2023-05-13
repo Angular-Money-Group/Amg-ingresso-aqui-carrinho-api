@@ -16,9 +16,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Querys
         public string IdPerson { get; set; }
         public decimal Tax { get; set; }
         public decimal Discount { get; set; }
-        public int Status { get; set; }
+        public StatusPaymentEnum Status { get; set; }
         public StageTransactionEnum Stage { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
         public List<TransactionItens> transactionItens { get; set; }
+        public string PaymentIdService { get; set; }
+        public Decimal TotalValue { get; set; }
+        public string ReturnUrl { get; set; }
+        public string Details { get; set; }
     }
 
     public class TransactionItens

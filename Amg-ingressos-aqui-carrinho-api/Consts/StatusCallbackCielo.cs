@@ -13,7 +13,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Consts
         public const string TimeOut = "Time Out";
         public const string CanceledCard = "Cartão Cancelado";
         public const string CreditCardProblems = "Problemas com o Cartão de Crédito";
-        public const string OperationSuccessfulTimeout = "Operation Successful / Time Out";
         public const string SuccessfullyPerformedOperation = "Operação realizada com sucesso";
         
     }

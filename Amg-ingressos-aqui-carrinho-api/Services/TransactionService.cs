@@ -33,8 +33,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             try
             {
                 transaction.Id.ValidateIdMongo("Transação");
-                var tickets= transaction.TransactionItens
-                    .Select(i=> new Ticket(){ Id = i.IdTicket} ).ToList();
+                
                 
             }
             catch (IdMongoException ex)
@@ -134,6 +133,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                                         transactionDto.IdCustomer,
                                          transactionDto.TransactionItensDto);
                 transaction.TotalValue = Convert.ToDecimal(_messageReturn.Data);
+                UpdateAsync(transaction);
+                _messageReturn.Data = transaction.Id;
             }
             catch (IdMongoException ex)
             {
