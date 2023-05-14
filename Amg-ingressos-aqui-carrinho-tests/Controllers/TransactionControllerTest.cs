@@ -192,12 +192,14 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         {
             // Arrange
             var transactionDto = FactoryTransaction.SimpleStageTicketDataDTo();
+            var idTransaction = "6442dcb6523d52533aeb1ae4";
             var messageReturn = "Transação alterada";
             _transactionRepositoryMock.Setup(x => x.Update<object>(It.IsAny<Transaction>()))
                 .Returns(Task.FromResult(messageReturn as object));
 
             // Act
-            var result = (await _transactionController.UpdateTransactionTicketsDataAsync(transactionDto) as OkObjectResult);
+            var result = (await _transactionController
+                .UpdateTransactionTicketsDataAsync(idTransaction,transactionDto) as OkObjectResult);
 
             // Assert
             Assert.AreEqual(messageReturn, result?.Value);
@@ -208,12 +210,14 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         {
             // Arrange
             var transactionDto = FactoryTransaction.SimpleStageTicketDataDTo();
+            var idTransaction = "6442dcb6523d52533aeb1ae4";
             var espectedReturn = MessageLogErrors.updateTransactionMessage;
             _transactionRepositoryMock.Setup(x => x.Update<object>(It.IsAny<Transaction>()))
                 .Throws(new Exception("error conection database"));
 
             // Act
-            var result = (await _transactionController.UpdateTransactionTicketsDataAsync(transactionDto) as ObjectResult);
+            var result = (await _transactionController
+                .UpdateTransactionTicketsDataAsync(idTransaction,transactionDto) as ObjectResult);
 
             // Assert
             Assert.AreEqual(500, result.StatusCode);
@@ -225,11 +229,12 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         {
             // Arrange
             var transactionDto = FactoryTransaction.SimpleStageTicketDataDTo();
-            transactionDto.Id = string.Empty;
+            var idTransaction = string.Empty;
             var espectedReturn = "Transação é obrigatório";
 
             // Act
-            var result = (await _transactionController.UpdateTransactionTicketsDataAsync(transactionDto) as ObjectResult);
+            var result = (await _transactionController
+                .UpdateTransactionTicketsDataAsync(idTransaction,transactionDto) as ObjectResult);
 
             // Assert
             Assert.AreEqual(404, result.StatusCode);
@@ -241,12 +246,14 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         {
             // Arrange
             var transactionDto = FactoryTransaction.SimpleStagePaymentDataDToCreditCard();
+            var idTransaction = "6442dcb6523d52533aeb1ae4";
             var messageReturn = "Transação alterada";
             _transactionRepositoryMock.Setup(x => x.Update<object>(It.IsAny<Transaction>()))
                 .Returns(Task.FromResult(messageReturn as object));
 
             // Act
-            var result = (await _transactionController.UpdateTransactionPaymentDataAsync(transactionDto) as OkObjectResult);
+            var result = (await _transactionController
+                .UpdateTransactionPaymentDataAsync(idTransaction,transactionDto) as OkObjectResult);
 
             // Assert
             Assert.AreEqual(messageReturn, result?.Value);
@@ -257,12 +264,14 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         {
             // Arrange
             var transactionDto = FactoryTransaction.SimpleStagePaymentDataDToCreditCard();
+            var idTransaction = "6442dcb6523d52533aeb1ae4";
             var espectedReturn = MessageLogErrors.updateTransactionMessage;
             _transactionRepositoryMock.Setup(x => x.Update<object>(It.IsAny<Transaction>()))
                 .Throws(new Exception("error conection database"));
 
             // Act
-            var result = (await _transactionController.UpdateTransactionPaymentDataAsync(transactionDto) as ObjectResult);
+            var result = (await _transactionController
+                .UpdateTransactionPaymentDataAsync(idTransaction,transactionDto) as ObjectResult);
 
             // Assert
             Assert.AreEqual(500, result.StatusCode);
@@ -278,7 +287,8 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
             var espectedReturn = "Transação é obrigatório";
 
             // Act
-            var result = (await _transactionController.UpdateTransactionPaymentDataAsync(transactionDto) as ObjectResult);
+            var result = (await _transactionController
+                .UpdateTransactionPaymentDataAsync(string.Empty,transactionDto) as ObjectResult);
 
             // Assert
             Assert.AreEqual(404, result.StatusCode);

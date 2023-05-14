@@ -84,7 +84,6 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
         {
             return new StageTicketDataDto()
             {
-                Id = "6442dcb6523d52533aeb1ae4",
                 Discount = new decimal(0),
                 Tax = new decimal(50)
             };
