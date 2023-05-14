@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Amg_ingressos_aqui_carrinho_api.Dtos;
 using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Model.Querys;
-using AutoMapper;
 
 namespace Amg_ingressos_aqui_carrinho_api.Mappers
 {

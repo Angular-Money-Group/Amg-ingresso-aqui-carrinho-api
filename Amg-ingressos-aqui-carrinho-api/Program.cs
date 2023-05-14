@@ -19,8 +19,6 @@ builder.Services.Configure<TransactionDatabaseSettings>(
     builder.Configuration.GetSection("CarrinhoDatabase"));
 builder.Services.Configure<CieloSettings>(
     builder.Configuration.GetSection("CieloSettings"));
-    
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // injecao de dependencia
 //services
