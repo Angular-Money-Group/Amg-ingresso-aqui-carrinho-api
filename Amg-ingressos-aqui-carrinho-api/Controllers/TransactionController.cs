@@ -55,17 +55,17 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// <summary>
         /// Busca Transação por id
         /// </summary>
-        /// <param name="idPerson">id do usuário</param>
+        /// <param name="idUser">id do usuário</param>
         /// <returns>200 Transação</returns>
         /// <returns>500 Erro inesperado</returns>
         /// <returns>404 Erro tratado</returns>
         [HttpGet]
-        [Route("person/{idPerson}")]
-        public async Task<IActionResult> GetByPersonAsync([FromRoute]string idPerson)
+        [Route("person/{idUser}")]
+        public async Task<IActionResult> GetByUserAsync([FromRoute]string idUser)
         {
             try
             {
-                var result = await _transactionService.GetByPersonAsync(idPerson);
+                var result = await _transactionService.GetByUserAsync(idUser);
                 if (result.Message != null && result.Message.Any())
                 {
                     _logger.LogInformation(result.Message);
@@ -284,8 +284,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         {
             try
             {
-                var transaction = await _transactionService.GetByIdAsync(idTransaction);
-                var resultQrcode = await _transactionService.FinishedTransactionAsync(transaction.Data as Transaction);
+                var transactionDb = (_transactionService
+                    .GetByIdAsync(idTransaction).Result.Data as List<GetTransaction>)
+                    .FirstOrDefault();
+                var transaction = transactionDb.GeTransactionToTransaction();
+                var resultQrcode = await _transactionService.FinishedTransactionAsync(transaction);
                 if (resultQrcode.Message.Any())
                 {
                     _logger.LogInformation(resultQrcode.Message);
@@ -293,28 +296,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
                 }
 
                 return Ok(resultQrcode.Data);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(MessageLogErrors.saveTransactionMessage, ex);
-                return StatusCode(500, MessageLogErrors.saveTransactionMessage);
-            }
-        }
-
-        /// <summary>
-        /// Grava Transação
-        /// </summary>
-        /// <param name="transaction">Corpo Transação a ser Gravado</param>
-        /// <returns>200 Transação criado</returns>
-        /// <returns>500 Erro inesperado</returns>
-        [HttpPut]
-        [Route("payment")]
-        public async Task<IActionResult> PaymentAsync()
-        {
-            try
-            {
-                _transactionService.Payment(new Transaction());
-                return Ok();
             }
             catch (Exception ex)
             {

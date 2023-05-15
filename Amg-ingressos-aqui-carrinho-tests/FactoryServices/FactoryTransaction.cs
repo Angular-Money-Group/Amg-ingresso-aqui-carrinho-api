@@ -59,7 +59,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
         {
             return new TransactionDto()
             {
-                IdCustomer = "6442dcb6523d52533aeb1ae4",
+                IdUser = "6442dcb6523d52533aeb1ae4",
                 TransactionItensDto = SimpleListTransactionItensDto()
             };
         }

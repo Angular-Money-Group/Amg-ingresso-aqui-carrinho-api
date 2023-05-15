@@ -60,7 +60,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
             }
         }
 
-        public async Task<object> GetByPerson(string idPerson)
+        public async Task<object> GetByUser(string idPerson)
         {
             try
             {
@@ -69,17 +69,17 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
 
                 if (!string.IsNullOrWhiteSpace(idPerson))
                 {
-                    var firstNameFilter = builder.Eq(x => x.IdPerson, idPerson);
-                    var status = builder.Eq(x => x.Status, Enum.StatusPaymentEnum.InProgress);
-                    filter &= firstNameFilter;
-                    filter &= status;
+                    var idPersonFilter = builder.Eq(x => x.IdPerson, idPerson);
+                    var statusFilter = builder.Eq(x => x.Status, Enum.StatusPaymentEnum.InProgress);
+                    filter &= idPersonFilter;
+                    filter &= statusFilter;
                 }
 
                 var result = await _transactionCollection.Find(filter).ToListAsync();
                 
                 
                 if (result == null)
-                    throw new GetByIdTransactionException("Evento não encontrado");
+                    throw new GetByIdTransactionException("Transação não encontrada");
 
                 return result;
             }

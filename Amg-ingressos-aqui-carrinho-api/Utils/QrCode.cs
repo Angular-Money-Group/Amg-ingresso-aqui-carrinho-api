@@ -10,16 +10,18 @@ namespace Amg_ingressos_aqui_carrinho_api.Utils
         public QrCode(IWebHostEnvironment webHostEnvironment){
             _webHostEnvironment = webHostEnvironment;
         }
-        public Bitmap GenerateQrCode(string qrTexto)
+        public QrCode(){
+
+        }
+
+        public string GenerateQrCode(string qrTexto)
         {
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
             _qrCodeData = qrGenerator.CreateQrCode(qrTexto,QRCodeGenerator.ECCLevel.Q);
             //QRCode qrCode = new QRCode(qrCodeData);
             Bitmap qrCodeImage = GetGraphic(20);
             var stream = BitmapToBytes(qrCodeImage);
-            SaveStreamAsFile(stream);
-
-            return qrCodeImage;
+            return SaveStreamAsFile(stream);
         }
         private static Byte[] BitmapToBytes(Bitmap img)
         {
@@ -29,7 +31,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Utils
                 return stream.ToArray();
             }
         }
-        public void SaveStreamAsFile(Byte[] inputStream) {
+        public string  SaveStreamAsFile(Byte[] inputStream) {
             var nomeArquivo = $"{Guid.NewGuid()}.png";
             var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "images", nomeArquivo);
             string linkImagem = "http://api.ingressosaqui.com:3002/imagens/" + nomeArquivo;
@@ -39,11 +41,12 @@ namespace Amg_ingressos_aqui_carrinho_api.Utils
             {
                 stream.Write(inputStream, 0, inputStream.Length);
             }
+            return linkImagem;
         } 
 
         public Bitmap GetGraphic(int pixelsPerModule)
         {
-            return this.GetGraphic(pixelsPerModule, Color.Black.ToString(), Color.White.ToString(), true);
+            return this.GetGraphic(pixelsPerModule, Color.Black, Color.White, true);
         }
 
         public Bitmap GetGraphic(int pixelsPerModule, string darkColorHtmlHex, string lightColorHtmlHex, bool drawQuietZones = true)
