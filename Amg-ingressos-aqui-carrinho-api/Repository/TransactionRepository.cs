@@ -34,11 +34,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                     documentFilter1,
                     document
                 };
+                var result = _transactionCollection
+                                                .Aggregate<object>(pipeline).ToList();
+
                 List<GetTransaction> pResults = _transactionCollection
                                                 .Aggregate<GetTransaction>(pipeline).ToList();
 
-                var result = _transactionCollection
-                                                .Aggregate<object>(pipeline).ToList();
+                
                 //var result = await _eventCollection.FindAsync<Event>(x => x._Id == id as string)
                 //    .Result.FirstOrDefaultAsync();
 
@@ -58,7 +60,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
             }
         }
 
-        public async Task<object> GetByPerson(string idPerson)
+        public async Task<object> GetByUser(string idPerson)
         {
             try
             {
@@ -67,17 +69,17 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
 
                 if (!string.IsNullOrWhiteSpace(idPerson))
                 {
-                    var firstNameFilter = builder.Eq(x => x.IdPerson, idPerson);
-                    var status = builder.Eq(x => x.Status, Enum.StatusPaymentEnum.InProgress);
-                    filter &= firstNameFilter;
-                    filter &= status;
+                    var idPersonFilter = builder.Eq(x => x.IdPerson, idPerson);
+                    var statusFilter = builder.Eq(x => x.Status, Enum.StatusPaymentEnum.InProgress);
+                    filter &= idPersonFilter;
+                    filter &= statusFilter;
                 }
 
                 var result = await _transactionCollection.Find(filter).ToListAsync();
                 
                 
                 if (result == null)
-                    throw new GetByIdTransactionException("Evento não encontrado");
+                    throw new GetByIdTransactionException("Transação não encontrada");
 
                 return result;
             }
@@ -136,11 +138,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                 var transactionModel = (transaction as Transaction);
                 var update = Builders<Transaction>.Update
                    .Set(transactionMongo => transactionMongo.Status, transactionModel.Status)
-                   .Set(transactionMongo => transactionMongo.IdPaymentMethod, transactionModel.IdPaymentMethod)
+                   .Set(transactionMongo => transactionMongo.PaymentMethod, transactionModel.PaymentMethod)
                    .Set(transactionMongo => transactionMongo.IdPerson, transactionModel.IdPerson)
                    .Set(transactionMongo => transactionMongo.Stage, transactionModel.Stage)
                    .Set(transactionMongo => transactionMongo.Tax, transactionModel.Tax)
-                   .Set(transactionMongo => transactionMongo.Discount, transactionModel.Discount);
+                   .Set(transactionMongo => transactionMongo.Discount, transactionModel.Discount)
+                   .Set(transactionMongo => transactionMongo.PaymentIdService, transactionModel.PaymentIdService)
+                   .Set(transactionMongo => transactionMongo.Details, transactionModel.Details)
+                   .Set(transactionMongo => transactionMongo.TotalValue, transactionModel.TotalValue);
 
                 var filter = Builders<Transaction>.Filter
                     .Eq(transactionMongo => transactionMongo.Id, transactionModel.Id);

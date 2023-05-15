@@ -5,6 +5,7 @@ using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Mappers;
 using Microsoft.AspNetCore.Mvc;
 using Amg_ingressos_aqui_carrinho_api.Model.Querys;
+using Amg_ingressos_aqui_carrinho_api.Enum;
 
 namespace Amg_ingressos_aqui_carrinho_api.Controllers
 {
@@ -30,12 +31,12 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// <returns>500 Erro inesperado</returns>
         /// <returns>404 Erro tratado</returns>
         [HttpGet]
-        [Route("getById")]
-        public async Task<IActionResult> GetByIdTransactionAsync(string idTransaction)
+        [Route("{id}")]
+        public async Task<IActionResult> GetByIdTransactionAsync(string id)
         {
             try
             {
-                var result = await _transactionService.GetByIdAsync(idTransaction);
+                var result = await _transactionService.GetByIdAsync(id);
                 if (result.Message != null && result.Message.Any())
                 {
                     _logger.LogInformation(result.Message);
@@ -54,17 +55,17 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// <summary>
         /// Busca Transação por id
         /// </summary>
-        /// <param name="idPerson">id do usuário</param>
+        /// <param name="idUser">id do usuário</param>
         /// <returns>200 Transação</returns>
         /// <returns>500 Erro inesperado</returns>
         /// <returns>404 Erro tratado</returns>
         [HttpGet]
-        [Route("person/{idPerson}")]
-        public async Task<IActionResult> GetByPersonAsync([FromRoute]string idPerson)
+        [Route("person/{idUser}")]
+        public async Task<IActionResult> GetByUserAsync([FromRoute]string idUser)
         {
             try
             {
-                var result = await _transactionService.GetByPersonAsync(idPerson);
+                var result = await _transactionService.GetByUserAsync(idUser);
                 if (result.Message != null && result.Message.Any())
                 {
                     _logger.LogInformation(result.Message);
@@ -117,8 +118,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// <returns>500 Erro inesperado</returns>
         /// <returns>404 Erro tratado</returns>
         [HttpPut]
-        [Route("confirmPersonData")]
-        public async Task<IActionResult> UpdateTransactionPersonDataAsync(string idTransaction)
+        [Route("confirmPersonData/{idTransaction}")]
+        public async Task<IActionResult> UpdateTransactionPersonDataAsync([FromRoute]string idTransaction)
         {
             try
             {
@@ -127,8 +128,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
                 var transaction = new Transaction(){
                     Id = idTransaction,
                     IdPerson= transactionDb.IdPerson,
-                    Stage = Enum.StageTransactionEnum.PersonData
+                    Stage = Enum.StageTransactionEnum.PersonData,
+                    TotalValue = transactionDb.TotalValue
                 };
+
+                if(transactionDb.Stage != StageTransactionEnum.Confirm)
+                    return NotFound("Estágio fora do padrão");
+
                 var result = await _transactionService.UpdateAsync(transaction);
                 if (result.Message != null && result.Message.Any())
                 {
@@ -153,16 +159,21 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// <returns>500 Erro inesperado</returns>
         /// <returns>404 Erro tratado</returns>
         [HttpPut]
-        [Route("confirmTicketsData")]
-        public async Task<IActionResult> UpdateTransactionTicketsDataAsync([FromBody]StageTicketDataDto transactionDto)
+        [Route("confirmTicketsData/{idTransaction}")]
+        public async Task<IActionResult> UpdateTransactionTicketsDataAsync([FromRoute]string idTransaction,[FromBody]StageTicketDataDto transactionDto)
         {
             try
             {
                 var transaction = transactionDto.StageTicketDataDtoToTransaction();
+                transaction.Id = idTransaction;
                 var transactionDb = (_transactionService
                     .GetByIdAsync(transaction.Id).Result.Data as List<GetTransaction>).FirstOrDefault();
+                
+                if(transactionDb.Stage != StageTransactionEnum.PersonData)
+                    return NotFound("Estágio fora do padrão");
 
                 transaction.IdPerson = transactionDb.IdPerson;
+                transaction.TotalValue = transactionDb.TotalValue;
                 var result = await _transactionService.UpdateAsync(transaction);
                 if (result.Message != null && result.Message.Any())
                 {
@@ -187,16 +198,21 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// <returns>500 Erro inesperado</returns>
         /// <returns>404 Erro tratado</returns>
         [HttpPut]
-        [Route("confirmPaymentData")]
-        public async Task<IActionResult> UpdateTransactionPaymentDataAsync([FromBody]StagePaymentDataDto transactionDto)
+        [Route("confirmPaymentData/{idTransaction}")]
+        public async Task<IActionResult> UpdateTransactionPaymentDataAsync([FromRoute]string idTransaction,[FromBody]PaymentMethod transactionDto)
         {
             try
             {
-
                 var transaction = transactionDto.StagePaymentDataDtoToTransaction();
+                transaction.Id = idTransaction;
                 var transactionDb = (_transactionService
                     .GetByIdAsync(transaction.Id).Result.Data as List<GetTransaction>).FirstOrDefault();
+
+                if(transactionDb.Stage != StageTransactionEnum.TicketsData)
+                    return NotFound("Estágio fora do padrão");
+
                 transaction.IdPerson = transactionDb.IdPerson;
+                transaction.TotalValue = transactionDb.TotalValue;
                 transaction.Discount = transactionDb.Discount;
                 transaction.Tax = transactionDb.Tax;
 
@@ -219,28 +235,33 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// <summary>
         /// Grava Transação
         /// </summary>
-        /// <param name="transaction">Corpo Transação a ser Gravado</param>
+        /// <param name="transactionDto">Corpo Transação a ser Gravado</param>
         /// <returns>200 Transação criado</returns>
         /// <returns>500 Erro inesperado</returns>
         [HttpPut]
-        [Route("paymentTransaction")]
-        public async Task<IActionResult> PaymentTransactionAsync(string idTransaction)
+        [Route("paymentTransaction/{idTransaction}")]
+        public async Task<IActionResult> PaymentTransactionAsync([FromRoute]string idTransaction)
         {
             try
             {
-                var transaction = await _transactionService.GetByIdAsync(idTransaction);
-                if (transaction.Message != null && transaction.Message.Any())
-                {
-                    _logger.LogInformation(transaction.Message);
-                    return NotFound(transaction.Message);
-                }
+                var transactionDb = (_transactionService
+                    .GetByIdAsync(idTransaction).Result.Data as List<GetTransaction>)
+                    .FirstOrDefault();
 
-                var resultPayment = await _transactionService.Payment(transaction.Data as Transaction);
+                if(transactionDb.Stage != StageTransactionEnum.PaymentData)
+                    return NotFound("Estágio fora do padrão");
+
+                var transaction = transactionDb.GeTransactionToTransaction();
+                transaction.Stage = StageTransactionEnum.PaymentTransaction;
+
+                var resultPayment = await _transactionService.Payment(transaction);
                 if (resultPayment.Message != null && resultPayment.Message.Any())
                 {
                     _logger.LogInformation(resultPayment.Message);
                     return NotFound(resultPayment.Message);
                 }
+
+                _transactionService.UpdateAsync(transaction);
 
                 return Ok("Transação Efetivada");
             }
@@ -258,13 +279,16 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// <returns>200 Transação criado</returns>
         /// <returns>500 Erro inesperado</returns>
         [HttpPut]
-        [Route("finishedTransaction")]
-        public async Task<IActionResult> FinishedTransactionAsync(string idTransaction)
+        [Route("finishedTransaction/{idTransaction}")]
+        public async Task<IActionResult> FinishedTransactionAsync([FromRoute]string idTransaction)
         {
             try
             {
-                var transaction = await _transactionService.GetByIdAsync(idTransaction);
-                var resultQrcode = await _transactionService.FinishedTransactionAsync(transaction.Data as Transaction);
+                var transactionDb = (_transactionService
+                    .GetByIdAsync(idTransaction).Result.Data as List<GetTransaction>)
+                    .FirstOrDefault();
+                var transaction = transactionDb.GeTransactionToTransaction();
+                var resultQrcode = await _transactionService.FinishedTransactionAsync(transaction);
                 if (resultQrcode.Message.Any())
                 {
                     _logger.LogInformation(resultQrcode.Message);

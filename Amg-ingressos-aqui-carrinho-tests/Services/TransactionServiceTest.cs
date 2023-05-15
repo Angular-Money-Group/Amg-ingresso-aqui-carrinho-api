@@ -39,7 +39,7 @@ namespace Prime.UnitTests.Services
             var messageReturn = "6442dcb6523d52533aeb1ae4";
             _transactionRepositoryMock.Setup(x => x.Save<object>(It.IsAny<Transaction>()))
                 .Returns(Task.FromResult(messageReturn as object));
-            _ticketServiceMock.Setup(x => x.GetTicketsAsync(It.IsAny<string>()))
+            _ticketServiceMock.Setup(x => x.GetTicketsByLotAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(new MessageReturn()
                 {
                     Data = FactoryTicketService
@@ -61,7 +61,7 @@ namespace Prime.UnitTests.Services
             //Arrange
             TransactionDto transaction = new TransactionDto()
             {
-                IdCustomer = "6442dcb6523d52533aeb1ae4"
+                IdUser = "6442dcb6523d52533aeb1ae4"
             };
             var messageReturn = "Id Transação é obrigatório";
             _transactionRepositoryMock.Setup(x => x.Save<object>(It.IsAny<Transaction>()))
@@ -80,7 +80,7 @@ namespace Prime.UnitTests.Services
             //Arrange
             TransactionDto transaction = new TransactionDto()
             {
-                IdCustomer = ""
+                IdUser = ""
             };
             var messageReturn = "Usuário é obrigatório";
             _transactionRepositoryMock.Setup(x => x.Save<object>(transaction))
@@ -99,7 +99,7 @@ namespace Prime.UnitTests.Services
             //Arrange
             TransactionDto transaction = new TransactionDto()
             {
-                IdCustomer = "6442dcb6523d52533aeb",
+                IdUser = "6442dcb6523d52533aeb",
             };
             var messageReturn = "Usuário é obrigatório e está menor que 24 digitos";
             _transactionRepositoryMock.Setup(x => x.Save<object>(transaction))
@@ -136,7 +136,7 @@ namespace Prime.UnitTests.Services
             var messageReturn = "Número de ingressos inválido";
             _transactionRepositoryMock.Setup(x => x.Save<object>(It.IsAny<Transaction>()))
                 .Returns(Task.FromResult("6442dcb6523d52533aeb1ae4" as object));
-            _ticketServiceMock.Setup(x => x.GetTicketsAsync(It.IsAny<string>()))
+            _ticketServiceMock.Setup(x => x.GetTicketsByLotAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(new MessageReturn() { Data = new List<Ticket>() }));
 
             //Act
@@ -154,7 +154,7 @@ namespace Prime.UnitTests.Services
             var messageReturn = "Valor do Ingresso inválido.";
             _transactionRepositoryMock.Setup(x => x.Save<object>(It.IsAny<Transaction>()))
                 .Returns(Task.FromResult("6442dcb6523d52533aeb1ae4" as object));
-            _ticketServiceMock.Setup(x => x.GetTicketsAsync(It.IsAny<string>()))
+            _ticketServiceMock.Setup(x => x.GetTicketsByLotAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(new MessageReturn()
                 {
                     Data = FactoryTicketService
@@ -363,11 +363,11 @@ namespace Prime.UnitTests.Services
         {
             //Arrange
             var idPerson = "6442dcb6523d52533aeb1ae4";
-            _transactionRepositoryMock.Setup(x => x.GetByPerson(idPerson))
+            _transactionRepositoryMock.Setup(x => x.GetByUser(idPerson))
                 .Returns(Task.FromResult(FactoryTransaction.SimpleTransaction() as object));
 
             //Act
-            var result = _transactionService.GetByPersonAsync(idPerson);
+            var result = _transactionService.GetByUserAsync(idPerson);
 
             //Assert
             Assert.IsNotNull(result.Result.Data);
@@ -379,11 +379,11 @@ namespace Prime.UnitTests.Services
             //Arrange
             var idPerson = string.Empty;
             var messageReturn = "Usuário é obrigatório";
-            _transactionRepositoryMock.Setup(x => x.GetByPerson(idPerson))
+            _transactionRepositoryMock.Setup(x => x.GetByUser(idPerson))
                 .Returns(Task.FromResult(FactoryTransaction.SimpleTransaction() as object));
 
             //Act
-            var result = _transactionService.GetByPersonAsync(idPerson);
+            var result = _transactionService.GetByUserAsync(idPerson);
 
             //Assert
             Assert.AreEqual(messageReturn, result.Result.Message);
@@ -395,11 +395,11 @@ namespace Prime.UnitTests.Services
             //Arrange
             var idTransaction = "6442dcb6523d52533aeb1ae4";
             var messageReturn = "Transação não encontrada";
-            _transactionRepositoryMock.Setup(x => x.GetByPerson(idTransaction))
+            _transactionRepositoryMock.Setup(x => x.GetByUser(idTransaction))
                 .Throws(new GetByPersonTransactionException(messageReturn));
 
             //Act
-            var result = _transactionService.GetByPersonAsync(idTransaction);
+            var result = _transactionService.GetByUserAsync(idTransaction);
             //Assert
             Assert.AreEqual(messageReturn, result.Result.Message);
         }

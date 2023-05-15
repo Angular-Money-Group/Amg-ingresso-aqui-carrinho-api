@@ -33,9 +33,16 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             try
             {
                 transaction.Id.ValidateIdMongo("Transação");
-                var tickets= transaction.TransactionItens
-                    .Select(i=> new Ticket(){ Id = i.IdTicket} ).ToList();
+                Utils.QrCode qrcode = new QrCode();
+                transaction.TransactionItens = (List<TransactionIten>)(_transactionItenRepository.GetByIdTransaction(transaction.Id).Result);
                 
+                transaction.TransactionItens.ForEach(i=> {
+                    var result = _ticketService.GetTicketsByIdAsync(i.IdTicket).Result.Data;
+                    var ticket = (Ticket)result;
+                    var linkImagem = qrcode.GenerateQrCode(ticket.Id);
+                    ticket.QrCode = linkImagem;
+                    _ticketService.UpdateTicketsAsync(ticket);
+                });
             }
             catch (IdMongoException ex)
             {
@@ -84,7 +91,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
         public async Task<MessageReturn> Payment(Transaction transaction)
         {
-            try
+            await _paymentService.Payment(transaction);
+            /*try
             {
                 transaction.Id.ValidateIdMongo("Transação");
                 var resultPayment = await _paymentService.Payment(transaction);
@@ -110,7 +118,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             catch (Exception ex)
             {
                 throw ex;
-            }
+            }*/
 
             return _messageReturn;
         }
@@ -119,10 +127,10 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         {
             try
             {
-                transactionDto.IdCustomer.ValidateIdMongo("Usuário");
+                transactionDto.IdUser.ValidateIdMongo("Usuário");
                 var transaction = new Transaction()
                 {
-                    IdPerson = transactionDto.IdCustomer,
+                    IdPerson = transactionDto.IdUser,
                     Status = Enum.StatusPaymentEnum.InProgress,
                     Stage = Enum.StageTransactionEnum.Confirm
                 };
@@ -130,8 +138,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 _messageReturn.Data = await _transactionRepository.Save<object>(transaction);
 
                 await SaveTransactionItenAsync(_messageReturn.Data.ToString(),
-                                        transactionDto.IdCustomer,
+                                        transactionDto.IdUser,
                                          transactionDto.TransactionItensDto);
+                transaction.TotalValue = Convert.ToDecimal(_messageReturn.Data);
+                UpdateAsync(transaction);
+                _messageReturn.Data = transaction.Id;
             }
             catch (IdMongoException ex)
             {
@@ -146,17 +157,18 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             return _messageReturn;
         }
 
-        public async Task<MessageReturn> SaveTransactionItenAsync(string IdTransaction, string IdCustomer, List<TransactionItenDto> transactionItens)
+        public async Task<MessageReturn> SaveTransactionItenAsync(string IdTransaction, string IdUser, List<TransactionItenDto> transactionItens)
         {
             try
             {
                 IdTransaction.ValidateIdMongo("Id Transação");
+                var valueTransaction = new decimal(0);
                 transactionItens.ForEach(i =>
                 {
                     try
                     {
                         //retorna todos tickets para o idLote
-                        var messageTicket = _ticketService.GetTicketsAsync(i.IdLot).Result;
+                        var messageTicket = _ticketService.GetTicketsByLotAsync(i.IdLot).Result;
 
                         if (messageTicket.Message != null && messageTicket.Message.Any())
                             throw new Exception("Erro ao buscar Ingressos");
@@ -174,6 +186,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                                 throw new SaveTransactionException("Valor do Ingresso inválido.");
 
                             var valueTicket = i.HalfPrice == true ? (ticket.Value / 2) : ticket.Value;
+                            valueTransaction = valueTransaction + valueTicket;
                             var transactionItem = new TransactionIten()
                             {
                                 HalfPrice = i.HalfPrice,
@@ -187,7 +200,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
                             //atualiza Ticket
                             ticket.isSold = true;
-                            ticket.IdUser = IdCustomer;
+                            ticket.IdUser = IdUser;
                             ticket.Value = valueTicket;
                             _ticketService.UpdateTicketsAsync(ticket);
                         }
@@ -204,6 +217,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     }
 
                 });
+                _messageReturn.Data = valueTransaction;
             }
             catch (IdMongoException ex)
             {
@@ -257,13 +271,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 throw new SaveTransactionException("Valor do Ingresso é obrigatório");
         }
 
-        public async Task<MessageReturn> GetByPersonAsync(string idPerson)
+        public async Task<MessageReturn> GetByUserAsync(string idUser)
         {
             try
             {
-                idPerson.ValidateIdMongo("Usuário");
+                idUser.ValidateIdMongo("Usuário");
 
-                _messageReturn.Data = await _transactionRepository.GetByPerson(idPerson);
+                _messageReturn.Data = await _transactionRepository.GetByUser(idUser);
 
             }
             catch (IdMongoException ex)
@@ -282,6 +296,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
 
             return _messageReturn;
-        }
+        }    
     }
 }

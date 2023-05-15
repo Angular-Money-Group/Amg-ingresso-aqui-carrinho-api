@@ -18,7 +18,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Dtos
         /// <summary>
         /// Id Usuario
         /// </summary>
-        public string IdCustomer { get; set; }
+        public string IdUser { get; set; }
 
         
         /// <summary>

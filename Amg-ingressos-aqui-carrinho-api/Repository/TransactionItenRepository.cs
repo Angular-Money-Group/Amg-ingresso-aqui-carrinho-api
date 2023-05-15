@@ -32,5 +32,36 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                 throw ex;
             }
         }
+        public async Task<object> GetByIdTransaction(string idTransaction)
+        {
+            try
+            {
+                var builder = Builders<TransactionIten>.Filter;
+                var filter = builder.Empty;
+
+                if (!string.IsNullOrWhiteSpace(idTransaction))
+                {
+                    var firstNameFilter = builder.Eq(x => x.IdTransaction, idTransaction);
+                    filter &= firstNameFilter;
+                }
+
+                var result = await _transactionItenCollection.Find(filter).ToListAsync();
+                
+                
+                if (result == null)
+                    throw new GetByIdTransactionException("Transacao itens nao encontrados");
+
+                return result;
+            }
+            catch (GetByIdTransactionException ex)
+            {
+                throw ex;
+            }
+            catch (System.Exception ex)
+            {
+                throw ex;
+            }
+        }
+
     }
 }
