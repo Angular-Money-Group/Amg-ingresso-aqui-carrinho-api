@@ -33,6 +33,16 @@ builder.Services.AddScoped<IDbConnection<Transaction>, DbConnection<Transaction>
 builder.Services.AddScoped<IDbConnection<TransactionIten>, DbConnection<TransactionIten>>();
 builder.Services.AddScoped<ICieloClient, CieloClient>();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
@@ -40,11 +50,17 @@ app.UseSwaggerUI();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    //app.UseSwagger();
-    //app.UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles(); // Certifique-se de ter essa linha
+app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true)
+                .AllowCredentials());
 
 app.UseAuthorization();
 
