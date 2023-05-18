@@ -33,14 +33,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             try
             {
                 transaction.Id.ValidateIdMongo("Transação");
-                Utils.QrCode qrcode = new QrCode();
+                //Utils.QrCode qrcode = new QrCode();
                 transaction.TransactionItens = (List<TransactionIten>)(_transactionItenRepository.GetByIdTransaction(transaction.Id).Result);
                 
                 transaction.TransactionItens.ForEach(i=> {
                     var result = _ticketService.GetTicketsByIdAsync(i.IdTicket).Result.Data;
                     var ticket = (Ticket)result;
-                    var linkImagem = qrcode.GenerateQrCode(ticket.Id);
-                    ticket.QrCode = linkImagem;
+                    //var linkImagem = qrcode.GenerateQrCode(ticket.Id);
+                    //ticket.QrCode = linkImagem;
                     _ticketService.UpdateTicketsAsync(ticket);
                 });
             }
