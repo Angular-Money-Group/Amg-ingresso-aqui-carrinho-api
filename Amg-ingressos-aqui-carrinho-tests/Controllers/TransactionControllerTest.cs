@@ -21,19 +21,24 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         private Mock<ILogger<TransactionController>> _loggerMock = new Mock<ILogger<TransactionController>>();
         private Mock<ITicketService> _ticketServiceMock = new Mock<ITicketService>();
         private Mock<IPaymentService> _paymentServiceMock = new Mock<IPaymentService>();
-        private TestHttpClientFactory HttpClientFactory = new TestHttpClientFactory();
-        private Mock<ITransactionRepository> _transactionServiceMock = new Mock<ITransactionRepository>();
+        private Mock<ICieloClient> _cieloClienteMock = new Mock<ICieloClient>();
+        private Mock<HttpClient> _httpClienteMock = new Mock<HttpClient>();
+        private Amg_ingressos_aqui_carrinho_tests.FactoryServices.TestHttpClientFactory HttpClientFactory = new Amg_ingressos_aqui_carrinho_tests.FactoryServices.TestHttpClientFactory();
 
         [SetUp]
         public void Setup()
         {
+            _cieloClienteMock.Setup(x => x.CreateClient())
+                .Returns(HttpClientFactory.CreateClient());
+
             _transactionController = new TransactionController(
                 _loggerMock.Object,
                 new TransactionService(
                 _transactionRepositoryMock.Object,
                 _transactionItenRepositoryMock.Object,
                 _ticketServiceMock.Object,
-                _paymentServiceMock.Object)
+                _paymentServiceMock.Object,
+                _cieloClienteMock.Object)
             );
         }
 

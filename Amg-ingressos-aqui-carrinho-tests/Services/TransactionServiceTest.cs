@@ -4,7 +4,6 @@ using NUnit.Framework;
 using Moq;
 using Amg_ingressos_aqui_carrinho_api.Repository.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Model;
-using Amg_ingressos_aqui_carrinho_api.Enum;
 using Amg_ingressos_aqui_carrinho_api.Infra;
 using Amg_ingressos_aqui_carrinho_api.Dtos;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
@@ -19,16 +18,23 @@ namespace Prime.UnitTests.Services
         private Mock<ITransactionItenRepository> _transactionItenRepositoryMock = new Mock<ITransactionItenRepository>();
         private Mock<ITicketService> _ticketServiceMock = new Mock<ITicketService>();
         private Mock<IPaymentService> _paymentServiceMock = new Mock<IPaymentService>();
+        private Mock<ICieloClient> _cieloClienteMock = new Mock<ICieloClient>();
+        private Mock<HttpClient> _httpClienteMock = new Mock<HttpClient>();
+        private Amg_ingressos_aqui_carrinho_tests.FactoryServices.TestHttpClientFactory HttpClientFactory = new Amg_ingressos_aqui_carrinho_tests.FactoryServices.TestHttpClientFactory();
 
 
         [SetUp]
         public void SetUp()
         {
+            _cieloClienteMock.Setup(x => x.CreateClient())
+                .Returns(HttpClientFactory.CreateClient());
+
             _transactionService = new TransactionService(
                 _transactionRepositoryMock.Object,
                 _transactionItenRepositoryMock.Object,
                 _ticketServiceMock.Object,
-                _paymentServiceMock.Object);
+                _paymentServiceMock.Object,
+                _cieloClienteMock.Object);
         }
 
         [Test]
