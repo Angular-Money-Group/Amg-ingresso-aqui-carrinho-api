@@ -1,5 +1,6 @@
 using Amg_ingressos_aqui_carrinho_api.Dtos;
 using Amg_ingressos_aqui_carrinho_api.Exceptions;
+using Amg_ingressos_aqui_carrinho_api.Infra;
 using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Repository.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
@@ -14,17 +15,20 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         private MessageReturn _messageReturn;
         private ITicketService _ticketService;
         private IPaymentService _paymentService;
+        private HttpClient _HttpClient;
 
         public TransactionService(
             ITransactionRepository transactionRepository,
             ITransactionItenRepository transactionItenRepository,
             ITicketService ticketService,
-            IPaymentService paymentService)
+            IPaymentService paymentService,
+            ICieloClient cieloClient)
         {
             _transactionRepository = transactionRepository;
             _ticketService = ticketService;
             _paymentService = paymentService;
             _transactionItenRepository = transactionItenRepository;
+            _HttpClient = cieloClient.CreateClient();
             _messageReturn = new MessageReturn();
         }
 
@@ -39,8 +43,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 transaction.TransactionItens.ForEach(i=> {
                     var result = _ticketService.GetTicketsByIdAsync(i.IdTicket).Result.Data;
                     var ticket = (Ticket)result;
-                    //var linkImagem = qrcode.GenerateQrCode(ticket.Id);
-                    //ticket.QrCode = linkImagem;
+                    var linkImagem = GenerateQrCode(ticket?.Id).Result;
+                    ticket.QrCode = linkImagem;
                     _ticketService.UpdateTicketsAsync(ticket);
                 });
             }
@@ -297,5 +301,16 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
             return _messageReturn;
         }    
+    
+        public async Task<string> GenerateQrCode(string idTicket)
+        {
+            //var url = new Uri(@);
+            var url = "http://127.0.0.1:8000/";
+            var uri = "v1/generate-qr-code?data=" + idTicket;
+            using var httpResponseMessage = await _HttpClient.GetAsync(url + uri);
+            //var result = httpResponseMessage.EnsureSuccessStatusCode();
+            string jsonContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
+            return jsonContent;
+        }
     }
 }

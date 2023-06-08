@@ -22,7 +22,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         public async Task<MessageReturn> GetTicketsByLotAsync(string idLote)
         {
             //var url = new Uri(@);
-            var url = "http://172.17.0.2:80/";
+            var url = "http://api.ingressosaqui.com/";
             var uri = "v1/tickets/lote/" + idLote;
             using var httpResponseMessage = await _HttpClient
                 .GetAsync(url + uri);
@@ -35,7 +35,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         public async Task<MessageReturn> GetTicketsByIdAsync(string id)
         {
             //var url = new Uri(@);
-            var url = "http://172.17.0.2:80/";
+            var url = "http://api.ingressosaqui.com/";
             var uri = "v1/tickets/" + id;
             using var httpResponseMessage = await _HttpClient
                 .GetAsync(url + uri);
@@ -52,7 +52,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             {
                 var ticketJson = new StringContent(JsonSerializer.Serialize(ticket),
             Encoding.UTF8, Application.Json); // using static System.Net.Mime.MediaTypeNames;
-                var url = "http://api.ingressosaqui.com:3002/";
+                var url = "http://api.ingressosaqui.com/";
                 var uri = "v1/tickets/" + ticket.Id;
 
                 //using var httpResponseMessage =
