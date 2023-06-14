@@ -6,6 +6,7 @@ using Amg_ingressos_aqui_carrinho_api.Mappers;
 using Microsoft.AspNetCore.Mvc;
 using Amg_ingressos_aqui_carrinho_api.Model.Querys;
 using Amg_ingressos_aqui_carrinho_api.Enum;
+using Amg_ingressos_aqui_carrinho_api.Utils;
 
 namespace Amg_ingressos_aqui_carrinho_api.Controllers
 {
@@ -123,8 +124,12 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         {
             try
             {
+                
+                if(idTransaction == string.Empty)
+                    return NotFound("Id Transação é Obrigatório");
                 var transactionDb = (_transactionService
-                    .GetByIdAsync(idTransaction).Result.Data as List<GetTransaction>).FirstOrDefault();
+                    .GetByIdAsync(idTransaction).Result.Data as List<GetTransaction>)
+                    .FirstOrDefault();
                 var transaction = new Transaction(){
                     Id = idTransaction,
                     IdPerson= transactionDb.IdPerson,
@@ -164,6 +169,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         {
             try
             {
+                if(idTransaction == string.Empty)
+                    return NotFound("Id Transação é Obrigatório");
                 var transaction = transactionDto.StageTicketDataDtoToTransaction();
                 transaction.Id = idTransaction;
                 var transactionDb = (_transactionService
@@ -203,10 +210,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         {
             try
             {
+                if(idTransaction == string.Empty)
+                    return NotFound("Id Transação é Obrigatório");
                 var transaction = transactionDto.StagePaymentDataDtoToTransaction();
                 transaction.Id = idTransaction;
                 var transactionDb = (_transactionService
-                    .GetByIdAsync(transaction.Id).Result.Data as List<GetTransaction>).FirstOrDefault();
+                    .GetByIdAsync(transaction.Id).Result.Data as List<GetTransaction>)
+                    .FirstOrDefault();
 
                 if(transactionDb.Stage != StageTransactionEnum.TicketsData)
                     return NotFound("Estágio fora do padrão");
@@ -244,6 +254,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         {
             try
             {
+                if(idTransaction == string.Empty)
+                    return NotFound("Id Transação é Obrigatório");
                 var transactionDb = (_transactionService
                     .GetByIdAsync(idTransaction).Result.Data as List<GetTransaction>)
                     .FirstOrDefault();
@@ -289,7 +301,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
                     .FirstOrDefault();
                 var transaction = transactionDb.GeTransactionToTransaction();
                 var resultQrcode = await _transactionService.FinishedTransactionAsync(transaction);
-                if (resultQrcode.Message.Any())
+                if (resultQrcode.Message!= null && resultQrcode.Message.Any())
                 {
                     _logger.LogInformation(resultQrcode.Message);
                     return NotFound(resultQrcode.Message);

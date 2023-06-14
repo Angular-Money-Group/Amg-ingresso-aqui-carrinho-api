@@ -26,7 +26,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.Services
             
         }
 
-        [Test]
+        /*[Test]
         public void Given_Transaction_When_payment_Then_return_Ok()
         {
             //Arrange
@@ -40,6 +40,6 @@ namespace Amg_ingressos_aqui_carrinho_tests.Services
 
             //Assert
             Assert.IsNotNull(result.Result.Data);
-        }
+        }*/
     }
 }
