@@ -93,26 +93,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
             }
         }
 
-        public async Task<object> Post<T1>(object transactionComplet)
-        {
-            try
-            {
-                var arrayFilter = Builders<Transaction>.Filter.Eq("student_id", 10000)
-                    & Builders<Transaction>.Filter.Eq("scores.type", "quiz");
-                var arrayUpdate = Builders<Transaction>.Update.Set("scores.$.score", 84.92381029342834);
-                await _transactionCollection.UpdateOneAsync(arrayFilter, arrayUpdate);
-                return "Transaction criado";
-            }
-            catch (SaveTransactionException ex)
-            {
-                throw ex;
-            }
-            catch (System.Exception ex)
-            {
-                throw ex;
-            }
-        }
-
         public async Task<object> Save<T>(object transaction)
         {
             try

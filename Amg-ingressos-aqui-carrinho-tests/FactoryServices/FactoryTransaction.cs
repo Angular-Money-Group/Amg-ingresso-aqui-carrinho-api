@@ -1,5 +1,6 @@
 using Amg_ingressos_aqui_carrinho_api.Dtos;
 using Amg_ingressos_aqui_carrinho_api.Model;
+using Amg_ingressos_aqui_carrinho_api.Model.Querys;
 
 namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
 {
@@ -25,6 +26,206 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                 Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
                 Tax = new decimal(10.0),
                 TransactionItens = SimpleTransactionItens()
+            };
+        }
+        internal static List<GetTransaction> SimpleListTransactionQueryStagePaymentTransaction(){
+            return new List<GetTransaction>()
+            {
+                new GetTransaction(){
+                    _id = "6442dcb6523d52533aeb1ae4",
+                    PaymentMethod = new PaymentMethod()
+                    {
+                        IdPaymentMethod = "6442dcb6523d52533aeb1ae4",
+                        Brand = "VISA",
+                        CardNumber = "4551870000000183",
+                        ExpirationDate = "12/2021",
+                        SecurityCode = "SecurityCode",
+                        Holder = "Teste Holder",
+                        SaveCard = false,
+                        TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePaymentEnum.CreditCard
+                    },
+                    IdPerson = "6442dcb6523d52533aeb1ae4",
+                    Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
+                    Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.PaymentTransaction,
+                    Tax = new decimal(10.0),
+                    transactionItens = new List<TransactionItens>(){
+                        new TransactionItens(){
+                            _id ="6442dcb6523d52533aeb1ae4",
+                            IdTransaction = "6442dcb6523d52533aeb1ae4",
+                            IdTicket = "6442dcb6523d52533aeb1ae4",
+                            HalfPrice = false,
+                            TicketPrice = "150"
+                        },
+                        new TransactionItens(){
+                            _id ="6442dcb6523d52533aeb1ae4",
+                            IdTransaction = "6442dcb6523d52533aeb1ae4",
+                            IdTicket = "6442dcb6523d52533aeb1ae4",
+                            HalfPrice = true,
+                            TicketPrice = "75",
+                        },
+                    }
+                },
+                
+            };
+        }
+        internal static List<GetTransaction> SimpleListTransactionQueryStagePaymentData(){
+            return new List<GetTransaction>()
+            {
+                new GetTransaction(){
+                    _id = "6442dcb6523d52533aeb1ae4",
+                    PaymentMethod = new PaymentMethod()
+                    {
+                        IdPaymentMethod = "6442dcb6523d52533aeb1ae4",
+                        Brand = "VISA",
+                        CardNumber = "4551870000000183",
+                        ExpirationDate = "12/2021",
+                        SecurityCode = "SecurityCode",
+                        Holder = "Teste Holder",
+                        SaveCard = false,
+                        TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePaymentEnum.CreditCard
+                    },
+                    IdPerson = "6442dcb6523d52533aeb1ae4",
+                    Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
+                    Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.PaymentData,
+                    Tax = new decimal(10.0),
+                    transactionItens = new List<TransactionItens>(){
+                        new TransactionItens(){
+                            _id ="6442dcb6523d52533aeb1ae4",
+                            IdTransaction = "6442dcb6523d52533aeb1ae4",
+                            IdTicket = "6442dcb6523d52533aeb1ae4",
+                            HalfPrice = false,
+                            TicketPrice = "150"
+                        },
+                        new TransactionItens(){
+                            _id ="6442dcb6523d52533aeb1ae4",
+                            IdTransaction = "6442dcb6523d52533aeb1ae4",
+                            IdTicket = "6442dcb6523d52533aeb1ae4",
+                            HalfPrice = true,
+                            TicketPrice = "75",
+                        },
+                    }
+                },
+                
+            };
+        }
+        internal static List<GetTransaction> SimpleListTransactionQueryStageConfirm(){
+            return new List<GetTransaction>()
+            {
+                new GetTransaction(){
+                    _id = "6442dcb6523d52533aeb1ae4",
+                    PaymentMethod = new PaymentMethod()
+                    {
+                        IdPaymentMethod = "6442dcb6523d52533aeb1ae4",
+                        Brand = "VISA",
+                        CardNumber = "4551870000000183",
+                        ExpirationDate = "12/2021",
+                        SecurityCode = "SecurityCode",
+                        Holder = "Teste Holder",
+                        SaveCard = false,
+                        TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePaymentEnum.CreditCard
+                    },
+                    IdPerson = "6442dcb6523d52533aeb1ae4",
+                    Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
+                    Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.Confirm,
+                    Tax = new decimal(10.0),
+                    transactionItens = new List<TransactionItens>(){
+                        new TransactionItens(){
+                            _id ="6442dcb6523d52533aeb1ae4",
+                            IdTransaction = "6442dcb6523d52533aeb1ae4",
+                            IdTicket = "6442dcb6523d52533aeb1ae4",
+                            HalfPrice = false,
+                            TicketPrice = "150"
+                        },
+                        new TransactionItens(){
+                            _id ="6442dcb6523d52533aeb1ae4",
+                            IdTransaction = "6442dcb6523d52533aeb1ae4",
+                            IdTicket = "6442dcb6523d52533aeb1ae4",
+                            HalfPrice = true,
+                            TicketPrice = "75",
+                        },
+                    }
+                },
+                
+            };
+        }
+        internal static List<GetTransaction> SimpleListTransactionQueryStagePersonData(){
+            return new List<GetTransaction>()
+            {
+                new GetTransaction(){
+                    _id = "6442dcb6523d52533aeb1ae4",
+                    PaymentMethod = new PaymentMethod()
+                    {
+                        IdPaymentMethod = "6442dcb6523d52533aeb1ae4",
+                        Brand = "VISA",
+                        CardNumber = "4551870000000183",
+                        ExpirationDate = "12/2021",
+                        SecurityCode = "SecurityCode",
+                        Holder = "Teste Holder",
+                        SaveCard = false,
+                        TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePaymentEnum.CreditCard
+                    },
+                    IdPerson = "6442dcb6523d52533aeb1ae4",
+                    Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
+                    Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.PersonData,
+                    Tax = new decimal(10.0),
+                    transactionItens = new List<TransactionItens>(){
+                        new TransactionItens(){
+                            _id ="6442dcb6523d52533aeb1ae4",
+                            IdTransaction = "6442dcb6523d52533aeb1ae4",
+                            IdTicket = "6442dcb6523d52533aeb1ae4",
+                            HalfPrice = false,
+                            TicketPrice = "150"
+                        },
+                        new TransactionItens(){
+                            _id ="6442dcb6523d52533aeb1ae4",
+                            IdTransaction = "6442dcb6523d52533aeb1ae4",
+                            IdTicket = "6442dcb6523d52533aeb1ae4",
+                            HalfPrice = true,
+                            TicketPrice = "75",
+                        },
+                    }
+                },
+                
+            };
+        }
+        internal static List<GetTransaction> SimpleListTransactionQueryStageTicketData(){
+            return new List<GetTransaction>()
+            {
+                new GetTransaction(){
+                    _id = "6442dcb6523d52533aeb1ae4",
+                    PaymentMethod = new PaymentMethod()
+                    {
+                        IdPaymentMethod = "6442dcb6523d52533aeb1ae4",
+                        Brand = "VISA",
+                        CardNumber = "4551870000000183",
+                        ExpirationDate = "12/2021",
+                        SecurityCode = "SecurityCode",
+                        Holder = "Teste Holder",
+                        SaveCard = false,
+                        TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePaymentEnum.CreditCard
+                    },
+                    IdPerson = "6442dcb6523d52533aeb1ae4",
+                    Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
+                    Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.TicketsData,
+                    Tax = new decimal(10.0),
+                    transactionItens = new List<TransactionItens>(){
+                        new TransactionItens(){
+                            _id ="6442dcb6523d52533aeb1ae4",
+                            IdTransaction = "6442dcb6523d52533aeb1ae4",
+                            IdTicket = "6442dcb6523d52533aeb1ae4",
+                            HalfPrice = false,
+                            TicketPrice = "150"
+                        },
+                        new TransactionItens(){
+                            _id ="6442dcb6523d52533aeb1ae4",
+                            IdTransaction = "6442dcb6523d52533aeb1ae4",
+                            IdTicket = "6442dcb6523d52533aeb1ae4",
+                            HalfPrice = true,
+                            TicketPrice = "75",
+                        },
+                    }
+                },
+                
             };
         }
         internal static Transaction SimpleTransactionPersonData()
@@ -63,7 +264,6 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                 TransactionItensDto = SimpleListTransactionItensDto()
             };
         }
-
         internal static List<TransactionItenDto> SimpleListTransactionItensDto()
         {
             return new List<TransactionItenDto>()

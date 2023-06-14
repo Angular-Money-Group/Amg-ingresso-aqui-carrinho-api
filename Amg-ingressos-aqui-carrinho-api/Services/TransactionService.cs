@@ -15,6 +15,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         private MessageReturn _messageReturn;
         private ITicketService _ticketService;
         private IPaymentService _paymentService;
+        private IEmailService _emailService;
         private HttpClient _HttpClient;
 
         public TransactionService(
@@ -22,7 +23,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             ITransactionItenRepository transactionItenRepository,
             ITicketService ticketService,
             IPaymentService paymentService,
-            ICieloClient cieloClient)
+            ICieloClient cieloClient,
+            IEmailService emailService)
         {
             _transactionRepository = transactionRepository;
             _ticketService = ticketService;
@@ -30,6 +32,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             _transactionItenRepository = transactionItenRepository;
             _HttpClient = cieloClient.CreateClient();
             _messageReturn = new MessageReturn();
+            _emailService = emailService;
         }
 
         public async Task<MessageReturn> FinishedTransactionAsync(Transaction transaction)
@@ -37,16 +40,25 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             try
             {
                 transaction.Id.ValidateIdMongo("Transação");
-                //Utils.QrCode qrcode = new QrCode();
-                transaction.TransactionItens = (List<TransactionIten>)(_transactionItenRepository.GetByIdTransaction(transaction.Id).Result);
-                
-                transaction.TransactionItens.ForEach(i=> {
+                transaction.TransactionItens = (List<TransactionIten>)_transactionItenRepository.GetByIdTransaction(transaction.Id).Result;
+
+                transaction.TransactionItens.ForEach(i =>
+                {
                     var result = _ticketService.GetTicketsByIdAsync(i.IdTicket).Result.Data;
                     var ticket = (Ticket)result;
-                    var linkImagem = GenerateQrCode(ticket?.Id).Result;
-                    ticket.QrCode = linkImagem;
+                    var nameImagem = GenerateQrCode(ticket?.Id).Result;
+                    ticket.QrCode = "https://api.ingressosaqui.com/imagens/qrcodes/"+nameImagem;
                     _ticketService.UpdateTicketsAsync(ticket);
                 });
+                var email = new Email
+                {
+                    Body = _emailService.GenerateBody(),
+                    Subject = "Ingressos",
+                    Sender = "",
+                    To = "suporte@ingressosAqui.com"
+                };
+                _ = _emailService.SaveAsync(email);
+
             }
             catch (IdMongoException ex)
             {
@@ -95,18 +107,17 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
         public async Task<MessageReturn> Payment(Transaction transaction)
         {
-            await _paymentService.Payment(transaction);
-            /*try
+            try
             {
                 transaction.Id.ValidateIdMongo("Transação");
                 var resultPayment = await _paymentService.Payment(transaction);
-                if(resultPayment.Message != null && resultPayment.Message.Any())
+                if (resultPayment.Message != null && resultPayment.Message.Any())
                     throw new PaymentTransactionException(resultPayment.Message);
 
                 transaction.Stage = Enum.StageTransactionEnum.PaymentTransaction;
                 transaction.Status = Enum.StatusPaymentEnum.Aproved;
                 UpdateAsync(transaction);
-                _messageReturn.Data= "Transação Efetivada";
+                _messageReturn.Data = "Transação Efetivada";
 
             }
             catch (IdMongoException ex)
@@ -122,7 +133,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             catch (Exception ex)
             {
                 throw ex;
-            }*/
+            }
 
             return _messageReturn;
         }
@@ -140,11 +151,16 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 };
 
                 _messageReturn.Data = await _transactionRepository.Save<object>(transaction);
+                //_messageReturn.Data.ToString().ValidateIdMongo("Transação");
+                transaction.Id = (string)_messageReturn.Data;
 
-                await SaveTransactionItenAsync(_messageReturn.Data.ToString(),
+                var totalTransaction = SaveTransactionItenAsync(_messageReturn?.Data?.ToString(),
                                         transactionDto.IdUser,
-                                         transactionDto.TransactionItensDto);
-                transaction.TotalValue = Convert.ToDecimal(_messageReturn.Data);
+                                         transactionDto.TransactionItensDto).Result.Data;
+                if (_messageReturn?.Message != null &&
+                    !string.IsNullOrEmpty(_messageReturn?.Message?.ToString()))
+                    return _messageReturn;
+                transaction.TotalValue = Convert.ToDecimal(totalTransaction);
                 UpdateAsync(transaction);
                 _messageReturn.Data = transaction.Id;
             }
@@ -300,15 +316,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
 
             return _messageReturn;
-        }    
-    
-        public async Task<string> GenerateQrCode(string idTicket)
+        }
+
+        private async Task<string> GenerateQrCode(string idTicket)
         {
             //var url = new Uri(@);
-            var url = "http://127.0.0.1:8000/";
+            var url = "http:api.ingressosaqui.com:3004";
             var uri = "v1/generate-qr-code?data=" + idTicket;
             using var httpResponseMessage = await _HttpClient.GetAsync(url + uri);
-            //var result = httpResponseMessage.EnsureSuccessStatusCode();
             string jsonContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
             return jsonContent;
         }
