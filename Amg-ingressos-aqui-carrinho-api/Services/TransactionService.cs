@@ -321,7 +321,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         private async Task<string> GenerateQrCode(string idTicket)
         {
             //var url = new Uri(@);
-            var url = "http:api.ingressosaqui.com:3004";
+            var url = "http://api.ingressosaqui.com:3004/";
             var uri = "v1/generate-qr-code?data=" + idTicket;
             using var httpResponseMessage = await _HttpClient.GetAsync(url + uri);
             string jsonContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
