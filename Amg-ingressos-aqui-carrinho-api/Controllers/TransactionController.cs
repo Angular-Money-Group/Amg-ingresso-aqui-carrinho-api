@@ -1,5 +1,5 @@
 using Amg_ingressos_aqui_carrinho_api.Consts;
-using Amg_ingressos_aqui_carrinho_api.Dtos;
+using Amg_ingressos_aqui_carrinho_api.Dto;
 using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Mappers;

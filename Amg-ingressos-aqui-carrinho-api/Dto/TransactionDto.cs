@@ -6,7 +6,7 @@ using Amg_ingressos_aqui_carrinho_api.Enum;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Amg_ingressos_aqui_carrinho_api.Dtos
+namespace Amg_ingressos_aqui_carrinho_api.Dto
 {
     public class TransactionDto
     {

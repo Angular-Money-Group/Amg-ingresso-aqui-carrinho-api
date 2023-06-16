@@ -1,4 +1,5 @@
-using Amg_ingressos_aqui_carrinho_api.Dtos;
+using System.Text.Json;
+using Amg_ingressos_aqui_carrinho_api.Dto;
 using Amg_ingressos_aqui_carrinho_api.Exceptions;
 using Amg_ingressos_aqui_carrinho_api.Infra;
 using Amg_ingressos_aqui_carrinho_api.Model;
@@ -41,11 +42,22 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             {
                 transaction.Id.ValidateIdMongo("Transação");
                 transaction.TransactionItens = (List<TransactionIten>)_transactionItenRepository.GetByIdTransaction(transaction.Id).Result;
+                var emailUser= string.Empty;
 
                 transaction.TransactionItens.ForEach(i =>
                 {
                     var result = _ticketService.GetTicketsByIdAsync(i.IdTicket).Result.Data;
-                    var ticket = (Ticket)result;
+                    var ticketDto = (TicketUserDto)result;
+                    emailUser = ticketDto.User.email;
+                    var ticket = new Ticket()
+                    {
+                        Id = ticketDto.Id,
+                        IdLot = ticketDto.IdLot,
+                        IdUser = ticketDto.IdUser,
+                        isSold = ticketDto.isSold,
+                        Position = ticketDto.Position,
+                        Value = ticketDto.Value
+                    };
                     var nameImagem = GenerateQrCode(ticket?.Id).Result;
                     ticket.QrCode = "https://api.ingressosaqui.com/imagens/qrcodes/"+nameImagem;
                     _ticketService.UpdateTicketsAsync(ticket);
@@ -54,10 +66,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 {
                     Body = _emailService.GenerateBody(),
                     Subject = "Ingressos",
-                    Sender = "",
-                    To = "suporte@ingressosAqui.com"
+                    Sender = "suporte@ingressosaqui.com",
+                    To = emailUser 
                 };
                 _ = _emailService.SaveAsync(email);
+                
+                transaction.Status = Enum.StatusPaymentEnum.Finished;
+                transaction.Stage = Enum.StageTransactionEnum.Finished;
+                _transactionRepository.Update<object>(transaction);
 
             }
             catch (IdMongoException ex)
@@ -324,7 +340,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             var url = "http://api.ingressosaqui.com:3004/";
             var uri = "v1/generate-qr-code?data=" + idTicket;
             using var httpResponseMessage = await _HttpClient.GetAsync(url + uri);
-            string jsonContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
+            string jsonContent =JsonSerializer.Deserialize<string>
+                                    ( httpResponseMessage.Content.ReadAsStringAsync().Result);
             return jsonContent;
         }
     }

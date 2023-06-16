@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Amg_ingressos_aqui_carrinho_api.Dtos;
+using Amg_ingressos_aqui_carrinho_api.Dto;
 using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Model.Querys;
 
@@ -63,6 +63,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Mappers
                 Status= getTransaction.Status,
                 Tax= getTransaction.Tax,
                 TotalValue= getTransaction.TotalValue,
+                Details = getTransaction.Details
             };
         }
     }
