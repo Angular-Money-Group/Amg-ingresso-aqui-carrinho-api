@@ -1,4 +1,4 @@
-using Amg_ingressos_aqui_carrinho_api.Dtos;
+using Amg_ingressos_aqui_carrinho_api.Dto;
 using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Model.Querys;
 

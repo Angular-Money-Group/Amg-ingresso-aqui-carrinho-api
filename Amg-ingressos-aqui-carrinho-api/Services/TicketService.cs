@@ -1,5 +1,5 @@
 using System.Text;
-using System.Text.Json;
+using Amg_ingressos_aqui_carrinho_api.Dto;
 using Amg_ingressos_aqui_carrinho_api.Infra;
 using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
@@ -21,12 +21,10 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
         public async Task<MessageReturn> GetTicketsByLotAsync(string idLote)
         {
-            //var url = new Uri(@);
             var url = "http://api.ingressosaqui.com/";
             var uri = "v1/tickets/lote/" + idLote;
             using var httpResponseMessage = await _HttpClient
                 .GetAsync(url + uri);
-            //var result = httpResponseMessage.EnsureSuccessStatusCode();
             string jsonContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
 
             _messageReturn.Data = JsonConvert.DeserializeObject<List<Ticket>>(jsonContent);
@@ -34,15 +32,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         }
         public async Task<MessageReturn> GetTicketsByIdAsync(string id)
         {
-            //var url = new Uri(@);
             var url = "http://api.ingressosaqui.com/";
-            var uri = "v1/tickets/" + id;
+            var uri = "v1/tickets/" + id + "/datauser";
             using var httpResponseMessage = await _HttpClient
                 .GetAsync(url + uri);
-            //var result = httpResponseMessage.EnsureSuccessStatusCode();
             string jsonContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
 
-            _messageReturn.Data = JsonConvert.DeserializeObject<Ticket>(jsonContent);
+            _messageReturn.Data = JsonConvert.DeserializeObject<TicketUserDto>(jsonContent);
             return _messageReturn;
         }
 
@@ -55,12 +51,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 var url = "http://api.ingressosaqui.com/";
                 var uri = "v1/tickets/" + ticket.Id;
 
-                //using var httpResponseMessage =
-                    _HttpClient.PutAsync(url + uri, ticketJson).Wait();
-
-                //string jsonContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
-
-                //_messageReturn.Data = JsonConvert.DeserializeObject<List<Ticket>>(jsonContent);
+                _HttpClient.PutAsync(url + uri, ticketJson).Wait();
                 return _messageReturn;
             }
             catch (System.Exception ex)
