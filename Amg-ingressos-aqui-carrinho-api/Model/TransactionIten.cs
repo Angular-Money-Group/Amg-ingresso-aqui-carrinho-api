@@ -37,6 +37,10 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// Preco Ingresso
         /// </summary>
         public decimal TicketPrice { get; set; }
+        /// <summary>
+        /// Preco Ingresso
+        /// </summary>
+        public string Details { get; set; }
 
     }
 }
