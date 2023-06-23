@@ -42,35 +42,26 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             {
                 transaction.Id.ValidateIdMongo("Transação");
                 transaction.TransactionItens = (List<TransactionIten>)_transactionItenRepository.GetByIdTransaction(transaction.Id).Result;
-                var emailUser= string.Empty;
-
                 transaction.TransactionItens.ForEach(i =>
                 {
                     var result = _ticketService.GetTicketsByIdAsync(i.IdTicket).Result.Data;
                     var ticketDto = (TicketUserDto)result;
-                    emailUser = ticketDto.User.email;
+                    var nameImagem = GenerateQrCode(i.IdTicket).Result;
                     var ticket = new Ticket()
                     {
                         Id = ticketDto.Id,
                         IdLot = ticketDto.IdLot,
-                        IdUser = ticketDto.IdUser,
+                        IdUser = ticketDto.User._id,
                         isSold = ticketDto.isSold,
                         Position = ticketDto.Position,
-                        Value = ticketDto.Value
+                        Value = ticketDto.Value,
+                        QrCode = "https://api.ingressosaqui.com/images/" + nameImagem
                     };
-                    var nameImagem = GenerateQrCode(ticket?.Id).Result;
-                    ticket.QrCode = "https://api.ingressosaqui.com/imagens/qrcodes/"+nameImagem;
                     _ticketService.UpdateTicketsAsync(ticket);
+                    ProcessEmail(ticketDto.User.email);
                 });
-                var email = new Email
-                {
-                    Body = _emailService.GenerateBody(),
-                    Subject = "Ingressos",
-                    Sender = "suporte@ingressosaqui.com",
-                    To = emailUser 
-                };
-                _ = _emailService.SaveAsync(email);
                 
+
                 transaction.Status = Enum.StatusPaymentEnum.Finished;
                 transaction.Stage = Enum.StageTransactionEnum.Finished;
                 _transactionRepository.Update<object>(transaction);
@@ -92,6 +83,20 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
 
             return _messageReturn;
+        }
+
+        private void ProcessEmail(string userEmail)
+        {
+            var email = new Email
+            {
+                Body = _emailService.GenerateBody(),
+                Subject = "Ingressos",
+                Sender = "suporte@ingressosaqui.com",
+                To = userEmail,
+                DataCadastro = DateTime.Now
+            };
+            _ = _emailService.SaveAsync(email);
+            _ = _emailService.Send(email.id);
         }
 
         public async Task<MessageReturn> GetByIdAsync(string idTransaction)
@@ -167,7 +172,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 };
 
                 _messageReturn.Data = await _transactionRepository.Save<object>(transaction);
-                //_messageReturn.Data.ToString().ValidateIdMongo("Transação");
                 transaction.Id = (string)_messageReturn.Data;
 
                 var totalTransaction = SaveTransactionItenAsync(_messageReturn?.Data?.ToString(),
@@ -228,7 +232,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                                 HalfPrice = i.HalfPrice,
                                 IdTransaction = IdTransaction,
                                 IdTicket = ticket?.Id,
-                                TicketPrice = valueTicket
+                                TicketPrice = valueTicket,
+                                Details= i.Details
+                                
                             };
                             //cria transaction iten
                             ValidateTransactionIten(transactionItem);

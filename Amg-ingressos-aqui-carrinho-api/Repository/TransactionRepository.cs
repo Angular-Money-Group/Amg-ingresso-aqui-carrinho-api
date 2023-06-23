@@ -143,5 +143,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                 throw ex;
             }
         }
+    
     }
 }

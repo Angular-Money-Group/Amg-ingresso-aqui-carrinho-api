@@ -14,7 +14,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
         private readonly IMongoCollection<Email> _emailCollection;
         public EmailRepository(IDbConnection<Email> dbconnectionIten)
         {
-            _emailCollection = dbconnectionIten.GetConnection("email");
+            _emailCollection = dbconnectionIten.GetConnection("templateemails");
         }
         public async Task<object> SaveAsync(object email)
         {

@@ -32,8 +32,10 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Querys
         public string _id { get; set; }
         [BsonRepresentation(BsonType.ObjectId)]
         public string IdTransaction { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
         public string IdTicket { get; set; }
         public bool HalfPrice { get; set; }
         public string TicketPrice { get; set; }
+        public string Details { get; set; }
     }
 }

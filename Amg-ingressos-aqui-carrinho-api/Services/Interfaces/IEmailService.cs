@@ -8,7 +8,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services.Interfaces
 {
     public interface IEmailService
     {
-        public Task<MessageReturn> SaveAsync(Email email);
+        Task<MessageReturn> SaveAsync(Email email);
+        MessageReturn Send(string idEmail);
         string GenerateBody();
     }
 }

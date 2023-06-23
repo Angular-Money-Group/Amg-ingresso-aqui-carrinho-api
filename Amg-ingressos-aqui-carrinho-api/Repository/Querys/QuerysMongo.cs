@@ -16,7 +16,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository.Querys
                                             $match: {
                                                 $expr: {
                                                     $eq: [
-                                                        '$IdTransaction',
+                                                        { '$toString': '$IdTransaction' },
                                                         '$$transactionId'
                                                     ]
                                                 }

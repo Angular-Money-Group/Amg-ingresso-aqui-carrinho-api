@@ -2,12 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Amg_ingressos_aqui_carrinho_api.Dto
 {
     public class TicketUserDto
     {
-        public string? Id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
         public string? IdLot { get; set; }
         public string? IdUser { get; set; }
         public string? Position { get; set; }

@@ -10,10 +10,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
 {
     public class TransactionDto
     {
-        /// <summary>
-        /// Id Usuario
-        /// </summary>
-        public string Id { get; set; }
 
         /// <summary>
         /// Id Usuario

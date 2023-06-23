@@ -24,5 +24,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
         /// meia entrada
         /// </summary>
         public bool HalfPrice { get; set; }
+        /// <summary>
+        /// Detalhe
+        /// </summary>
+        public string Details { get; set; }
     }
 }
