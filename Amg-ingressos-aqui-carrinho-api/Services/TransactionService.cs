@@ -58,7 +58,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                         QrCode = "https://api.ingressosaqui.com/images/" + nameImagem
                     };
                     _ticketService.UpdateTicketsAsync(ticket);
-                    ProcessEmail(ticketDto.User.email);
+                    ProcessEmail(ticketDto.User.email,ticket.QrCode);
                 });
                 
 
@@ -85,7 +85,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             return _messageReturn;
         }
 
-        private void ProcessEmail(string userEmail)
+        private void ProcessEmail(string userEmail, string urlQrCode)
         {
             var email = new Email
             {
@@ -95,6 +95,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 To = userEmail,
                 DataCadastro = DateTime.Now
             };
+            //alterar pra urlQrCode 
+            email.Body = email.Body.Replace("{1}","https://www.canalautismo.com.br/wp-content/uploads/2018/05/qrcode-RevistaAutismo.png");
             _ = _emailService.SaveAsync(email);
             _ = _emailService.Send(email.id);
         }
