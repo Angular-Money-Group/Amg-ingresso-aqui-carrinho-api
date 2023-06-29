@@ -63,5 +63,28 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
             }
         }
 
+        public async Task<object> DeleteByIdTransaction(string idTransaction){
+            try
+            {
+                // find a person using an equality filter on its id
+                var filter = Builders<TransactionIten>.Filter.Eq(transaction => transaction.IdTransaction, idTransaction);
+
+                // delete the person
+                var transactionDeleteResult = await _transactionItenCollection.DeleteOneAsync(filter);
+                if (transactionDeleteResult.DeletedCount >= 1)
+                    return "transação iten deletado com sucesso";
+                else
+                    return "erro ao deletar transação";
+
+            }
+            catch (SaveTransactionException ex)
+            {
+                throw ex;
+            }
+            catch (System.Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

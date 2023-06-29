@@ -86,32 +86,32 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     transaction.Status = StatusPaymentEnum.Aproved;
                     break;
                 case StatusCallbackCielo.NotAllowed:
-                    _messageReturn.Data = Consts.StatusCallbackCielo.NotAllowed;
+                    _messageReturn.Message = Consts.StatusCallbackCielo.NotAllowed;
                     transaction.Status = StatusPaymentEnum.ErrorPayment;
                     transaction.Details= Consts.StatusCallbackCielo.NotAllowed;
                     break;
                 case StatusCallbackCielo.ExpiredCard:
-                    _messageReturn.Data = Consts.StatusCallbackCielo.ExpiredCard;
+                    _messageReturn.Message = Consts.StatusCallbackCielo.ExpiredCard;
                     transaction.Status = StatusPaymentEnum.ErrorPayment;
                     transaction.Details= Consts.StatusCallbackCielo.ExpiredCard;
                     break;
                 case StatusCallbackCielo.BlockedCard:
-                    _messageReturn.Data = Consts.StatusCallbackCielo.BlockedCard;
+                    _messageReturn.Message = Consts.StatusCallbackCielo.BlockedCard;
                     transaction.Status = StatusPaymentEnum.ErrorPayment;
                     transaction.Details= Consts.StatusCallbackCielo.BlockedCard;
                     break;
                 case StatusCallbackCielo.TimeOut:
-                    _messageReturn.Data = Consts.StatusCallbackCielo.TimeOut;
+                    _messageReturn.Message = Consts.StatusCallbackCielo.TimeOut;
                     transaction.Status = StatusPaymentEnum.ErrorPayment;
                     transaction.Details= Consts.StatusCallbackCielo.TimeOut;
                     break;
                 case StatusCallbackCielo.CanceledCard:
-                    _messageReturn.Data = Consts.StatusCallbackCielo.CanceledCard;
+                    _messageReturn.Message = Consts.StatusCallbackCielo.CanceledCard;
                     transaction.Status = StatusPaymentEnum.ErrorPayment;
                     transaction.Details= Consts.StatusCallbackCielo.CanceledCard;
                     break;
                 case StatusCallbackCielo.CreditCardProblems:
-                    _messageReturn.Data = Consts.StatusCallbackCielo.CreditCardProblems;
+                    _messageReturn.Message = Consts.StatusCallbackCielo.CreditCardProblems;
                     transaction.Status = StatusPaymentEnum.ErrorPayment;
                     transaction.Details= Consts.StatusCallbackCielo.CreditCardProblems;
                     break;
@@ -174,32 +174,32 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     transaction.Details = Consts.StatusCallbackCielo.SuccessfullyPerformedOperation;
                     break;
                 case StatusCallbackCielo.NotAllowed:
-                    _messageReturn.Data = Consts.StatusCallbackCielo.NotAllowed;
+                    _messageReturn.Message = Consts.StatusCallbackCielo.NotAllowed;
                     transaction.Status = StatusPaymentEnum.ErrorPayment;
                     transaction.Details= Consts.StatusCallbackCielo.NotAllowed;
                     break;
                 case StatusCallbackCielo.ExpiredCard:
-                    _messageReturn.Data = Consts.StatusCallbackCielo.ExpiredCard;
+                    _messageReturn.Message = Consts.StatusCallbackCielo.ExpiredCard;
                     transaction.Status = StatusPaymentEnum.ErrorPayment;
                     transaction.Details= Consts.StatusCallbackCielo.ExpiredCard;
                     break;
                 case StatusCallbackCielo.BlockedCard:
-                    _messageReturn.Data = Consts.StatusCallbackCielo.BlockedCard;
+                    _messageReturn.Message = Consts.StatusCallbackCielo.BlockedCard;
                     transaction.Status = StatusPaymentEnum.ErrorPayment;
                     transaction.Details= Consts.StatusCallbackCielo.BlockedCard;
                     break;
                 case StatusCallbackCielo.TimeOut:
-                    _messageReturn.Data = Consts.StatusCallbackCielo.TimeOut;
+                    _messageReturn.Message = Consts.StatusCallbackCielo.TimeOut;
                     transaction.Status = StatusPaymentEnum.ErrorPayment;
                     transaction.Details= Consts.StatusCallbackCielo.TimeOut;
                     break;
                 case StatusCallbackCielo.CanceledCard:
-                    _messageReturn.Data = Consts.StatusCallbackCielo.CanceledCard;
+                    _messageReturn.Message = Consts.StatusCallbackCielo.CanceledCard;
                     transaction.Status = StatusPaymentEnum.ErrorPayment;
                     transaction.Details= Consts.StatusCallbackCielo.CanceledCard;
                     break;
                 case StatusCallbackCielo.CreditCardProblems:
-                    _messageReturn.Data = Consts.StatusCallbackCielo.CreditCardProblems;
+                    _messageReturn.Message = Consts.StatusCallbackCielo.CreditCardProblems;
                     transaction.Status = StatusPaymentEnum.ErrorPayment;
                     transaction.Details= Consts.StatusCallbackCielo.CreditCardProblems;
                     break;

@@ -24,6 +24,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Querys
         public Decimal TotalValue { get; set; }
         public string ReturnUrl { get; set; }
         public string Details { get; set; }
+        public int TotalTicket { get; set; }
+        public DateTime DateRegister { get; set; }
     }
 
     public class TransactionItens

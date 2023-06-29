@@ -16,6 +16,10 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
         /// </summary>
         public string IdUser { get; set; }
 
+        /// <summary>
+        /// Total Tickets
+        /// </summary>
+        public int TotalTicket { get; set; }
         
         /// <summary>
         /// TransactionItens
