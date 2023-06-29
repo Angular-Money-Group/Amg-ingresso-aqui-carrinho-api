@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System;
 using Amg_ingressos_aqui_carrinho_api.Dto;
 using Amg_ingressos_aqui_carrinho_api.Exceptions;
 using Amg_ingressos_aqui_carrinho_api.Infra;
@@ -96,18 +97,27 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 DataCadastro = DateTime.Now
             };
             //alterar pra urlQrCode 
-            email.Body = email.Body.Replace("{1}","https://www.canalautismo.com.br/wp-content/uploads/2018/05/qrcode-RevistaAutismo.png");
+            email.Body = email.Body.Replace("{nome_usuario}","Usuário Teste");
+            email.Body = email.Body.Replace("{nome_evento}","Evento Teste");
+            email.Body = email.Body.Replace("{data_evento}","15/03/2024 - 23H A 16/03/2024 - 23H59");
+            email.Body = email.Body.Replace("{local_evento}","Arena Sabiazinho");
+            email.Body = email.Body.Replace("{endereco_evento}","Arena Sabiazinho");
+            email.Body = email.Body.Replace("{area_evento}","Área Vip");
+            email.Body = email.Body.Replace("{tipo_ingresso}","Inteira");
+            email.Body = email.Body.Replace("{qr_code}","https://www.canalautismo.com.br/wp-content/uploads/2018/05/qrcode-RevistaAutismo.png");
+            
+            
             _ = _emailService.SaveAsync(email);
             _ = _emailService.Send(email.id);
         }
 
-        public async Task<MessageReturn> GetByIdAsync(string idTransaction)
+        public async Task<MessageReturn> GetByIdAsync(string id)
         {
             try
             {
-                idTransaction.ValidateIdMongo("Transação");
+                id.ValidateIdMongo("Transação");
 
-                _messageReturn.Data = await _transactionRepository.GetById(idTransaction);
+                _messageReturn.Data = await _transactionRepository.GetById(id);
 
             }
             catch (IdMongoException ex)
@@ -170,7 +180,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 {
                     IdPerson = transactionDto.IdUser,
                     Status = Enum.StatusPaymentEnum.InProgress,
-                    Stage = Enum.StageTransactionEnum.Confirm
+                    Stage = Enum.StageTransactionEnum.Confirm,
+                    DateRegister= DateTime.Now,
+                    TotalTicket = transactionDto.TotalTicket
                 };
 
                 _messageReturn.Data = await _transactionRepository.Save<object>(transaction);
@@ -251,11 +263,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     }
                     catch (SaveTransactionException ex)
                     {
+                        _transactionItenRepository.DeleteByIdTransaction(IdTransaction);
                         _messageReturn.Data = string.Empty;
                         throw ex;
                     }
                     catch (System.Exception ex)
                     {
+                        _transactionItenRepository.DeleteByIdTransaction(IdTransaction);
                         _messageReturn.Data = string.Empty;
                         throw ex;
                     }
@@ -351,6 +365,33 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             string jsonContent =JsonSerializer.Deserialize<string>
                                     ( httpResponseMessage.Content.ReadAsStringAsync().Result);
             return jsonContent;
+        }
+    
+        public async Task<MessageReturn> DeleteAsync(string id)
+        {
+            try
+            {
+                id.ValidateIdMongo("Transação");
+                _messageReturn.Data = await _transactionItenRepository.DeleteByIdTransaction(id);
+                _messageReturn.Data = await _transactionRepository.Delete<object>(id);
+
+            }
+            catch (IdMongoException ex)
+            {
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
+            catch (UpdateTransactionException ex)
+            {
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return _messageReturn;
         }
     }
 }

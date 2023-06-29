@@ -20,6 +20,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
             _transactionCollection = dbconnection.GetConnection("transaction");
         }
 
+
         public async Task<object> GetById(string idTransaction)
         {
             try
@@ -40,7 +41,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                 List<GetTransaction> pResults = _transactionCollection
                                                 .Aggregate<GetTransaction>(pipeline).ToList();
 
-                
+
                 //var result = await _eventCollection.FindAsync<Event>(x => x._Id == id as string)
                 //    .Result.FirstOrDefaultAsync();
 
@@ -76,8 +77,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                 }
 
                 var result = await _transactionCollection.Find(filter).ToListAsync();
-                
-                
+
+
                 if (result == null)
                     throw new GetByIdTransactionException("Transação não encontrada");
 
@@ -143,6 +144,30 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                 throw ex;
             }
         }
-    
+
+        public async Task<object> Delete<T1>(string id)
+        {
+            try
+            {
+                // find a person using an equality filter on its id
+                var filter = Builders<Transaction>.Filter.Eq(transaction => transaction.Id, id);
+
+                // delete the person
+                var transactionDeleteResult = await _transactionCollection.DeleteOneAsync(filter);
+                if (transactionDeleteResult.DeletedCount == 1)
+                    return "transação deletada com sucesso";
+                else
+                    return "erro ao deletar transação";
+
+            }
+            catch (SaveTransactionException ex)
+            {
+                throw ex;
+            }
+            catch (System.Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

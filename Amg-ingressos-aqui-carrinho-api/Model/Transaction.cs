@@ -47,27 +47,41 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         [BsonIgnore]
         public List<TransactionIten> TransactionItens { get; set; }
 
+        
         /// <summary>
         /// Status Transacao
         /// </summary>
         public StatusPaymentEnum Status { get; set; }
+        
         /// <summary>
         /// Etapa de transacao
         /// </summary>
         public StageTransactionEnum Stage { get; set; }
+        
         /// <summary>
         /// Url de Retorno Transacao
         /// </summary>
         public string ReturnUrl { get; set; }
+        
         /// <summary>
         /// PaymentId Cielo
         /// </summary>
         public string PaymentIdService { get; set; }
+        
         /// <summary>
         /// Detalhes de transacao
         /// </summary>
         public string Details { get; set; }
+
+        /// <summary>
+        /// Total Ticket
+        /// </summary>
+        public int TotalTicket { get; set; }
         
+        /// <summary>
+        /// Data Cadastro
+        /// </summary>
+        public DateTime DateRegister { get; set; }
 
     }
 }
