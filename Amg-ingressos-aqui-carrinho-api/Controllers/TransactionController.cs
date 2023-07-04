@@ -219,7 +219,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
                     .GetByIdAsync(transaction.Id).Result.Data as List<GetTransaction>)
                     .FirstOrDefault();
 
-                if(transactionDb.Stage != StageTransactionEnum.TicketsData)
+                if(transactionDb.Stage != StageTransactionEnum.TicketsData && 
+                transactionDb.Status != StatusPaymentEnum.ErrorPayment)
                     return NotFound("Estágio fora do padrão");
 
                 transaction.IdPerson = transactionDb.IdPerson;
@@ -274,7 +275,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
                     return NotFound(resultPayment.Message);
                 }
 
-                _transactionService.UpdateAsync(transaction);
+                //_transactionService.UpdateAsync(transaction);
 
                 return Ok("Transação Efetivada");
             }
