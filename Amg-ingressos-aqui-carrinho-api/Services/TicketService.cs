@@ -30,7 +30,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             _messageReturn.Data = JsonConvert.DeserializeObject<List<Ticket>>(jsonContent);
             return _messageReturn;
         }
-        public async Task<MessageReturn> GetTicketsByIdAsync(string id)
+        public async Task<MessageReturn> GetTicketByIdDataUserAsync(string id)
         {
             var url = "http://api.ingressosaqui.com/";
             var uri = "v1/tickets/" + id + "/datauser";

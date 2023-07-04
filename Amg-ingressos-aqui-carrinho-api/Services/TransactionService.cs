@@ -45,7 +45,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 transaction.TransactionItens = (List<TransactionIten>)_transactionItenRepository.GetByIdTransaction(transaction.Id).Result;
                 transaction.TransactionItens.ForEach(i =>
                 {
-                    var result = _ticketService.GetTicketsByIdAsync(i.IdTicket).Result.Data;
+                    var result = _ticketService.GetTicketByIdDataUserAsync(i.IdTicket).Result.Data;
                     var ticketDto = (TicketUserDto)result;
                     var nameImagem = GenerateQrCode(i.IdTicket).Result;
                     var ticket = new Ticket()
@@ -149,23 +149,28 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
                 transaction.Stage = Enum.StageTransactionEnum.PaymentTransaction;
                 transaction.Status = Enum.StatusPaymentEnum.Aproved;
-                UpdateAsync(transaction);
                 _messageReturn.Data = "Transação Efetivada";
 
             }
             catch (IdMongoException ex)
             {
+                transaction.Status = Enum.StatusPaymentEnum.ErrorPayment;
                 _messageReturn.Data = string.Empty;
                 _messageReturn.Message = ex.Message;
             }
             catch (PaymentTransactionException ex)
             {
+                transaction.Status = Enum.StatusPaymentEnum.ErrorPayment;
                 _messageReturn.Data = string.Empty;
                 _messageReturn.Message = ex.Message;
             }
             catch (Exception ex)
             {
+                transaction.Status = Enum.StatusPaymentEnum.ErrorPayment;
                 throw ex;
+            }
+            finally{
+                UpdateAsync(transaction);
             }
 
             return _messageReturn;

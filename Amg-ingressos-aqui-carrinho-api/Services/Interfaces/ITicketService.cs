@@ -10,6 +10,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services.Interfaces
     {
         Task<MessageReturn> GetTicketsByLotAsync(string idLote);
         Task<MessageReturn> UpdateTicketsAsync(Ticket ticket);
-        Task<MessageReturn> GetTicketsByIdAsync(string id);
+        Task<MessageReturn> GetTicketByIdDataUserAsync(string id);
     }
 }
