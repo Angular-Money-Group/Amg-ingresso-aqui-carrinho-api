@@ -434,7 +434,7 @@ namespace Prime.UnitTests.Services
             var messageReturn = "Transação Efetivada";
             var idTransaction = "6442dcb6523d52533aeb1ae4";
             var transaction = FactoryTransaction.SimpleTransaction();
-            _ticketServiceMock.Setup(x => x.GetTicketsByIdAsync(It.IsAny<string>()))
+            _ticketServiceMock.Setup(x => x.GetTicketByIdDataUserAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(new MessageReturn(){Data=FactoryTicketService.SimpleTicketNotSold()}));
             _transactionRepositoryMock.Setup(x => x.GetById(idTransaction))
                 .Returns(Task.FromResult(FactoryTransaction.SimpleTransaction() as object));
