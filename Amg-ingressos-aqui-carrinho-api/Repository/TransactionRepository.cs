@@ -14,7 +14,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
     public class TransactionRepository<T> : ITransactionRepository
     {
         private readonly IMongoCollection<Transaction> _transactionCollection;
-        private readonly IMongoCollection<TransactionIten> _transactionItenCollection;
         public TransactionRepository(IDbConnection<Transaction> dbconnection)
         {
             _transactionCollection = dbconnection.GetConnection("transaction");
@@ -99,7 +98,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
             try
             {
                 await _transactionCollection.InsertOneAsync(transaction as Transaction);
-                return (transaction as Transaction).Id;
+                return transaction as Transaction;
 
             }
             catch (SaveTransactionException ex)
@@ -145,7 +144,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
             }
         }
 
-        public async Task<object> Delete<T1>(string id)
+        public async Task<object> Delete(string id)
         {
             try
             {
