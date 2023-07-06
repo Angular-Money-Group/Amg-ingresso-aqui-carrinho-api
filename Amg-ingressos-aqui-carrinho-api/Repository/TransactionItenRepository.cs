@@ -20,7 +20,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
         {
             try
             {
-                await _transactionItenCollection.InsertOneAsync(transaction as TransactionIten);
+                _transactionItenCollection.InsertOneAsync(transaction as TransactionIten);
                 return (transaction as TransactionIten).Id;
             }
             catch (SaveTransactionException ex)
@@ -45,7 +45,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                     filter &= firstNameFilter;
                 }
 
-                var result = await _transactionItenCollection.Find(filter).ToListAsync();
+                var result = _transactionItenCollection.Find(filter).ToListAsync();
                 
                 
                 if (result == null)
