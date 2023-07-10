@@ -56,7 +56,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                         isSold = ticketDto.isSold,
                         Position = ticketDto.Position,
                         Value = ticketDto.Value,
-                        QrCode = "https://api.ingressosaqui.com/images/" + nameImagem
+                        QrCode = "https://api.ingressosaqui.com/imagens/" + nameImagem
                     };
                     _ticketService.UpdateTicketsAsync(ticket);
                     ProcessEmail(ticketDto.User.email,ticket.QrCode);
