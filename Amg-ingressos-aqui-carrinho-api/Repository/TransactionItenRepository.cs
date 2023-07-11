@@ -45,7 +45,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                     filter &= firstNameFilter;
                 }
 
-                var result = _transactionItenCollection.Find(filter).ToListAsync();
+                var result = await _transactionItenCollection.Find(filter).ToListAsync();
                 
                 
                 if (result == null)
