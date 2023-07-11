@@ -104,7 +104,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             email.Body = email.Body.Replace("{endereco_evento}","Arena Sabiazinho");
             email.Body = email.Body.Replace("{area_evento}","Área Vip");
             email.Body = email.Body.Replace("{tipo_ingresso}","Inteira");
-            email.Body = email.Body.Replace("{qr_code}","https://www.canalautismo.com.br/wp-content/uploads/2018/05/qrcode-RevistaAutismo.png");
+            //email.Body = email.Body.Replace("{qr_code}","https://www.canalautismo.com.br/wp-content/uploads/2018/05/qrcode-RevistaAutismo.png");
+            email.Body = email.Body.Replace("{qr_code}", urlQrCode);
             
             
             _ = _emailService.SaveAsync(email);
