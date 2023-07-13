@@ -188,7 +188,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     Status = Enum.StatusPaymentEnum.InProgress,
                     Stage = Enum.StageTransactionEnum.Confirm,
                     DateRegister= DateTime.Now,
-                    TotalTicket = transactionDto.TotalTicket
+                    TotalTicket = transactionDto.TotalTicket,
+                    TotalValue = transactionDto.TotalValue
                 };
 
                 _messageReturn.Data = await _transactionRepository.Save<object>(transaction);
