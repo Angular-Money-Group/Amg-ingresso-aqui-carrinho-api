@@ -24,7 +24,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
         /// <summary>
         /// Total Valor da transacao
         /// </summary>
-        public int TotalValue { get; set; }
+        public decimal TotalValue { get; set; }
         
         /// <summary>
         /// TransactionItens
