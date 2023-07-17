@@ -38,7 +38,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         {
             var ticketJson = new StringContent(JsonSerializer.Serialize(new {emailID = idEmail}),
              Encoding.UTF8, Application.Json); // using static System.Net.Mime.MediaTypeNames;
-            var url = "https://api.ingressosaqui.com/";
+            var url = "http://api.ingressosaqui.com:3006/";
             var uri = "v1/email/";
 
             _HttpClient.PostAsync(url + uri, ticketJson).Wait();
