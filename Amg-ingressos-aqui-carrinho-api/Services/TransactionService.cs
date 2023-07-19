@@ -59,7 +59,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                         QrCode = "https://api.ingressosaqui.com/imagens/" + nameImagem
                     };
                     _ticketService.UpdateTicketsAsync(ticket);
-                    ProcessEmail(ticketDto.User.email,ticket.QrCode);
+                    ProcessEmail(ticketDto,ticket.QrCode);
                 });
                 
 
@@ -86,25 +86,24 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             return _messageReturn;
         }
 
-        private void ProcessEmail(string userEmail, string urlQrCode)
+        private void ProcessEmail(TicketUserDto ticketUserDto, string urlQrCode)
         {
             var email = new Email
             {
                 Body = _emailService.GenerateBody(),
                 Subject = "Ingressos",
                 Sender = "suporte@ingressosaqui.com",
-                To = userEmail,
+                To = ticketUserDto.User.email,
                 DataCadastro = DateTime.Now
             };
             //alterar pra urlQrCode 
-            email.Body = email.Body.Replace("{nome_usuario}","Usuário Teste");
+            email.Body = email.Body.Replace("{nome_usuario}",ticketUserDto.User.name);
             email.Body = email.Body.Replace("{nome_evento}","Evento Teste");
             email.Body = email.Body.Replace("{data_evento}","15/03/2024 - 23H A 16/03/2024 - 23H59");
             email.Body = email.Body.Replace("{local_evento}","Arena Sabiazinho");
             email.Body = email.Body.Replace("{endereco_evento}","Arena Sabiazinho");
             email.Body = email.Body.Replace("{area_evento}","Área Vip");
             email.Body = email.Body.Replace("{tipo_ingresso}","Inteira");
-            //email.Body = email.Body.Replace("{qr_code}","https://www.canalautismo.com.br/wp-content/uploads/2018/05/qrcode-RevistaAutismo.png");
             email.Body = email.Body.Replace("{qr_code}", urlQrCode);
             
             
