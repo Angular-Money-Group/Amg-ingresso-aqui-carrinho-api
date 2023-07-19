@@ -41,8 +41,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
              Encoding.UTF8, Application.Json); // using static System.Net.Mime.MediaTypeNames;
             _HttpClient.DefaultRequestHeaders.Add(
                 HeaderNames.Accept, "application/json");
-            _HttpClient.DefaultRequestHeaders.Add(
-                HeaderNames.ContentType , "application/json");
             _HttpClient.Timeout = TimeSpan.FromMinutes(10);
             var url = "http://api.ingressosaqui.com:3006/";
             var uri = "v1/email/";
@@ -55,7 +53,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         {
             try
             {
-                var html = System.IO.File.ReadAllText(@"Template/index.html");
+                var path  = (Environment.CurrentDirectory + "/Template/index.html");
+                var html = System.IO.File.ReadAllText(path);
                 var body = html;
                 return body;
             }
