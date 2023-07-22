@@ -7,7 +7,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Amg_ingressos_aqui_carrinho_api.Dto
 {
-    public class TicketUserDto
+    public class TicketUserDataDto
     {
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }

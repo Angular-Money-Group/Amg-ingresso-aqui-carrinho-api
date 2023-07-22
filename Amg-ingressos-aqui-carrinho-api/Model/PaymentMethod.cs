@@ -13,8 +13,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// <summary>
         /// Id Metodo Pagamento
         /// </summary>
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string IdPaymentMethod { get; set; }
+        public string? IdPaymentMethod { get; set; }
         /// <summary>
         /// Tipo de pagamento
         /// </summary>

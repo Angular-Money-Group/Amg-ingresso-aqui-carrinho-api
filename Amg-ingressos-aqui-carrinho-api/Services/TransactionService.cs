@@ -45,21 +45,23 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 transaction.TransactionItens = (List<TransactionIten>)_transactionItenRepository.GetByIdTransaction(transaction.Id).Result;
                 transaction.TransactionItens.ForEach(i =>
                 {
-                    var result = _ticketService.GetTicketByIdDataUserAsync(i.IdTicket).Result.Data;
-                    var ticketDto = (TicketUserDto)result;
+                    var resultUserData = _ticketService.GetTicketByIdDataUserAsync(i.IdTicket).Result.Data;
+                    var resultEventData = _ticketService.GetTicketByIdDataEventAsync(i.IdTicket).Result.Data;
+                    var ticketUserDto = (TicketUserDataDto)resultUserData;
+                    var ticketEventDto = (TicketEventDataDto)resultEventData;
                     var nameImagem = GenerateQrCode(i.IdTicket).Result;
                     var ticket = new Ticket()
                     {
-                        Id = ticketDto.Id,
-                        IdLot = ticketDto.IdLot,
-                        IdUser = ticketDto.User._id,
-                        isSold = ticketDto.isSold,
-                        Position = ticketDto.Position,
-                        Value = ticketDto.Value,
+                        Id = ticketUserDto.Id,
+                        IdLot = ticketUserDto.IdLot,
+                        IdUser = ticketUserDto.User._id,
+                        isSold = ticketUserDto.isSold,
+                        Position = ticketUserDto.Position,
+                        Value = ticketUserDto.Value,
                         QrCode = "https://api.ingressosaqui.com/imagens/" + nameImagem
                     };
                     _ticketService.UpdateTicketsAsync(ticket);
-                    ProcessEmail(ticketDto,ticket.QrCode);
+                    ProcessEmail(ticketUserDto,ticketEventDto,ticket.QrCode, i.HalfPrice);
                 });
                 
 
@@ -86,7 +88,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             return _messageReturn;
         }
 
-        private void ProcessEmail(TicketUserDto ticketUserDto, string urlQrCode)
+        private void ProcessEmail(TicketUserDataDto ticketUserDto,TicketEventDataDto ticketEventDto, string urlQrCode, bool halfprice)
         {
             var email = new Email
             {
@@ -98,12 +100,16 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             };
             //alterar pra urlQrCode 
             email.Body = email.Body.Replace("{nome_usuario}",ticketUserDto.User.name);
-            email.Body = email.Body.Replace("{nome_evento}","Evento Teste");
-            email.Body = email.Body.Replace("{data_evento}","15/03/2024 - 23H A 16/03/2024 - 23H59");
-            email.Body = email.Body.Replace("{local_evento}","Arena Sabiazinho");
-            email.Body = email.Body.Replace("{endereco_evento}","Arena Sabiazinho");
-            email.Body = email.Body.Replace("{area_evento}","Área Vip");
-            email.Body = email.Body.Replace("{tipo_ingresso}","Inteira");
+            email.Body = email.Body.Replace("{nome_evento}",ticketEventDto.@event.name);
+            email.Body = email.Body.Replace("{data_evento}",ticketEventDto.@event.startDate +"A"+ ticketEventDto.@event.endDate);
+            email.Body = email.Body.Replace("{local_evento}",ticketEventDto.@event.local);
+            email.Body = email.Body.Replace("{endereco_evento}",ticketEventDto.@event.address.addressDescription 
+                + " - "+ ticketEventDto.@event.address.number
+                + " - "+ ticketEventDto.@event.address.neighborhood
+                + " - "+ ticketEventDto.@event.address.city
+                + " - "+ ticketEventDto.@event.address.state);
+            email.Body = email.Body.Replace("{area_evento}",ticketEventDto.variant.name);
+            email.Body = email.Body.Replace("{tipo_ingresso}", halfprice? "Meia Entrada":"Inteira");
             email.Body = email.Body.Replace("{qr_code}", urlQrCode);
             
             

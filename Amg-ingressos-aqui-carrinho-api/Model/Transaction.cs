@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using Amg_ingressos_aqui_carrinho_api.Enum;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
