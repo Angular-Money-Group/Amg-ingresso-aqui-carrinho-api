@@ -101,7 +101,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             //alterar pra urlQrCode 
             email.Body = email.Body.Replace("{nome_usuario}",ticketUserDto.User.name);
             email.Body = email.Body.Replace("{nome_evento}",ticketEventDto.@event.name);
-            email.Body = email.Body.Replace("{data_evento}",ticketEventDto.@event.startDate +"A"+ ticketEventDto.@event.endDate);
+            email.Body = email.Body.Replace("{data_evento}",ticketEventDto.@event.startDate +" as "+ ticketEventDto.@event.endDate);
             email.Body = email.Body.Replace("{local_evento}",ticketEventDto.@event.local);
             email.Body = email.Body.Replace("{endereco_evento}",ticketEventDto.@event.address.addressDescription 
                 + " - "+ ticketEventDto.@event.address.number
