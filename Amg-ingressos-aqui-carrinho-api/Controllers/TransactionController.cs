@@ -285,9 +285,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
                     return NotFound(resultPayment.Message);
                 }
 
-                //_transactionService.UpdateAsync(transaction);
-
-                return Ok("Transação Efetivada");
+                return Ok(resultPayment.Data);
             }
             catch (Exception ex)
             {

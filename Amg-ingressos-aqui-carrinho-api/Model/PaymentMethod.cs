@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Amg_ingressos_aqui_carrinho_api.Enum;
@@ -17,6 +18,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// <summary>
         /// Tipo de pagamento
         /// </summary>
+        [Required]
         public TypePaymentEnum TypePayment { get; set; }
         /// <summary>
         /// Numero cartao
