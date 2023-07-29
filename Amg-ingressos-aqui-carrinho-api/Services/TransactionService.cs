@@ -149,13 +149,12 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             try
             {
                 transaction.Id.ValidateIdMongo("Transação");
-                var resultPayment = await _paymentService.Payment(transaction);
-                if (resultPayment.Message != null && resultPayment.Message.Any())
-                    throw new PaymentTransactionException(resultPayment.Message);
+                _messageReturn = await _paymentService.Payment(transaction);
+                if (_messageReturn.Message != null && _messageReturn.Message.Any())
+                    throw new PaymentTransactionException(_messageReturn.Message);
 
                 transaction.Stage = Enum.StageTransactionEnum.PaymentTransaction;
                 transaction.Status = Enum.StatusPaymentEnum.Aproved;
-                _messageReturn.Data = "Transação Efetivada";
 
             }
             catch (IdMongoException ex)
@@ -297,7 +296,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             {
                 transaction.Id.ValidateIdMongo("Transação");
 
-                _messageReturn.Data = await _transactionRepository.Update<object>(transaction);
+                await _transactionRepository.Update<object>(transaction);
 
             }
             catch (IdMongoException ex)
@@ -356,7 +355,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
         private async Task<string> GenerateQrCode(string idTicket)
         {
-            //var url = new Uri(@);
             var url = "http://api.ingressosaqui.com:3004/";
             var uri = "v1/generate-qr-code?data=" + idTicket;
             using var httpResponseMessage = await _HttpClient.GetAsync(url + uri);
