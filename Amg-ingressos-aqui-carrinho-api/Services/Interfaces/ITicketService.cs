@@ -8,7 +8,10 @@ namespace Amg_ingressos_aqui_carrinho_api.Services.Interfaces
 {
     public interface ITicketService
     {
-        Task<MessageReturn> GetTicketsAsync(string idLote);
+        Task<MessageReturn> GetTicketsByLotAsync(string idLote);
         Task<MessageReturn> UpdateTicketsAsync(Ticket ticket);
+        Task<MessageReturn> GetTicketByIdDataUserAsync(string id);
+        Task<MessageReturn> GetTicketByIdDataEventAsync(string id);
+        
     }
 }

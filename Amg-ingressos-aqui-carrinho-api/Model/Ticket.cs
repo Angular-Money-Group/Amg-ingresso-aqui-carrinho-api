@@ -15,31 +15,31 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// </summary>
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        [JsonProperty("Id")]
+        [JsonProperty("id")]
         public string? Id { get; set; }
         
         /// <summary>
         /// Id mongo Lote
         /// </summary>
-        [JsonProperty("IdLot")]
+        [JsonProperty("idLot")]
         public string? IdLot { get; set; }
 
         /// <summary>
         /// Id mongo Usuário
         /// </summary>
-        [JsonProperty("IdUser")]
+        [JsonProperty("idUser")]
         public string? IdUser { get; set; }
         
         /// <summary>
         /// Posicao
         /// </summary>
-        [JsonProperty("Position")]
+        [JsonProperty("position")]
         public string? Position { get; set; }
 
         /// <summary>
         /// Valor Ingresso
         /// </summary>
-        [JsonProperty("Value")]
+        [JsonProperty("value")]
         public decimal Value { get; set; }
 
         /// <summary>
@@ -48,5 +48,10 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         [BsonDefaultValue(false)]
         [JsonProperty("isSold")]
         public bool isSold { get; set; }
+        /// <summary>
+        /// QrCode
+        /// </summary>
+        [JsonProperty("qrCode")]
+        public string QrCode { get; set; }
     }
 }

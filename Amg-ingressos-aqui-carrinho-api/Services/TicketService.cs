@@ -1,5 +1,5 @@
 using System.Text;
-using System.Text.Json;
+using Amg_ingressos_aqui_carrinho_api.Dto;
 using Amg_ingressos_aqui_carrinho_api.Infra;
 using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
@@ -19,17 +19,36 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             _messageReturn = new Model.MessageReturn();
         }
 
-        public async Task<MessageReturn> GetTicketsAsync(string idLote)
+        public async Task<MessageReturn> GetTicketsByLotAsync(string idLote)
         {
-            //var url = new Uri(@);
-            var url = "http://api.ingressosaqui.com:3002/";
-            var uri = "v1/tickets/getTicketsRemaining?idLote=" + idLote;
-            using var httpResponseMessage = await _HttpClient
-                .GetAsync(url + uri);
-            //var result = httpResponseMessage.EnsureSuccessStatusCode();
+            var url = "http://api.ingressosaqui.com/";
+            var uri = "v1/tickets/lote/" + idLote;
+            using var httpResponseMessage = await _HttpClient.GetAsync(url + uri);
             string jsonContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
 
             _messageReturn.Data = JsonConvert.DeserializeObject<List<Ticket>>(jsonContent);
+            return _messageReturn;
+        }
+
+        public async Task<MessageReturn> GetTicketByIdDataUserAsync(string id)
+        {
+            var url = "http://api.ingressosaqui.com/";
+            var uri = "v1/tickets/" + id + "/datauser";
+            using var httpResponseMessage = await _HttpClient.GetAsync(url + uri);
+            string jsonContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
+
+            _messageReturn.Data = JsonConvert.DeserializeObject<TicketUserDataDto>(jsonContent);
+            return _messageReturn;
+        }
+
+        public async Task<MessageReturn> GetTicketByIdDataEventAsync(string id)
+        {
+            var url = "http://api.ingressosaqui.com/";
+            var uri = "v1/tickets/" + id + "/dataevent";
+            using var httpResponseMessage = await _HttpClient.GetAsync(url + uri);
+            string jsonContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
+
+            _messageReturn.Data = JsonConvert.DeserializeObject<TicketEventDataDto>(jsonContent);
             return _messageReturn;
         }
 
@@ -37,17 +56,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         {
             try
             {
-                var ticketJson = new StringContent(JsonSerializer.Serialize(ticket),
-            Encoding.UTF8, Application.Json); // using static System.Net.Mime.MediaTypeNames;
-                var url = "http://api.ingressosaqui.com:3002/";
-                var uri = "v1/tickets/updateTicket?id=" + ticket.Id;
+                var ticketJson = new StringContent(JsonSerializer.Serialize(ticket),Encoding.UTF8, Application.Json); // using static System.Net.Mime.MediaTypeNames;
+                var url = "http://api.ingressosaqui.com/";
+                var uri = "v1/tickets/" + ticket.Id;
 
-                //using var httpResponseMessage =
-                    _HttpClient.PutAsync(url + uri, ticketJson).Wait();
-
-                //string jsonContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
-
-                //_messageReturn.Data = JsonConvert.DeserializeObject<List<Ticket>>(jsonContent);
+                _HttpClient.PutAsync(url + uri, ticketJson).Wait();
                 return _messageReturn;
             }
             catch (System.Exception ex)
