@@ -12,6 +12,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Cielo.Callback
         public Customer Customer { get; set; }
         public Payment Payment { get; set; }
     }
+
+    public class CreditCardIsValid {
+        public bool Valid	 { get; set; }
+        public string ReturnCode { get; set; }
+        public string ReturnMessage { get; set; }
+        public string IssuerTransactionId { get; set; }
+    }
+
     // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
     public class CreditCard
     {

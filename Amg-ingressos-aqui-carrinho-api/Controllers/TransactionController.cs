@@ -276,9 +276,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
                     return NotFound("Estágio fora do padrão");
 
                 var transaction = transactionDb.GeTransactionToTransaction();
-                transaction.Stage = StageTransactionEnum.PaymentTransaction;
 
                 var resultPayment = await _transactionService.Payment(transaction);
+                
+                transaction.Stage = StageTransactionEnum.PaymentTransaction;
+
                 if (resultPayment.Message != null && resultPayment.Message.Any())
                 {
                     _logger.LogInformation(resultPayment.Message);
@@ -290,7 +292,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(MessageLogErrors.paymentTransactionMessage, ex);
-                return StatusCode(500, MessageLogErrors.paymentTransactionMessage);
+                return StatusCode(500, ex.Message);
             }
         }
 
