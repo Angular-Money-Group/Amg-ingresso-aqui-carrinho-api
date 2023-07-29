@@ -34,7 +34,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Cielo
     public class Payment
     {
         public string Type { get; set; }
-        public int Amount { get; set; }
+        public decimal Amount { get; set; }
         public string Provider { get; set; }
         public string Address { get; set; }
         public string BoletoNumber { get; set; }

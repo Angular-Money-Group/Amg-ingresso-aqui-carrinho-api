@@ -163,6 +163,12 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 _messageReturn.Data = string.Empty;
                 _messageReturn.Message = ex.Message;
             }
+            catch (CreditCardNotValidExeption ex)
+            {
+                transaction.Status = Enum.StatusPaymentEnum.ErrorPayment;
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
             catch (PaymentTransactionException ex)
             {
                 transaction.Status = Enum.StatusPaymentEnum.ErrorPayment;

@@ -6,6 +6,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Enum
         Canceled = 1,
         Aproved = 2,
         Finished = 3,
-        ErrorPayment=4
+        ErrorPayment = 4,
+        Pending = 5
     }
 }

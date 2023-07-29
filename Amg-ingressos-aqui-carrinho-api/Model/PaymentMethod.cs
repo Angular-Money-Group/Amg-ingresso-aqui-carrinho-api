@@ -23,31 +23,31 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// <summary>
         /// Numero cartao
         /// </summary>
-        public string CardNumber { get; set; }
+        public string? CardNumber { get; set; }
         /// <summary>
         /// Nome no Cartao
         /// </summary>
-        public string Holder { get; set; }
+        public string? Holder { get; set; }
         /// <summary>
         /// Data Expiracao
         /// </summary>
-        public string ExpirationDate { get; set; }
+        public string? ExpirationDate { get; set; }
         /// <summary>
         /// Codigo seguranca
         /// </summary>
-        public string SecurityCode { get; set; }
+        public string? SecurityCode { get; set; }
         /// <summary>
         /// Salvar Cartao 
         /// </summary>
-        public bool SaveCard { get; set; }
+        public bool? SaveCard { get; set; }
         /// <summary>
         /// Bandeira
         /// </summary>
-        public string Brand { get; set; }
+        public string? Brand { get; set; }
         /// <summary>
         /// Numero de parcelas
         /// </summary>
-        public int Installments { get; set; }
+        public int? Installments { get; set; }
         
         
         
