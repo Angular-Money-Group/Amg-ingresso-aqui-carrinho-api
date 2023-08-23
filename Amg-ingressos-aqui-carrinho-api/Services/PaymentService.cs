@@ -186,7 +186,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                             CardNumber = transaction.PaymentMethod.CardNumber,
                             ExpirationDate = transaction.PaymentMethod.ExpirationDate,
                             Holder = transaction.PaymentMethod.Holder,
-                            SecurityCode = transaction.PaymentMethod.SecurityCode
+                            SecurityCode = transaction.PaymentMethod.SecurityCode,
+                            SaveCard = "false",
+                            CardOnFile = new CardOnFile()
                         },
                         Type = transaction.PaymentMethod.TypePayment.ToString(),
                         Installments = 1,
@@ -214,8 +216,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 //     };
 
                 var transactionJson = new StringContent(System.Text.Json.JsonSerializer.Serialize(transactionToJson), Encoding.UTF8, Application.Json);
-
-                var cardIsValid = ValidateCard(transactionJson).Result;
+                var creditCard = new StringContent(System.Text.Json.JsonSerializer.Serialize(transactionToJson.Payment.CreditCard), Encoding.UTF8, Application.Json);
+                var cardIsValid = ValidateCard(creditCard).Result;
 
                 if (!cardIsValid.Valid)
                     throw new CreditCardNotValidExeption(cardIsValid.ReturnMessage);
