@@ -19,6 +19,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Cielo.CreditCard
         public string ExpirationDate { get; set; }
         public string SecurityCode { get; set; }
         public string Brand { get; set; }
+        public string SaveCard { get; set; }
+        public CardOnFile CardOnFile { get; set; }
     }
 
     public class Payment
@@ -28,6 +30,29 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Cielo.CreditCard
         public int Installments { get; set; }
         public string SoftDescriptor { get; set; }
         public CreditCard CreditCard { get; set; }
+    }
+
+    public class CardOnFile
+    {
+         private string usage = "First";
+         private string reason = "Recurring";
+
+        public string Usage
+        {
+            get { return usage; }
+            set { usage = value; }
+        }
+
+        public string Reason
+        {
+            get { return reason; }
+            set { reason =value; }
+        }
+
+        public CardOnFile() {
+            Usage = usage;
+            Reason = reason;
+        }
     }
 
 }
