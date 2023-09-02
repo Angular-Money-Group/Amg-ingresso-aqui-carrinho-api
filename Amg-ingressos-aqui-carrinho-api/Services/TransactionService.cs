@@ -195,6 +195,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 var transaction = new Transaction()
                 {
                     IdPerson = transactionDto.IdUser,
+                    IdEvent = transactionDto.IdEvent,
                     Status = Enum.StatusPaymentEnum.InProgress,
                     Stage = Enum.StageTransactionEnum.Confirm,
                     DateRegister= DateTime.Now,
