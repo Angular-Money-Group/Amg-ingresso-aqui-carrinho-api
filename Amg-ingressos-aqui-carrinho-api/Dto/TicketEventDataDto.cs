@@ -14,7 +14,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
         public string idLot { get; set; }
         public string idUser { get; set; }
         public object position { get; set; }
-        public int value { get; set; }
+        public double value { get; set; }
         public bool isSold { get; set; }
         public bool reqDocs { get; set; }
         public string qrCode { get; set; }
@@ -71,6 +71,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
         public int status { get; set; }
         public string idEvent { get; set; }
         public bool reqDocs { get; set; }
+        public int QuantityCourtesy { get; set; }
         public object positions { get; set; }
     }
 }
