@@ -126,19 +126,26 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                             @"{ $match: { '$and': [{ 'IdEvent': '" + idEvent.ToString() + "' }] }}"
                         )
                     );
-                }
-                ;
+                };
+                    pipeline.Add(
+                        BsonDocument.Parse(@"{$addFields:{'Stage': { '$toString': '$Stage' }}}")
+                    );
+                pipeline.Add(
+                    BsonDocument.Parse(
+                        @"{ $match: { '$and': [{ 'Stage': '" + 5 + "' }] }}"
+                    )
+                );
 
                 pipeline.Add(
                     BsonDocument.Parse(
                         @"{
-            $lookup: {
-                from: 'events',
-                localField: 'IdEvent',
-                foreignField: '_id',
-                as: 'Event'
-            }
-        }"
+                            $lookup: {
+                                from: 'events',
+                                localField: 'IdEvent',
+                                foreignField: '_id',
+                                as: 'Event'
+                            }
+                        }"
                     )
                 );
 
