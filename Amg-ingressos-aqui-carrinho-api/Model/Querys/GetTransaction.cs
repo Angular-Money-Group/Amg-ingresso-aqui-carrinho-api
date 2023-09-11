@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Amg_ingressos_aqui_carrinho_api.Enum;
+using Amg_ingressos_aqui_carrinho_api.Model;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -16,6 +17,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Querys
         public string IdPerson { get; set; }
         [BsonRepresentation(BsonType.ObjectId)]
         public string IdEvent { get; set; }
+        public Event Event { get; set; }
         public decimal Tax { get; set; }
         public decimal Discount { get; set; }
         public StatusPaymentEnum Status { get; set; }

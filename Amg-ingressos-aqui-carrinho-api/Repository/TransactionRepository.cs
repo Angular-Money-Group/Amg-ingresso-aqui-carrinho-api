@@ -14,11 +14,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
     public class TransactionRepository<T> : ITransactionRepository
     {
         private readonly IMongoCollection<Transaction> _transactionCollection;
+
         public TransactionRepository(IDbConnection<Transaction> dbconnection)
         {
             _transactionCollection = dbconnection.GetConnection("transaction");
         }
-
 
         public async Task<object> GetById(string idTransaction)
         {
@@ -26,18 +26,23 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
             {
                 var json = QuerysMongo.GetTransactionQuery;
 
-                BsonDocument documentFilter = BsonDocument.Parse(@"{$addFields:{'_id': { '$toString': '$_id' }}}");
-                BsonDocument documentFilter1 = BsonDocument.Parse(@"{ $match: { '$and': [{ '_id': '" + idTransaction.ToString() + "' }] }}");
+                BsonDocument documentFilter = BsonDocument.Parse(
+                    @"{$addFields:{'_id': { '$toString': '$_id' }}}"
+                );
+                BsonDocument documentFilter1 = BsonDocument.Parse(
+                    @"{ $match: { '$and': [{ '_id': '" + idTransaction.ToString() + "' }] }}"
+                );
                 BsonDocument document = BsonDocument.Parse(json);
-                BsonDocument[] pipeline = new BsonDocument[] {
+                BsonDocument[] pipeline = new BsonDocument[]
+                {
                     documentFilter,
                     documentFilter1,
                     document
                 };
 
                 List<GetTransaction> pResults = _transactionCollection
-                                                .Aggregate<GetTransaction>(pipeline).ToList();
-
+                    .Aggregate<GetTransaction>(pipeline)
+                    .ToList();
 
                 //var result = await _eventCollection.FindAsync<Event>(x => x._Id == id as string)
                 //    .Result.FirstOrDefaultAsync();
@@ -75,6 +80,77 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
 
                 var result = await _transactionCollection.Find(filter).ToListAsync();
 
+                if (result == null)
+                    throw new GetByIdTransactionException("Transação não encontrada");
+
+                return result;
+            }
+            catch (GetByIdTransactionException ex)
+            {
+                throw ex;
+            }
+            catch (System.Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<object> GetByUserEvent(string idPerson, string? idEvent)
+        {
+            try
+            {
+                List<BsonDocument> pipeline = new List<BsonDocument>();
+
+                if (!string.IsNullOrWhiteSpace(idPerson))
+                {
+                    pipeline.Add(
+                        BsonDocument.Parse(
+                            @"{$addFields:{'IdPerson': { '$toString': '$IdPerson' }}}"
+                        )
+                    );
+                    pipeline.Add(
+                        BsonDocument.Parse(
+                            @"{ $match: { '$and': [{ 'IdPerson': '"
+                                + idPerson.ToString()
+                                + "' }] }}"
+                        )
+                    );
+                }
+                else if (!string.IsNullOrWhiteSpace(idEvent))
+                {
+                    pipeline.Add(
+                        BsonDocument.Parse(@"{$addFields:{'IdEvent': { '$toString': '$IdEvent' }}}")
+                    );
+                    pipeline.Add(
+                        BsonDocument.Parse(
+                            @"{ $match: { '$and': [{ 'IdEvent': '" + idEvent.ToString() + "' }] }}"
+                        )
+                    );
+                }
+
+                pipeline.Add(
+                    BsonDocument.Parse(
+                        @"{
+                            $lookup:'
+                                {
+                                    from: 'events',
+                                    localField: 'IdEvent',
+                                    foreignField: '_id',
+                                    as: 'Event'
+                                }
+                        }"
+                    )
+                );
+
+                BsonDocument uniwindEvent = BsonDocument.Parse(
+                    @"{
+                        $unwind: '$Event'
+                    }"
+                );
+
+                pipeline.Add(uniwindEvent);
+
+                var result = _transactionCollection.Aggregate<GetTransaction>(pipeline).ToList();
 
                 if (result == null)
                     throw new GetByIdTransactionException("Transação não encontrada");
@@ -97,7 +173,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
             {
                 await _transactionCollection.InsertOneAsync(transaction as Transaction);
                 return transaction as Transaction;
-
             }
             catch (SaveTransactionException ex)
             {
@@ -115,22 +190,32 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
             {
                 var transactionModel = (transaction as Transaction);
                 var update = Builders<Transaction>.Update
-                   .Set(transactionMongo => transactionMongo.Status, transactionModel.Status)
-                   .Set(transactionMongo => transactionMongo.PaymentMethod, transactionModel.PaymentMethod)
-                   .Set(transactionMongo => transactionMongo.IdPerson, transactionModel.IdPerson)
-                   .Set(transactionMongo => transactionMongo.Stage, transactionModel.Stage)
-                   .Set(transactionMongo => transactionMongo.Tax, transactionModel.Tax)
-                   .Set(transactionMongo => transactionMongo.Discount, transactionModel.Discount)
-                   .Set(transactionMongo => transactionMongo.PaymentIdService, transactionModel.PaymentIdService)
-                   .Set(transactionMongo => transactionMongo.Details, transactionModel.Details)
-                   .Set(transactionMongo => transactionMongo.TotalValue, transactionModel.TotalValue);
+                    .Set(transactionMongo => transactionMongo.Status, transactionModel.Status)
+                    .Set(
+                        transactionMongo => transactionMongo.PaymentMethod,
+                        transactionModel.PaymentMethod
+                    )
+                    .Set(transactionMongo => transactionMongo.IdPerson, transactionModel.IdPerson)
+                    .Set(transactionMongo => transactionMongo.Stage, transactionModel.Stage)
+                    .Set(transactionMongo => transactionMongo.Tax, transactionModel.Tax)
+                    .Set(transactionMongo => transactionMongo.Discount, transactionModel.Discount)
+                    .Set(
+                        transactionMongo => transactionMongo.PaymentIdService,
+                        transactionModel.PaymentIdService
+                    )
+                    .Set(transactionMongo => transactionMongo.Details, transactionModel.Details)
+                    .Set(
+                        transactionMongo => transactionMongo.TotalValue,
+                        transactionModel.TotalValue
+                    );
 
-                var filter = Builders<Transaction>.Filter
-                    .Eq(transactionMongo => transactionMongo.Id, transactionModel.Id);
+                var filter = Builders<Transaction>.Filter.Eq(
+                    transactionMongo => transactionMongo.Id,
+                    transactionModel.Id
+                );
 
                 await _transactionCollection.UpdateOneAsync(filter, update);
                 return "Atualizado";
-
             }
             catch (SaveTransactionException ex)
             {
@@ -155,7 +240,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                     return "transação deletada com sucesso";
                 else
                     return "erro ao deletar transação";
-
             }
             catch (SaveTransactionException ex)
             {

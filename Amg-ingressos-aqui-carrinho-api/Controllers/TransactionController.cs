@@ -84,6 +84,36 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         }
 
         /// <summary>
+        /// Busca Transação por id
+        /// </summary>
+        /// <param name="idUser">id do usuário</param>
+        /// <param name="idEvent">id do evento</param>
+        /// <returns>200 Transação</returns>
+        /// <returns>500 Erro inesperado</returns>
+        /// <returns>404 Erro tratado</returns>
+        [HttpGet]
+        [Route("person/{idUser}/tickets")]
+        public async Task<IActionResult> GetByUserEventAsync([FromRoute] string idUser, [FromQuery] string? idEvent)
+        {
+            try
+            {
+                var result = await _transactionService.GetByUserEventAsync(idUser, idEvent);
+                if (result.Message != null && result.Message.Any())
+                {
+                    _logger.LogInformation(result.Message);
+                    return NotFound(result.Message);
+                }
+
+                return Ok(result.Data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(MessageLogErrors.getByPersonTransactionMessage, ex);
+                return StatusCode(500, MessageLogErrors.getByPersonTransactionMessage);
+            }
+        }
+
+        /// <summary>
         /// Grava Transação
         /// </summary>
         /// <param name="transaction">Dados para criar Transacao</param>
