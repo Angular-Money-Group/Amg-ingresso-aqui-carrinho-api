@@ -360,6 +360,31 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             return _messageReturn;
         }
 
+        public async Task<MessageReturn> GetByUserEventAsync(string idUser, string? idEvent)
+        {
+            try
+            {
+                _messageReturn.Data = await _transactionRepository.GetByUserEvent(idUser, idEvent);
+
+            }
+            catch (IdMongoException ex)
+            {
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
+            catch (GetByPersonTransactionException ex)
+            {
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return _messageReturn;
+        }
+
         private async Task<string> GenerateQrCode(string idTicket)
         {
             var url = "http://api.ingressosaqui.com:3004/";
