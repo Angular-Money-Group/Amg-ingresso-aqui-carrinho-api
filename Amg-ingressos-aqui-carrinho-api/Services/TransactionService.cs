@@ -421,5 +421,32 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
             return _messageReturn;
         }
+
+        public async Task<MessageReturn> CancelTransaction(Transaction transaction)
+        {
+            try
+            {
+                transaction.Status = Enum.StatusPaymentEnum.Canceled;
+                _messageReturn.Data = await _transactionRepository.Update<object>(transaction);
+
+            }
+            catch (IdMongoException ex)
+            {
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
+            catch (UpdateTransactionException ex)
+            {
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return _messageReturn;
+            
+        }
     }
 }

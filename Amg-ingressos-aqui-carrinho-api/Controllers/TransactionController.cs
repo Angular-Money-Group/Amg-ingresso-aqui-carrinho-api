@@ -357,5 +357,37 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
                 return StatusCode(500, MessageLogErrors.saveTransactionMessage);
             }
         }
+        /// <summary>
+        /// Grava Transação
+        /// </summary>
+        /// <param name="transaction">Corpo Transação a ser Gravado</param>
+        /// <returns>200 Transação criado</returns>
+        /// <returns>500 Erro inesperado</returns>
+        [HttpPut]
+        [Route("cancel/{idTransaction}")]
+        public async Task<IActionResult> CancelTransactionAsync([FromRoute] string idTransaction)
+        {
+            try
+            {
+                idTransaction.ValidateIdMongo("Transação");
+                var transactionDb = (_transactionService
+                    .GetByIdAsync(idTransaction).Result.Data as List<GetTransaction>)
+                    .FirstOrDefault();
+                var transaction = transactionDb.GeTransactionToTransaction();
+                var resultQrcode = await _transactionService.CancelTransaction(transaction);
+                if (resultQrcode.Message != null && resultQrcode.Message.Any())
+                {
+                    _logger.LogInformation(resultQrcode.Message);
+                    return NotFound(resultQrcode.Message);
+                }
+
+                return Ok(resultQrcode.Data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(MessageLogErrors.saveTransactionMessage, ex);
+                return StatusCode(500, MessageLogErrors.saveTransactionMessage);
+            }
+        }
     }
 }
