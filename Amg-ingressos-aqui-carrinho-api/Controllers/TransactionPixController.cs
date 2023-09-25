@@ -110,7 +110,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
 
                 if (
                     transactionDb.Stage != StageTransactionEnum.TicketsData
-                    && transactionDb.Status != StatusPaymentEnum.ErrorPayment
+                    && transactionDb.Status != StatusPaymentEnum.InProgress
                 )
                     return NotFound("Estágio fora do padrão");
 
