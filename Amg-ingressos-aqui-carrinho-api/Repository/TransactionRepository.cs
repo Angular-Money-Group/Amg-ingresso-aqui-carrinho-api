@@ -202,6 +202,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                         transactionMongo => transactionMongo.PaymentMethod,
                         transactionModel.PaymentMethod
                     )
+                    .Set(
+                        transactionMongo => transactionMongo.PaymentMethodPix,
+                        transactionModel.PaymentMethodPix
+                    )
+                    .Set(
+                        transactionMongo => transactionMongo.PaymentPix,
+                        transactionModel.PaymentPix
+                    )
                     .Set(transactionMongo => transactionMongo.IdPerson, transactionModel.IdPerson)
                     .Set(transactionMongo => transactionMongo.Stage, transactionModel.Stage)
                     .Set(transactionMongo => transactionMongo.Tax, transactionModel.Tax)
