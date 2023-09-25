@@ -19,12 +19,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         private MessageReturn _messageReturn;
         private HttpClient _HttpClient;
         private IUserService _userService;
+
         public PaymentService(ICieloClient cieloClient, IUserService userService)
         {
             _HttpClient = cieloClient.CreateClient();
             _userService = userService;
             _messageReturn = new Model.MessageReturn();
         }
+
         public async Task<MessageReturn> Payment(Transaction transaction)
         {
             try
@@ -36,8 +38,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     await PaymentCieloDebitCardAsync(transaction);
                 else if (transaction.PaymentMethod.TypePayment == Enum.TypePaymentEnum.PaymentSlip)
                     PaymentCieloSlipAsync(transaction);
-                else if (transaction.PaymentMethod.TypePayment == Enum.TypePaymentEnum.Pix)
-                    _messageReturn.Data = PaymentCieloPixAsync(transaction).Result;
                 else
                     throw new Exception("Tipo nao mapeado");
             }
@@ -54,41 +54,42 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             return _messageReturn;
         }
 
-        private async Task<object> PaymentCieloPixAsync(Transaction transaction)
+        public async Task<MessageReturn> PaymentCieloPixAsync(Transaction transaction)
         {
-
-            var result = _userService.FindByIdAsync(transaction.IdPerson).Result;
-            if (result.Message.Any())
-                throw new Exception(result.Message);
-
-            User user = result.Data as User;
-
-            var transactionToJson = new PaymentCieloPix()
+            try
             {
-                MerchantOrderId = transaction.Id,
+                var result = _userService.FindByIdAsync(transaction.IdPerson).Result;
 
-                Customer = new Model.Cielo.Pix.CustomerPix() { Name = user.Name, Identity = user.DocumentId, IdentityType = "CPF" },
-                Payment = new Model.Cielo.Pix.PaymentPix()
-                {
-                    Amount = (int)((transaction.TotalValue + transaction.Tax) - transaction.Discount),
-                    Type = transaction.PaymentMethod.TypePayment.ToString(),
-                }
-            };
+                User user = result.Data as User;
 
-            var transactionJson = new StringContent(System.Text.Json.JsonSerializer.Serialize(transactionToJson), Encoding.UTF8, Application.Json);
-            var objJson = SendRequestAsync(transactionJson);
-            var obj = JsonConvert.DeserializeObject<CallbackCreditCard>(objJson.ToString());
-            switch (obj.Payment.ReturnCode)
-            {
-                case StatusCallbackCielo.Pending:
-                    _messageReturn.Data = Consts.StatusCallbackCielo.SuccessfullyPerformedOperation;
-                    transaction.Status = StatusPaymentEnum.Pending;
-                    break;
+                var transactionToJson = transaction.PaymentMethodPix;
 
+                var transactionJson = new StringContent(
+                    System.Text.Json.JsonSerializer.Serialize(transactionToJson),
+                    Encoding.UTF8,
+                    Application.Json
+                );
+                var objJson = SendRequestAsync(transactionJson);
+                var obj = JsonConvert.DeserializeObject<CallbackPix>(objJson);
+
+                // switch (obj.Payment.ReturnCode)
+                // {
+                //     case StatusCallbackCielo.Pending:
+                //         _messageReturn.Data = Consts
+                //             .StatusCallbackCielo
+                //             .SuccessfullyPerformedOperation;
+                //         transaction.Status = StatusPaymentEnum.Pending;
+                //         break;
+                // }
+
+                _messageReturn.Data = obj;
             }
-            transaction.PaymentIdService = obj.Payment.PaymentId;
+            catch (Exception ex)
+            {
+                _messageReturn.Message = ex.Message;
+            }
 
-            return obj;
+            return _messageReturn;
         }
 
         private async Task<object> PaymentCieloDebitCardAsync(Transaction transaction)
@@ -105,7 +106,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 Customer = new Model.Cielo.DebitCard.Customer() { Name = user.Name },
                 Payment = new Model.Cielo.DebitCard.Payment()
                 {
-                    Amount = (int)((transaction.TotalValue + transaction.Tax) - transaction.Discount),
+                    Amount = (int)(
+                        (transaction.TotalValue + transaction.Tax) - transaction.Discount
+                    ),
                     DebitCard = new DebitCard()
                     {
                         Brand = transaction.PaymentMethod.Brand,
@@ -120,7 +123,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 }
             };
 
-            var transactionJson = new StringContent(System.Text.Json.JsonSerializer.Serialize(transactionToJson), Encoding.UTF8, Application.Json);
+            var transactionJson = new StringContent(
+                System.Text.Json.JsonSerializer.Serialize(transactionToJson),
+                Encoding.UTF8,
+                Application.Json
+            );
             var objJson = SendRequestAsync(transactionJson);
             var obj = JsonConvert.DeserializeObject<CallbackCreditCard>(objJson.ToString());
             switch (obj.Payment.ReturnCode)
@@ -179,7 +186,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     MerchantOrderId = transaction.Id,
                     Payment = new Model.Cielo.CreditCard.Payment()
                     {
-                        Amount = (int)((transaction.TotalValue + transaction.Tax) - transaction.Discount),
+                        Amount = (int)(
+                            (transaction.TotalValue + transaction.Tax) - transaction.Discount
+                        ),
                         CreditCard = new Model.Cielo.CreditCard.CreditCard()
                         {
                             Brand = transaction.PaymentMethod.Brand,
@@ -215,8 +224,16 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 //         }
                 //     };
 
-                var transactionJson = new StringContent(System.Text.Json.JsonSerializer.Serialize(transactionToJson), Encoding.UTF8, Application.Json);
-                var creditCard = new StringContent(System.Text.Json.JsonSerializer.Serialize(transactionToJson.Payment.CreditCard), Encoding.UTF8, Application.Json);
+                var transactionJson = new StringContent(
+                    System.Text.Json.JsonSerializer.Serialize(transactionToJson),
+                    Encoding.UTF8,
+                    Application.Json
+                );
+                var creditCard = new StringContent(
+                    System.Text.Json.JsonSerializer.Serialize(transactionToJson.Payment.CreditCard),
+                    Encoding.UTF8,
+                    Application.Json
+                );
                 var cardIsValid = ValidateCard(creditCard).Result;
 
                 if (!cardIsValid.Valid)
@@ -227,9 +244,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 switch (obj.Payment.ReturnCode)
                 {
                     case StatusCallbackCielo.SuccessfullyPerformedOperation:
-                        _messageReturn.Data = Consts.StatusCallbackCielo.SuccessfullyPerformedOperation;
+                        _messageReturn.Data = Consts
+                            .StatusCallbackCielo
+                            .SuccessfullyPerformedOperation;
                         transaction.Status = StatusPaymentEnum.Aproved;
-                        transaction.Details = Consts.StatusCallbackCielo.SuccessfullyPerformedOperation;
+                        transaction.Details = Consts
+                            .StatusCallbackCielo
+                            .SuccessfullyPerformedOperation;
                         break;
                     case StatusCallbackCielo.NotAllowed:
                         _messageReturn.Message = Consts.StatusCallbackCielo.NotAllowed;
@@ -262,9 +283,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                         transaction.Details = Consts.StatusCallbackCielo.CreditCardProblems;
                         break;
                     case StatusCallbackCielo.SuccessfullyPerformedOperation2:
-                        _messageReturn.Data = Consts.StatusCallbackCielo.SuccessfullyPerformedOperation;
+                        _messageReturn.Data = Consts
+                            .StatusCallbackCielo
+                            .SuccessfullyPerformedOperation;
                         transaction.Status = StatusPaymentEnum.Aproved;
-                        transaction.Details = Consts.StatusCallbackCielo.SuccessfullyPerformedOperation;
+                        transaction.Details = Consts
+                            .StatusCallbackCielo
+                            .SuccessfullyPerformedOperation;
                         break;
                 }
                 transaction.PaymentIdService = obj.Payment.PaymentId;
@@ -279,19 +304,24 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             {
                 throw ex;
             }
-
         }
 
         private async Task<CreditCardIsValid> ValidateCard(StringContent transactionJson)
         {
             try
             {
-                var requestMessage = new HttpRequestMessage(HttpMethod.Post, "https://apisandbox.cieloecommerce.cielo.com.br/1/zeroauth");
+                var requestMessage = new HttpRequestMessage(
+                    HttpMethod.Post,
+                    "https://apisandbox.cieloecommerce.cielo.com.br/1/zeroauth"
+                );
                 requestMessage.Headers.Add("Accept", "*/*");
                 requestMessage.Headers.Add("Accept-Encoding", "gzip, deflate, br");
                 requestMessage.Headers.Add("Connection", "keep-alive");
                 requestMessage.Headers.Add("MerchantId", "e3169e28-d8e5-4f90-8db2-3c54af7d361a");
-                requestMessage.Headers.Add("MerchantKey", "GNOWRLOKZITAJZTNKLDTZNEAUDHFQTRCTAKMWQEP");
+                requestMessage.Headers.Add(
+                    "MerchantKey",
+                    "GNOWRLOKZITAJZTNKLDTZNEAUDHFQTRCTAKMWQEP"
+                );
                 requestMessage.Content = transactionJson;
 
                 using var httpResponseMessage = _HttpClient.Send(requestMessage);
@@ -300,13 +330,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 var result = httpResponseMessage.EnsureSuccessStatusCode();
 
                 return JsonConvert.DeserializeObject<CreditCardIsValid>(jsonContent);
-
             }
             catch (System.Exception ex)
             {
                 throw ex;
             }
         }
+
         private async Task PaymentCieloSlipAsync(Transaction transaction)
         {
             try
@@ -345,14 +375,22 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                         Demonstrative = "Desmonstrative Teste",
                         ExpirationDate = "5/1/2023",
                         Identification = "11884926754",
-                        Instructions = "Aceitar somente até a data de vencimento, após essa data juros de 1% dia.",
+                        Instructions =
+                            "Aceitar somente até a data de vencimento, após essa data juros de 1% dia.",
                         Amount = transaction.TotalValue,
                         Type = "Boleto",
                     }
                 };
-                var transactionJson = new StringContent(System.Text.Json.JsonSerializer.Serialize(transactionToJson), Encoding.UTF8, Application.Json);
+                var transactionJson = new StringContent(
+                    System.Text.Json.JsonSerializer.Serialize(transactionToJson),
+                    Encoding.UTF8,
+                    Application.Json
+                );
                 var objJson = SendRequestAsync(transactionJson);
-                var obj = JsonConvert.DeserializeObject<Model.Cielo.Callback.Slip.CallbackPaymentSlip>(objJson);
+                var obj =
+                    JsonConvert.DeserializeObject<Model.Cielo.Callback.Slip.CallbackPaymentSlip>(
+                        objJson
+                    );
                 transaction.PaymentIdService = obj.Payment.PaymentId;
                 _messageReturn.Data = obj.Payment.Url;
             }
@@ -360,19 +398,52 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             {
                 throw;
             }
+        }
 
+        public string GetStatusPayment(string paymentId)
+        {
+            try
+            {
+                var requestMessage = new HttpRequestMessage(
+                    HttpMethod.Get,
+                    "https://apiquerysandbox.cieloecommerce.cielo.com.br/1/sales/" + paymentId
+                );
+                requestMessage.Headers.Add("Accept", "*/*");
+                requestMessage.Headers.Add("Accept-Encoding", "gzip, deflate, br");
+                requestMessage.Headers.Add("Connection", "keep-alive");
+                requestMessage.Headers.Add("MerchantId", "e3169e28-d8e5-4f90-8db2-3c54af7d361a");
+                requestMessage.Headers.Add(
+                    "MerchantKey",
+                    "GNOWRLOKZITAJZTNKLDTZNEAUDHFQTRCTAKMWQEP"
+                );
+
+                using var httpResponseMessage = _HttpClient.Send(requestMessage);
+
+                string jsonContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
+                return jsonContent;
+            }
+            catch (System.Exception ex)
+            {
+                throw;
+            }
         }
 
         private string SendRequestAsync(StringContent transactionJson)
         {
             try
             {
-                var requestMessage = new HttpRequestMessage(HttpMethod.Post, "https://apisandbox.cieloecommerce.cielo.com.br/1/sales");
+                var requestMessage = new HttpRequestMessage(
+                    HttpMethod.Post,
+                    "https://apisandbox.cieloecommerce.cielo.com.br/1/sales"
+                );
                 requestMessage.Headers.Add("Accept", "*/*");
                 requestMessage.Headers.Add("Accept-Encoding", "gzip, deflate, br");
                 requestMessage.Headers.Add("Connection", "keep-alive");
                 requestMessage.Headers.Add("MerchantId", "e3169e28-d8e5-4f90-8db2-3c54af7d361a");
-                requestMessage.Headers.Add("MerchantKey", "GNOWRLOKZITAJZTNKLDTZNEAUDHFQTRCTAKMWQEP");
+                requestMessage.Headers.Add(
+                    "MerchantKey",
+                    "GNOWRLOKZITAJZTNKLDTZNEAUDHFQTRCTAKMWQEP"
+                );
                 requestMessage.Content = transactionJson;
 
                 using var httpResponseMessage = _HttpClient.Send(requestMessage);

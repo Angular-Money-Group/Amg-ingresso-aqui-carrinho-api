@@ -2,6 +2,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Enum
 {
     public enum StatusCallbackCielo
     {
+        PaymentConfirmed = 2,
         NotAllowed = 05,
         Pending = 12,
         ExpiredCard = 57,

@@ -222,6 +222,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
 
                 transaction.IdPerson = transactionDb.IdPerson;
                 transaction.TotalValue = transactionDb.TotalValue;
+                
                 var result = await _transactionService.UpdateAsync(transaction);
                 if (result.Message != null && result.Message.Any())
                 {
@@ -283,7 +284,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
                 return StatusCode(500, MessageLogErrors.updateTransactionMessage);
             }
         }
-
+        
         /// <summary>
         /// Grava Transação
         /// </summary>

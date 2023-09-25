@@ -48,8 +48,24 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// Numero de parcelas
         /// </summary>
         public int? Installments { get; set; }
-        
-        
-        
+    }
+
+    public class PaymentMethodPix {
+        public string MerchantOrderId { get; set; }
+
+        public Customer Customer { get; set; }
+        public Payment Payment { get; set; }
+
+    }
+
+    public class Customer {
+        public string Name { get; set; }
+        public string Identity { get; set; }
+        public string IdentityType { get; set; }
+    }
+
+    public class Payment{
+        public string Type { get; set; }
+        public int Amount { get; set; }
     }
 }
