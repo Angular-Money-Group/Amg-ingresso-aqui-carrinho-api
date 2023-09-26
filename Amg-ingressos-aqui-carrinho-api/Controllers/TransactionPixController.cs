@@ -101,6 +101,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
             {
                 if (idTransaction == string.Empty)
                     return NotFound("Id Transação é Obrigatório");
+
                 var transaction = transactionDto.StagePaymentPixDataDtoToTransaction();
                 transaction.Id = idTransaction;
                 var transactionDb = (
