@@ -10,7 +10,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services.Interfaces
         Task<MessageReturn> UpdateAsync(Transaction transaction);
         Task<MessageReturn> GetByIdAsync(string idTransaction);
         Task<MessageReturn> GetByUserAsync(string idUser);
-        Task<MessageReturn> GetByUserEventAsync(string idUser, string? idEvent);
+        Task<MessageReturn> GetByUserEventAsync(string idUser);
+        Task<MessageReturn> GetByUserTicketAsync(string idUser, string idEvent);
         Task<MessageReturn> Payment(Transaction transaction);
         Task<MessageReturn> FinishedTransactionAsync(Transaction transaction);
         Task<MessageReturn> CancelTransaction(Transaction transaction);

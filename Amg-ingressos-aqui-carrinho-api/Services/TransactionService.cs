@@ -7,6 +7,7 @@ using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Repository.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Utils;
+using Amg_ingressos_aqui_carrinho_api.Model.Querys;
 
 namespace Amg_ingressos_aqui_carrinho_api.Services
 {
@@ -42,7 +43,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             try
             {
                 transaction.Id.ValidateIdMongo("Transação");
-                transaction.TransactionItens = (List<TransactionIten>)_transactionItenRepository.GetByIdTransaction(transaction.Id).Result;
+                transaction.TransactionItens = (List<Model.TransactionIten>)_transactionItenRepository.GetByIdTransaction(transaction.Id).Result;
                 transaction.TransactionItens.ForEach(i =>
                 {
                     var resultUserData = _ticketService.GetTicketByIdDataUserAsync(i.IdTicket).Result.Data;
@@ -50,7 +51,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     var ticketUserDto = (TicketUserDataDto)resultUserData;
                     var ticketEventDto = (TicketEventDataDto)resultEventData;
                     var nameImagem = GenerateQrCode(i.IdTicket).Result;
-                    var ticket = new Ticket()
+                    var ticket = new Model.Ticket()
                     {
                         Id = ticketUserDto.Id,
                         IdLot = ticketUserDto.IdLot,
@@ -233,7 +234,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                         if (messageTicket.Message != null && messageTicket.Message.Any())
                             throw new Exception("Erro ao buscar Ingressos");
 
-                        var listTickets = (List<Ticket>)messageTicket.Data;
+                        var listTickets = (List<Model.Ticket>)messageTicket.Data;
                         if (listTickets?.Count == 0 || listTickets?.Count < i.AmountTicket)
                             throw new SaveTransactionException("Número de ingressos inválido");
 
@@ -245,7 +246,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                             if (ticket.Value == 0)
                                 throw new SaveTransactionException("Valor do Ingresso inválido.");
 
-                            var transactionItem = new TransactionIten()
+                            var transactionItem = new Model.TransactionIten()
                             {
                                 HalfPrice = i.HalfPrice,
                                 IdTransaction = IdTransaction,
@@ -324,7 +325,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             return _messageReturn;
         }
 
-        private void ValidateTransactionIten(TransactionIten transactionIten)
+        private void ValidateTransactionIten(Model.TransactionIten transactionIten)
         {
             transactionIten.IdTicket.ValidateIdMongo("Ticket");
             transactionIten.IdTransaction.ValidateIdMongo("Transação");
@@ -360,11 +361,64 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             return _messageReturn;
         }
 
-        public async Task<MessageReturn> GetByUserEventAsync(string idUser, string? idEvent)
+        public async Task<MessageReturn> GetByUserEventAsync(string idUser)
         {
             try
             {
-                _messageReturn.Data = await _transactionRepository.GetByUserEvent(idUser, idEvent);
+                
+                List<GetTransactionEvent> transactions = (List<GetTransactionEvent>)await _transactionRepository.GetByUserEvent(idUser);
+                var result = transactions.GroupBy(x=> x.IdEvent).Select(y=>  new EventDto {
+                    address = y.FirstOrDefault().Event.Address,
+                    description = y.FirstOrDefault().Event.Description,
+                    startDate = y.FirstOrDefault().Event.StartDate,
+                    endDate = y.FirstOrDefault().Event.EndDate,
+                    image= y.FirstOrDefault().Event.Image,
+                    local = y.FirstOrDefault().Event.Local,
+                    name = y.FirstOrDefault().Event.Name,
+                    status = y.FirstOrDefault().Event.Status,
+                    type = y.FirstOrDefault().Event.Type
+                    /*Transactions = y.Select(y=> new TransactionEventDto(){
+                                Id= y._id,
+                                DateRegister= y.DateRegister,
+                                Discount= y.Discount,
+                                IdEvent= y.IdEvent,
+                                IdPerson=y.IdPerson,
+                                PaymentMethod= y.PaymentMethod,
+                                Status= y.Status,
+                                Tax= y.Tax,
+                                TotalTicket=y.TotalTicket,
+                                TotalValue=y.TotalValue,
+                            }).ToList()*/
+                }).ToList();
+
+                _messageReturn.Data = result;
+
+            }
+            catch (IdMongoException ex)
+            {
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
+            catch (GetByPersonTransactionException ex)
+            {
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return _messageReturn;
+        }
+
+        public async Task<MessageReturn> GetByUserTicketAsync(string idUser, string? idEvent)
+        {
+            try
+            {
+                
+                var transactions = (List<GetTransactionEvent>)await _transactionRepository.GetByUserTickets(idUser, idEvent);
+                _messageReturn.Data = transactions;
 
             }
             catch (IdMongoException ex)

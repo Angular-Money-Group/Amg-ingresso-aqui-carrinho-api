@@ -39,7 +39,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Mappers
                 Stage = Enum.StageTransactionEnum.PaymentData
             };
         }
-        public static Transaction GeTransactionToTransaction(this GetTransaction getTransaction)
+        public static Transaction GeTransactionToTransaction(this GetTransactionEvent getTransaction)
         {
             return new Transaction()
             {
