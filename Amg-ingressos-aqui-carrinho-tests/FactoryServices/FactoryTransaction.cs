@@ -28,10 +28,10 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                 TransactionItens = SimpleTransactionItens()
             };
         }
-        internal static List<GetTransaction> SimpleListTransactionQueryStagePaymentTransaction(){
-            return new List<GetTransaction>()
+        internal static List<GetTransactionEventData> SimpleListTransactionQueryStagePaymentTransaction(){
+            return new List<GetTransactionEventData>()
             {
-                new GetTransaction(){
+                new GetTransactionEventData(){
                     _id = "6442dcb6523d52533aeb1ae4",
                     PaymentMethod = new PaymentMethod()
                     {
@@ -48,7 +48,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                     Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
                     Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.PaymentTransaction,
                     Tax = new decimal(10.0),
-                    transactionItens = new List<TransactionItens>(){
+                    TransactionIten = new List<TransactionItens>(){
                         new TransactionItens(){
                             _id ="6442dcb6523d52533aeb1ae4",
                             IdTransaction = "6442dcb6523d52533aeb1ae4",
@@ -68,10 +68,10 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                 
             };
         }
-        internal static List<GetTransaction> SimpleListTransactionQueryStagePaymentData(){
-            return new List<GetTransaction>()
+        internal static List<GetTransactionEventData> SimpleListTransactionQueryStagePaymentData(){
+            return new List<GetTransactionEventData>()
             {
-                new GetTransaction(){
+                new GetTransactionEventData(){
                     _id = "6442dcb6523d52533aeb1ae4",
                     PaymentMethod = new PaymentMethod()
                     {
@@ -88,7 +88,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                     Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
                     Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.PaymentData,
                     Tax = new decimal(10.0),
-                    transactionItens = new List<TransactionItens>(){
+                    TransactionIten = new List<TransactionItens>(){
                         new TransactionItens(){
                             _id ="6442dcb6523d52533aeb1ae4",
                             IdTransaction = "6442dcb6523d52533aeb1ae4",
@@ -108,10 +108,10 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                 
             };
         }
-        internal static List<GetTransaction> SimpleListTransactionQueryStageConfirm(){
-            return new List<GetTransaction>()
+        internal static List<GetTransactionEventData> SimpleListTransactionQueryStageConfirm(){
+            return new List<GetTransactionEventData>()
             {
-                new GetTransaction(){
+                new GetTransactionEventData(){
                     _id = "6442dcb6523d52533aeb1ae4",
                     PaymentMethod = new PaymentMethod()
                     {
@@ -128,7 +128,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                     Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
                     Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.Confirm,
                     Tax = new decimal(10.0),
-                    transactionItens = new List<TransactionItens>(){
+                    TransactionIten = new List<TransactionItens>(){
                         new TransactionItens(){
                             _id ="6442dcb6523d52533aeb1ae4",
                             IdTransaction = "6442dcb6523d52533aeb1ae4",
@@ -148,10 +148,10 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                 
             };
         }
-        internal static List<GetTransaction> SimpleListTransactionQueryStagePersonData(){
-            return new List<GetTransaction>()
+        internal static List<GetTransactionEventData> SimpleListTransactionQueryStagePersonData(){
+            return new List<GetTransactionEventData>()
             {
-                new GetTransaction(){
+                new GetTransactionEventData(){
                     _id = "6442dcb6523d52533aeb1ae4",
                     PaymentMethod = new PaymentMethod()
                     {
@@ -168,7 +168,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                     Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
                     Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.PersonData,
                     Tax = new decimal(10.0),
-                    transactionItens = new List<TransactionItens>(){
+                    TransactionIten = new List<TransactionItens>(){
                         new TransactionItens(){
                             _id ="6442dcb6523d52533aeb1ae4",
                             IdTransaction = "6442dcb6523d52533aeb1ae4",
@@ -188,10 +188,10 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                 
             };
         }
-        internal static List<GetTransaction> SimpleListTransactionQueryStageTicketData(){
-            return new List<GetTransaction>()
+        internal static List<GetTransactionEventData> SimpleListTransactionQueryStageTicketData(){
+            return new List<GetTransactionEventData>()
             {
-                new GetTransaction(){
+                new GetTransactionEventData(){
                     _id = "6442dcb6523d52533aeb1ae4",
                     PaymentMethod = new PaymentMethod()
                     {
@@ -208,7 +208,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                     Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
                     Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.TicketsData,
                     Tax = new decimal(10.0),
-                    transactionItens = new List<TransactionItens>(){
+                    TransactionIten = new List<TransactionItens>(){
                         new TransactionItens(){
                             _id ="6442dcb6523d52533aeb1ae4",
                             IdTransaction = "6442dcb6523d52533aeb1ae4",
