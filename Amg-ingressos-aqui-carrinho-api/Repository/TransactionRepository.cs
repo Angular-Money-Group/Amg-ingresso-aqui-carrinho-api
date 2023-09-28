@@ -40,8 +40,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                     document
                 };
 
-                List<GetTransaction> pResults = _transactionCollection
-                    .Aggregate<GetTransaction>(pipeline)
+                List<GetTransactionEventData> pResults = _transactionCollection
+                    .Aggregate<GetTransactionEventData>(pipeline)
                     .ToList();
 
                 //var result = await _eventCollection.FindAsync<Event>(x => x._Id == id as string)
@@ -95,41 +95,29 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
             }
         }
 
-        public async Task<object> GetByUserEvent(string idPerson, string? idEvent)
+        public async Task<object> GetByUserEventData(string idPerson)
         {
             try
             {
                 List<BsonDocument> pipeline = new List<BsonDocument>();
 
-                if (!string.IsNullOrWhiteSpace(idPerson))
-                {
-                    pipeline.Add(
-                        BsonDocument.Parse(
-                            @"{$addFields:{'IdPerson': { '$toString': '$IdPerson' }}}"
-                        )
-                    );
-                    pipeline.Add(
-                        BsonDocument.Parse(
-                            @"{ $match: { '$and': [{ 'IdPerson': '"
-                                + idPerson.ToString()
-                                + "' }] }}"
-                        )
-                    );
-                }
-                else if (!string.IsNullOrWhiteSpace(idEvent))
-                {
-                    pipeline.Add(
-                        BsonDocument.Parse(@"{$addFields:{'IdEvent': { '$toString': '$IdEvent' }}}")
-                    );
-                    pipeline.Add(
-                        BsonDocument.Parse(
-                            @"{ $match: { '$and': [{ 'IdEvent': '" + idEvent.ToString() + "' }] }}"
-                        )
-                    );
-                };
-                    pipeline.Add(
-                        BsonDocument.Parse(@"{$addFields:{'Stage': { '$toString': '$Stage' }}}")
-                    );
+
+                pipeline.Add(
+                    BsonDocument.Parse(
+                        @"{$addFields:{'IdPerson': { '$toString': '$IdPerson' }}}"
+                    )
+                );
+                pipeline.Add(
+                    BsonDocument.Parse(
+                        @"{ $match: { '$and': [{ 'IdPerson': '"
+                            + idPerson.ToString()
+                            + "' }] }}"
+                    )
+                );
+
+                pipeline.Add(
+                    BsonDocument.Parse(@"{$addFields:{'Stage': { '$toString': '$Stage' }}}")
+                );
                 pipeline.Add(
                     BsonDocument.Parse(
                         @"{ $match: { '$and': [{ 'Stage': '" + 5 + "' }] }}"
@@ -157,12 +145,51 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
 
                 pipeline.Add(uniwindEvent);
 
-                var result = _transactionCollection.Aggregate<GetTransaction>(pipeline).ToList();
+                var result = _transactionCollection.Aggregate<GetTransactionEventData>(pipeline).ToList();
 
                 if (result == null)
                     throw new GetByIdTransactionException("Transação não encontrada");
 
                 return result;
+            }
+            catch (GetByIdTransactionException ex)
+            {
+                throw ex;
+            }
+            catch (System.Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<object> GetByUserTicketData(string idPerson, string idEvent)
+        {
+            try
+            {
+                var json = QuerysMongo.GetTransactionTicketQuery;
+
+                BsonDocument documentFilter = BsonDocument.Parse(
+                    @"{$match: { '$and': [{ 'IdPerson': ObjectId('" + idPerson + "') },{'IdEvent': ObjectId('" + idEvent + "')} ] }}"
+                );
+                BsonDocument document = BsonDocument.Parse(json);
+                BsonDocument[] pipeline = new BsonDocument[]
+                {
+                    documentFilter,
+                    document
+                };
+
+                List<GetTransactionEventData> pResults = _transactionCollection
+                    .Aggregate<GetTransactionEventData>(pipeline)
+                    .ToList();
+
+                //var result = await _eventCollection.FindAsync<Event>(x => x._Id == id as string)
+                //    .Result.FirstOrDefaultAsync();
+
+
+                if (pResults == null)
+                    throw new GetByIdTransactionException("Evento não encontrado");
+
+                return pResults;
             }
             catch (GetByIdTransactionException ex)
             {

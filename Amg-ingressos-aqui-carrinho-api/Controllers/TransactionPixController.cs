@@ -43,7 +43,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
             {
                 var transactionDb = (
                     _transactionService.GetByIdAsync(transactionId).Result.Data
-                    as List<GetTransaction>
+                    as List<GetTransactionEventData>
                 ).FirstOrDefault();
 
                 if (
@@ -106,7 +106,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
                 transaction.Id = idTransaction;
                 var transactionDb = (
                     _transactionService.GetByIdAsync(transaction.Id).Result.Data
-                    as List<GetTransaction>
+                    as List<GetTransactionEventData>
                 ).FirstOrDefault();
 
                 if (
@@ -203,7 +203,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
                     return NotFound("Id Transação é Obrigatório");
                 var transactionDb = (
                     _transactionService.GetByIdAsync(idTransaction).Result.Data
-                    as List<GetTransaction>
+                    as List<GetTransactionEventData>
                 ).FirstOrDefault();
 
                 if (transactionDb.Stage != StageTransactionEnum.PaymentData)
