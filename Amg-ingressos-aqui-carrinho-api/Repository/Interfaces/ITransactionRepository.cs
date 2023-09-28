@@ -7,6 +7,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository.Interfaces
         Task<object> Delete(string id);
         Task<object> GetById(string id);
         Task<object> GetByUser(string idUser);
-        Task<object> GetByUserEvent(string idUser, string? idEvent);
+        Task<object> GetByUserEventData(string idUser);
+        Task<object> GetByUserTicketData(string idUser, string idEvent);
+        
     }
 }

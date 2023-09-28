@@ -92,12 +92,42 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// <returns>500 Erro inesperado</returns>
         /// <returns>404 Erro tratado</returns>
         [HttpGet]
-        [Route("person/{idUser}/tickets")]
-        public async Task<IActionResult> GetByUserEventAsync([FromRoute] string idUser, [FromQuery] string? idEvent)
+        [Route("person/{idUser}/event")]
+        public async Task<IActionResult> GetByUserEventAsync([FromRoute] string idUser)
         {
             try
             {
-                var result = await _transactionService.GetByUserEventAsync(idUser, idEvent);
+                var result = await _transactionService.GetByUserEventDataAsync(idUser);
+                if (result.Message != null && result.Message.Any())
+                {
+                    _logger.LogInformation(result.Message);
+                    return NotFound(result.Message);
+                }
+
+                return Ok(result.Data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(MessageLogErrors.getByPersonTransactionMessage, ex);
+                return StatusCode(500, MessageLogErrors.getByPersonTransactionMessage);
+            }
+        }
+
+        /// <summary>
+        /// Busca Transação por id
+        /// </summary>
+        /// <param name="idUser">id do usuário</param>
+        /// <param name="idEvent">id do evento</param>
+        /// <returns>200 Transação</returns>
+        /// <returns>500 Erro inesperado</returns>
+        /// <returns>404 Erro tratado</returns>
+        [HttpGet]
+        [Route("person/{idUser}/event/{idEvent}")]
+        public async Task<IActionResult> GetByUserDataTicketEventAsync([FromRoute] string idUser,string idEvent)
+        {
+            try
+            {
+                var result = await _transactionService.GetByUserTicketEventDataAsync(idUser,idEvent);
                 if (result.Message != null && result.Message.Any())
                 {
                     _logger.LogInformation(result.Message);
@@ -168,7 +198,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
                 if (idTransaction == string.Empty)
                     return NotFound("Id Transação é Obrigatório");
                 var transactionDb = (_transactionService
-                    .GetByIdAsync(idTransaction).Result.Data as List<GetTransaction>)
+                    .GetByIdAsync(idTransaction).Result.Data as List<GetTransactionEventData>)
                     .FirstOrDefault();
                 var transaction = new Transaction()
                 {
@@ -215,7 +245,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
                 var transaction = transactionDto.StageTicketDataDtoToTransaction();
                 transaction.Id = idTransaction;
                 var transactionDb = (_transactionService
-                    .GetByIdAsync(transaction.Id).Result.Data as List<GetTransaction>).FirstOrDefault();
+                    .GetByIdAsync(transaction.Id).Result.Data as List<GetTransactionEventData>).FirstOrDefault();
 
                 if (transactionDb.Stage != StageTransactionEnum.PersonData)
                     return NotFound("Estágio fora do padrão");
@@ -257,7 +287,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
                 var transaction = transactionDto.StagePaymentDataDtoToTransaction();
                 transaction.Id = idTransaction;
                 var transactionDb = (_transactionService
-                    .GetByIdAsync(transaction.Id).Result.Data as List<GetTransaction>)
+                    .GetByIdAsync(transaction.Id).Result.Data as List<GetTransactionEventData>)
                     .FirstOrDefault();
 
                 if (transactionDb.Stage != StageTransactionEnum.TicketsData &&
@@ -300,7 +330,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
                 if (idTransaction == string.Empty)
                     return NotFound("Id Transação é Obrigatório");
                 var transactionDb = (_transactionService
-                    .GetByIdAsync(idTransaction).Result.Data as List<GetTransaction>)
+                    .GetByIdAsync(idTransaction).Result.Data as List<GetTransactionEventData>)
                     .FirstOrDefault();
 
                 if (transactionDb.Stage != StageTransactionEnum.PaymentData)
@@ -340,7 +370,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
             try
             {
                 var transactionDb = (_transactionService
-                    .GetByIdAsync(idTransaction).Result.Data as List<GetTransaction>)
+                    .GetByIdAsync(idTransaction).Result.Data as List<GetTransactionEventData>)
                     .FirstOrDefault();
                 var transaction = transactionDb.GeTransactionToTransaction();
                 var resultQrcode = await _transactionService.FinishedTransactionAsync(transaction);
@@ -372,7 +402,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
             {
                 idTransaction.ValidateIdMongo("Transação");
                 var transactionDb = (_transactionService
-                    .GetByIdAsync(idTransaction).Result.Data as List<GetTransaction>)
+                    .GetByIdAsync(idTransaction).Result.Data as List<GetTransactionEventData>)
                     .FirstOrDefault();
                 var transaction = transactionDb.GeTransactionToTransaction();
                 var resultQrcode = await _transactionService.CancelTransaction(transaction);

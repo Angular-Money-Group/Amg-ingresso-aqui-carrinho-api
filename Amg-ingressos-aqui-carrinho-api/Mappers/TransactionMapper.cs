@@ -58,7 +58,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Mappers
             };
         }
 
-        public static Transaction GeTransactionToTransaction(this GetTransaction getTransaction)
+        public static Transaction GeTransactionToTransaction(this GetTransactionEventData getTransaction)
         {
             return new Transaction()
             {
@@ -87,7 +87,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Mappers
             };
         }
 
-        public static Transaction GeTransactionToPixTransaction(this GetTransaction getTransaction)
+        public static Transaction GeTransactionToPixTransaction(this GetTransactionEventData getTransaction)
         {
             return new Transaction()
             {
@@ -112,7 +112,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Mappers
         }
 
 
-        public static Transaction GetTransactionPixToTransactionPix(this GetTransaction getTransaction)
+        public static Transaction GetTransactionPixToTransactionPix(this GetTransactionEventData getTransaction)
         {
             return new Transaction()
             {

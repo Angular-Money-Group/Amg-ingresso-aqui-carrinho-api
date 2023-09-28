@@ -1,5 +1,3 @@
-using System.Text.Json;
-using System;
 using Amg_ingressos_aqui_carrinho_api.Dto;
 using Amg_ingressos_aqui_carrinho_api.Exceptions;
 using Amg_ingressos_aqui_carrinho_api.Infra;
@@ -9,7 +7,6 @@ using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Utils;
 using Amg_ingressos_aqui_carrinho_api.Model.Cielo.Callback;
 using Newtonsoft.Json;
-using Amg_ingressos_aqui_carrinho_api.Enum;
 
 namespace Amg_ingressos_aqui_carrinho_api.Services
 {
@@ -446,7 +443,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
             return _messageReturn;
         }
-
         private void ValidateTransactionIten(TransactionIten transactionIten)
         {
             transactionIten.IdTicket.ValidateIdMongo("Ticket");
@@ -455,7 +451,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             if (transactionIten.TicketPrice == new decimal(0))
                 throw new SaveTransactionException("Valor do Ingresso é obrigatório");
         }
-
         public async Task<MessageReturn> GetByUserAsync(string idUser)
         {
             try
@@ -481,12 +476,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
             return _messageReturn;
         }
-
-        public async Task<MessageReturn> GetByUserEventAsync(string idUser, string? idEvent)
-        {
+        public async Task<MessageReturn> GetByUserTicketEventDataAsync(string idUser, string idEvent){
             try
             {
-                _messageReturn.Data = await _transactionRepository.GetByUserEvent(idUser, idEvent);
+                idUser.ValidateIdMongo("Usuário");
+                idUser.ValidateIdMongo("Evento");
+
+                _messageReturn.Data = await _transactionRepository.GetByUserTicketData(idUser, idEvent);
             }
             catch (IdMongoException ex)
             {
@@ -505,7 +501,42 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
             return _messageReturn;
         }
+        public async Task<MessageReturn> GetByUserEventDataAsync(string idUser)
+        {
+            try
+            {
+                var data = (List<Model.Querys.GetTransactionEventData>)await _transactionRepository.GetByUserEventData(idUser);
+                var listEvents = data.GroupBy(x => x.IdEvent)
+                      .Select(y => new EventDto{ 
+                                id= y.FirstOrDefault().IdEvent,
+                                Address= y.FirstOrDefault().Event.Address,
+                                EndDate = y.FirstOrDefault().Event.EndDate,
+                                StartDate = y.FirstOrDefault().Event.StartDate,
+                                Image = y.FirstOrDefault().Event.Image,
+                                Local = y.FirstOrDefault().Event.Local,
+                                Name= y.FirstOrDefault().Event.Name,
+                                Status= y.FirstOrDefault().Event.Status
+                              }).ToList();  
 
+                _messageReturn.Data = listEvents;
+            }
+            catch (IdMongoException ex)
+            {
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
+            catch (GetByPersonTransactionException ex)
+            {
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return _messageReturn;
+        }
         private async Task<string> GenerateQrCode(string idTicket)
         {
             var url = "http://api.ingressosaqui.com:3004/";
@@ -516,7 +547,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             );
             return jsonContent;
         }
-
         public async Task<MessageReturn> DeleteAsync(string id)
         {
             try
@@ -542,7 +572,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
             return _messageReturn;
         }
-
         public async Task<MessageReturn> CancelTransaction(Transaction transaction)
         {
             try

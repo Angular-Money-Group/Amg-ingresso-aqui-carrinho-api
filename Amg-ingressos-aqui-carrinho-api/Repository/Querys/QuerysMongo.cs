@@ -26,5 +26,45 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository.Querys
                                     as: 'transactionItens'
                                 }
                             }";
+
+        public const string GetTransactionTicketQuery = @"{
+                        $lookup: {
+                            from: 'transactionIten',
+                            'let': { transactionId: '$_id' },
+                            pipeline: [
+                                {
+                                    $match: {
+                                        $expr: {
+                                            $eq: [
+                                                '$IdTransaction',
+                                                '$$transactionId'
+                                            ]
+                                        }
+                                    }
+                                },
+                                {
+                                    $lookup: {
+                                        from: 'tickets',
+                                        'let': { ticketId: '$IdTicket' },
+                                        pipeline: [
+                                            {
+                                                $match: {
+                                                    $expr: {
+                                                        $eq: [
+                                                            '$_id',
+                                                            '$$ticketId'
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        ],
+                                        as: 'ticket'
+                                    }
+                                },
+                            ],
+                            as: 'TransactionIten'
+                        }
+                    }";
+
     }
 }
