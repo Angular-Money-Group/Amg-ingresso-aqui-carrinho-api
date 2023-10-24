@@ -18,14 +18,12 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         private ITicketService _ticketService;
         private IPaymentService _paymentService;
         private IEmailService _emailService;
-        private HttpClient _HttpClient;
 
         public TransactionService(
             ITransactionRepository transactionRepository,
             ITransactionItenRepository transactionItenRepository,
             ITicketService ticketService,
             IPaymentService paymentService,
-            ICieloClient cieloClient,
             IEmailService emailService
         )
         {
@@ -33,7 +31,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             _ticketService = ticketService;
             _paymentService = paymentService;
             _transactionItenRepository = transactionItenRepository;
-            _HttpClient = cieloClient.CreateClient();
             _messageReturn = new MessageReturn();
             _emailService = emailService;
         }
@@ -539,9 +536,10 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         }
         private async Task<string> GenerateQrCode(string idTicket)
         {
+            HttpClient httpClient= new HttpClient(); 
             var url = "http://api.ingressosaqui.com:3004/";
             var uri = "v1/generate-qr-code?data=" + idTicket;
-            using var httpResponseMessage = await _HttpClient.GetAsync(url + uri);
+            using var httpResponseMessage = await httpClient.GetAsync(url + uri);
             string jsonContent = System.Text.Json.JsonSerializer.Deserialize<string>(
                 httpResponseMessage.Content.ReadAsStringAsync().Result
             );

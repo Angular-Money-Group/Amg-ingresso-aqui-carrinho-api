@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using static System.Net.Mime.MediaTypeNames;
 using Amg_ingressos_aqui_carrinho_api.Model.Cielo;
 using Amg_ingressos_aqui_carrinho_api.Exceptions;
+using Microsoft.Extensions.Options;
 
 namespace Amg_ingressos_aqui_carrinho_api.Services
 {
@@ -19,25 +20,37 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         private MessageReturn _messageReturn;
         private HttpClient _HttpClient;
         private IUserService _userService;
+        private ITransactionGatewayClient transactionClient;
 
-        public PaymentService(ICieloClient cieloClient, IUserService userService)
+        public PaymentService(IOptions<PaymentSettings> transactionDatabaseSettings, IUserService userService)
         {
-            _HttpClient = cieloClient.CreateClient();
+            if(transactionDatabaseSettings.Value.Key.Equals("PAGBANK")){
+                //_HttpClient = new CieloClient(transactionDatabaseSettings).CreateClient();
+                transactionClient = new PagBankClient(transactionDatabaseSettings);
+            }
+            else
+                ;//_HttpClient = new CieloClient(transactionDatabaseSettings).CreateClient();
+            
             _userService = userService;
             _messageReturn = new Model.MessageReturn();
         }
 
         public async Task<MessageReturn> Payment(Transaction transaction)
         {
+            var result = _userService.FindByIdAsync(transaction.IdPerson).Result;
+            User user = result.Data as User;
             try
             {
                 StringContent transactionJson;
                 if (transaction.PaymentMethod.TypePayment == Enum.TypePaymentEnum.CreditCard)
-                    await PaymentCieloCreditCardAsync(transaction);
+                    //await PaymentCieloCreditCardAsync(transaction);
+                    _messageReturn = await transactionClient.PaymentCreditCardAsync(transaction,user);
                 else if (transaction.PaymentMethod.TypePayment == Enum.TypePaymentEnum.DebitCard)
-                    await PaymentCieloDebitCardAsync(transaction);
+                    //await PaymentCieloDebitCardAsync(transaction);
+                    _messageReturn = await transactionClient.PaymentDebitCardAsync(transaction);
                 else if (transaction.PaymentMethod.TypePayment == Enum.TypePaymentEnum.PaymentSlip)
-                    PaymentCieloSlipAsync(transaction);
+                    //PaymentCieloSlipAsync(transaction);
+                    _messageReturn = await transactionClient.PaymentSlipAsync(transaction);
                 else
                     throw new Exception("Tipo nao mapeado");
             }

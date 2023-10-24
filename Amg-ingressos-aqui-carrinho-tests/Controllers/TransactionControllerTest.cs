@@ -21,7 +21,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         private Mock<ILogger<TransactionController>> _loggerMock = new Mock<ILogger<TransactionController>>();
         private Mock<ITicketService> _ticketServiceMock = new Mock<ITicketService>();
         private Mock<IPaymentService> _paymentServiceMock = new Mock<IPaymentService>();
-        private Mock<ICieloClient> _cieloClienteMock = new Mock<ICieloClient>();
+        private Mock<ITransactionGatewayClient> _cieloClienteMock = new Mock<ITransactionGatewayClient>();
         private Mock<HttpClient> _httpClienteMock = new Mock<HttpClient>();
         private TestHttpClientFactory HttpClientFactory = new TestHttpClientFactory();
         private Mock<IEmailService> _emailServiceMock = new Mock<IEmailService>();
@@ -29,8 +29,8 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         [SetUp]
         public void Setup()
         {
-            _cieloClienteMock.Setup(x => x.CreateClient())
-                .Returns(HttpClientFactory.CreateClient());
+            /*_cieloClienteMock.Setup(x => x.CreateClient())
+                .Returns(HttpClientFactory.CreateClient());*/
 
             _transactionController = new TransactionController(
                 _loggerMock.Object,
@@ -39,7 +39,6 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
                 _transactionItenRepositoryMock.Object,
                 _ticketServiceMock.Object,
                 _paymentServiceMock.Object,
-                _cieloClienteMock.Object,
                 _emailServiceMock.Object)
             );
         }

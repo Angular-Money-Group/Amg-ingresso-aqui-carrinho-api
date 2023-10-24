@@ -12,10 +12,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
     public class TicketService : ITicketService
     {
         private MessageReturn _messageReturn;
-        private HttpClient _HttpClient;
-        public TicketService(ICieloClient cieloClient)
+        private HttpClient _HttpClient = new HttpClient();
+        public TicketService(ITransactionGatewayClient cieloClient)
         {
-            _HttpClient = cieloClient.CreateClient();
             _messageReturn = new Model.MessageReturn();
         }
 

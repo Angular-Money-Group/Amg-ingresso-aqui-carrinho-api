@@ -18,7 +18,7 @@ namespace Prime.UnitTests.Services
         private Mock<ITransactionItenRepository> _transactionItenRepositoryMock = new Mock<ITransactionItenRepository>();
         private Mock<ITicketService> _ticketServiceMock = new Mock<ITicketService>();
         private Mock<IPaymentService> _paymentServiceMock = new Mock<IPaymentService>();
-        private Mock<ICieloClient> _cieloClienteMock = new Mock<ICieloClient>();
+        private Mock<ITransactionGatewayClient> _cieloClienteMock = new Mock<ITransactionGatewayClient>();
         private Mock<HttpClient> _httpClienteMock = new Mock<HttpClient>();
         private Mock<IEmailService> _emailService = new Mock<IEmailService>();
         private TestHttpClientFactory HttpClientFactory = new TestHttpClientFactory();
@@ -27,15 +27,14 @@ namespace Prime.UnitTests.Services
         [SetUp]
         public void SetUp()
         {
-            _cieloClienteMock.Setup(x => x.CreateClient())
-                .Returns(HttpClientFactory.CreateClient());
+            /*_cieloClienteMock.Setup(x => x.CreateClient())
+                .Returns(HttpClientFactory.CreateClient());*/
 
             _transactionService = new TransactionService(
                 _transactionRepositoryMock.Object,
                 _transactionItenRepositoryMock.Object,
                 _ticketServiceMock.Object,
                 _paymentServiceMock.Object,
-                _cieloClienteMock.Object,
                 _emailService.Object);
         }
 

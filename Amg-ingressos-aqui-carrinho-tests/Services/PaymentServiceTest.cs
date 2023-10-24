@@ -8,6 +8,7 @@ using Moq;
 using NUnit.Framework;
 using Amg_ingressos_aqui_carrinho_tests.FactoryServices;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
+using Microsoft.Extensions.Options;
 
 namespace Amg_ingressos_aqui_carrinho_tests.Services
 {
@@ -15,7 +16,8 @@ namespace Amg_ingressos_aqui_carrinho_tests.Services
     {
         private PaymentService _paymentService;
         private UserService _userService;
-        private Mock<ICieloClient> _cieloClienteMock = new Mock<ICieloClient>();
+        private Mock<ITransactionGatewayClient> _cieloClienteMock = new Mock<ITransactionGatewayClient>();
+        private Mock<IOptions<PaymentSettings>> _paymentSettings = new Mock<IOptions<PaymentSettings>>();
         private Mock<IUserService> _userServiceMock = new Mock<IUserService>();
         private Mock<HttpClient> _httpClienteMock = new Mock<HttpClient>();
         private FactoryServices.TestHttpClientFactory HttpClientFactory = new FactoryServices.TestHttpClientFactory();
@@ -23,9 +25,9 @@ namespace Amg_ingressos_aqui_carrinho_tests.Services
         [SetUp]
         public void SetUp()
         {
-            _cieloClienteMock.Setup(x => x.CreateClient())
-                .Returns(HttpClientFactory.CreateClient());
-            _paymentService = new PaymentService(_cieloClienteMock.Object, _userService);
+            /*_cieloClienteMock.Setup(x => x.CreateClient())
+                .Returns(HttpClientFactory.CreateClient());*/
+            _paymentService = new PaymentService(_paymentSettings.Object, _userService);
             
         }
 

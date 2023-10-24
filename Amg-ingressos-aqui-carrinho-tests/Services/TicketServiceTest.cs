@@ -8,15 +8,15 @@ namespace Amg_ingressos_aqui_carrinho_tests.Services
     public class TicketServiceTest
     {
         private TicketService _ticketService;
-        private Mock<ICieloClient> _cieloClienteMock = new Mock<ICieloClient>();
+        private Mock<ITransactionGatewayClient> _cieloClienteMock = new Mock<ITransactionGatewayClient>();
         private Mock<HttpClient> _httpClienteMock = new Mock<HttpClient>();
         private FactoryServices.TestHttpClientFactory HttpClientFactory = new FactoryServices.TestHttpClientFactory();
 
         [SetUp]
         public void SetUp()
         {
-            _cieloClienteMock.Setup(x => x.CreateClient())
-                .Returns(HttpClientFactory.CreateClient());
+            /*_cieloClienteMock.Setup(x => x.CreateClient())
+                .Returns(HttpClientFactory.CreateClient());*/
             _ticketService = new TicketService(_cieloClienteMock.Object);
 
         }
