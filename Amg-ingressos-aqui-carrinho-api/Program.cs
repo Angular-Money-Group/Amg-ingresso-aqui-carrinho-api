@@ -17,8 +17,8 @@ builder.Services.AddHttpClient();
 // Add services to the container.
 builder.Services.Configure<TransactionDatabaseSettings>(
     builder.Configuration.GetSection("CarrinhoDatabase"));
-builder.Services.Configure<CieloSettings>(
-    builder.Configuration.GetSection("CieloSettings"));
+builder.Services.Configure<PaymentSettings>(
+    builder.Configuration.GetSection("PaymentSettings"));
 
 // injecao de dependencia
 //services
@@ -37,7 +37,8 @@ builder.Services.AddScoped<IEmailRepository, EmailRepository>();
 builder.Services.AddScoped<IDbConnection<Transaction>, DbConnection<Transaction>>();
 builder.Services.AddScoped<IDbConnection<TransactionIten>, DbConnection<TransactionIten>>();
 builder.Services.AddScoped<IDbConnection<Email>, DbConnection<Email>>();
-builder.Services.AddScoped<ICieloClient, CieloClient>();
+builder.Services.AddScoped<ITransactionGatewayClient, CieloClient>();
+builder.Services.AddScoped<ITransactionGatewayClient, PagBankClient>();
 
 builder.Services.AddCors(options =>
 {
