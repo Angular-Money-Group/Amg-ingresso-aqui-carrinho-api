@@ -47,10 +47,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     _messageReturn = await transactionClient.PaymentCreditCardAsync(transaction,user);
                 else if (transaction.PaymentMethod.TypePayment == Enum.TypePaymentEnum.DebitCard)
                     //await PaymentCieloDebitCardAsync(transaction);
-                    _messageReturn = await transactionClient.PaymentDebitCardAsync(transaction);
+                    _messageReturn = await transactionClient.PaymentDebitCardAsync(transaction,user);
                 else if (transaction.PaymentMethod.TypePayment == Enum.TypePaymentEnum.PaymentSlip)
                     //PaymentCieloSlipAsync(transaction);
-                    _messageReturn = await transactionClient.PaymentSlipAsync(transaction);
+                    _messageReturn = await transactionClient.PaymentSlipAsync(transaction,user);
+                else if (transaction.PaymentMethod.TypePayment == Enum.TypePaymentEnum.Pix)
+                    //PaymentCieloSlipAsync(transaction);
+                    _messageReturn = await transactionClient.PaymentPixAsync(transaction,user);
                 else
                     throw new Exception("Tipo nao mapeado");
             }

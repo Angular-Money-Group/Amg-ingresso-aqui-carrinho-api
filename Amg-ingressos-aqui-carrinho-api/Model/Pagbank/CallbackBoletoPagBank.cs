@@ -3,21 +3,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank.Callback
+namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank.Callback.Boleto
 {
-    public class CallbackCreditCardPagBank
+    public class CallbackBoletoPagBank
     {
-         public string id { get; set; }
+        public string id { get; set; }
         public string reference_id { get; set; }
         public DateTime created_at { get; set; }
         public Customer customer { get; set; }
         public List<Item> items { get; set; }
+        public Shipping shipping { get; set; }
         public List<Charge> charges { get; set; }
-        public List<object> notification_urls { get; set; }
+        public List<string> notification_urls { get; set; }
         public List<Link> links { get; set; }
     }
+    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+    public class Address
+    {
+        public string street { get; set; }
+        public string number { get; set; }
+        public string complement { get; set; }
+        public string locality { get; set; }
+        public string city { get; set; }
+        public string region_code { get; set; }
+        public string country { get; set; }
+        public string postal_code { get; set; }
+        public string region { get; set; }
+    }
 
-   // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
     public class Amount
     {
         public int value { get; set; }
@@ -25,15 +38,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank.Callback
         public Summary summary { get; set; }
     }
 
-    public class Card
+    public class Boleto
     {
-        public string brand { get; set; }
-        public string first_digits { get; set; }
-        public string last_digits { get; set; }
-        public string exp_month { get; set; }
-        public string exp_year { get; set; }
+        public string id { get; set; }
+        public string barcode { get; set; }
+        public string formatted_barcode { get; set; }
+        public string due_date { get; set; }
+        public InstructionLines instruction_lines { get; set; }
         public Holder holder { get; set; }
-        public bool store { get; set; }
     }
 
     public class Charge
@@ -42,7 +54,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank.Callback
         public string reference_id { get; set; }
         public string status { get; set; }
         public DateTime created_at { get; set; }
-        public DateTime paid_at { get; set; }
         public string description { get; set; }
         public Amount amount { get; set; }
         public PaymentResponse payment_response { get; set; }
@@ -61,6 +72,15 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank.Callback
     public class Holder
     {
         public string name { get; set; }
+        public string tax_id { get; set; }
+        public string email { get; set; }
+        public Address address { get; set; }
+    }
+
+    public class InstructionLines
+    {
+        public string line_1 { get; set; }
+        public string line_2 { get; set; }
     }
 
     public class Item
@@ -82,18 +102,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank.Callback
     public class PaymentMethod
     {
         public string type { get; set; }
-        public int installments { get; set; }
-        public bool capture { get; set; }
-        public Card card { get; set; }
-        public string soft_descriptor { get; set; }
+        public Boleto boleto { get; set; }
     }
 
     public class PaymentResponse
     {
         public string code { get; set; }
         public string message { get; set; }
-        public string reference { get; set; }
-        public RawData raw_data { get; set; }
     }
 
     public class Phone
@@ -104,11 +119,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank.Callback
         public string number { get; set; }
     }
 
-    public class RawData
+    public class Shipping
     {
-        public string authorization_code { get; set; }
-        public string nsu { get; set; }
-        public string reason_code { get; set; }
+        public Address address { get; set; }
     }
 
     public class Summary

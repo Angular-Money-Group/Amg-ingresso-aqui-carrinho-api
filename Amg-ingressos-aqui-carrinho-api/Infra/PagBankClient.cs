@@ -3,11 +3,14 @@ using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Enum;
 using Newtonsoft.Json;
 using static System.Net.Mime.MediaTypeNames;
-using Amg_ingressos_aqui_carrinho_api.Exceptions;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Amg_ingressos_aqui_carrinho_api.Dto.Pagbank;
 using Amg_ingressos_aqui_carrinho_api.Model.Pagbank;
+using Amg_ingressos_aqui_carrinho_api.Model.Pagbank.Callback;
+using Amg_ingressos_aqui_carrinho_api.Dto;
+using Amg_ingressos_aqui_carrinho_api.Model.Pagbank.Pix;
+using Amg_ingressos_aqui_carrinho_api.Model.Pagbank.Callback.Boleto;
 
 namespace Amg_ingressos_aqui_carrinho_api.Infra
 {
@@ -35,31 +38,94 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             return _httpClient;
         }
 
-        public Task<MessageReturn> PaymentSlipAsync(Transaction transaction)
+        public async Task<MessageReturn> PaymentSlipAsync(Transaction transaction, User user)
         {
-            throw new NotImplementedException();
+
+            try
+            {
+                //cria pedido e paga
+                Request request = new RequestPagBankBoletoDto().TransactionToRequest(transaction, user);
+                Response response = SendRequestAsync(request);
+
+                if (!string.IsNullOrEmpty(response.Data))
+                {
+                    var obj = JsonConvert.DeserializeObject<CallbackBoletoPagBank>(response.Data);
+                    transaction.PaymentIdService = obj.id;
+                    _messageReturn.Data = "ok";
+                }
+                else
+                {
+                    _messageReturn.Message = response.Message;
+                    transaction.Status = StatusPaymentEnum.ErrorPayment;
+                    transaction.Details = response.Message;
+                }
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+
+            return _messageReturn;
         }
 
         public async Task<MessageReturn> PaymentCreditCardAsync(Transaction transaction, User user)
         {
             try
-            {   
+            {
                 //valida cartao
                 //var cardIsValid = ValidateCard(transaction).Result;
 
                 //if (!cardIsValid)
-                    //throw new CreditCardNotValidExeption("cartao expirado");
-                
+                //throw new CreditCardNotValidExeption("cartao expirado");
+
                 //cria pedido e paga
-                Request request = new RequestPagBankDto().TransactionToRequest(transaction, user);
+                Request request = new RequestPagBankCreditCardDto().TransactionToRequest(transaction, user);
                 Response response = SendRequestAsync(request);
 
-                if(!string.IsNullOrEmpty(response.Data)){
+                if (!string.IsNullOrEmpty(response.Data))
+                {
                     var obj = JsonConvert.DeserializeObject<CallbackCreditCardPagBank>(response.Data);
                     transaction.PaymentIdService = obj.id;
                     _messageReturn.Data = "ok";
                 }
-                else{
+                else
+                {
+                    _messageReturn.Message = response.Message;
+                    transaction.Status = StatusPaymentEnum.ErrorPayment;
+                    transaction.Details = response.Message;
+                }
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+
+            return _messageReturn;
+        }
+
+        public Task<MessageReturn> PaymentDebitCardAsync(Transaction transaction, User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<MessageReturn> PaymentPixAsync(Transaction transaction, User user)
+        {
+            try
+            {
+                //cria pedido e paga
+                Request request = new RequestPagBankPixDto().TransactionToRequest(transaction, user);
+                Response response = SendRequestAsync(request);
+
+                if (!string.IsNullOrEmpty(response.Data))
+                {
+                    var obj = JsonConvert.DeserializeObject<CallbackPixPagBank>(response.Data);
+                    transaction.PaymentIdService = obj.id;
+                    _messageReturn.Data = obj.qr_codes.FirstOrDefault()
+                                             .links.FirstOrDefault(i=> i.rel.Equals("QRCODE.PNG"))
+                                             .href;
+                }
+                else
+                {
                     _messageReturn.Message = response.Message;
                     transaction.Status = StatusPaymentEnum.ErrorPayment;
                     transaction.Details = response.Message;
@@ -77,8 +143,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
         {
             string jsonContent = response.Content.ReadAsStringAsync().Result;
             var obj = JsonConvert.DeserializeObject<CallbackErrorMessagePagBank>(response.ToString());
-                _messageReturn.Message = Consts.StatusCallbackCielo.NotAllowed;
-                
+            _messageReturn.Message = Consts.StatusCallbackCielo.NotAllowed;
+
             return obj.ToString();
             //valida retorno
             /*switch (StatusCallbackCielo.SuccessfullyPerformedOperation)//obj.reference_id)
@@ -124,23 +190,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                     transaction.Details = Consts.StatusCallbackCielo.SuccessfullyPerformedOperation;
                     break;
             }*/
-        }
-
-        public Task<MessageReturn> PaymentDebitCardAsync(Transaction transaction)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<MessageReturn> PaymentPixAsync(Transaction transaction)
-        {
-            throw new NotImplementedException();
-        }
+        }     
 
         private async Task<bool> ValidateCard(Transaction transactionJson)
         {
             Request requestCartao = new Request
-                {
-                    Data = System.Text.Json.JsonSerializer.Serialize(
+            {
+                Data = System.Text.Json.JsonSerializer.Serialize(
                      new PaymentCard()
                      {
                          number = "5590800827578129",
@@ -152,7 +208,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                              name = "Jose da Silva"
                          }
                      })
-                };
+            };
 
             try
             {
@@ -177,7 +233,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 var result = httpResponseMessage.EnsureSuccessStatusCode();
 
                 var response = new Response();
-                if(httpResponseMessage.StatusCode == System.Net.HttpStatusCode.OK)
+                if (httpResponseMessage.StatusCode == System.Net.HttpStatusCode.OK)
                     return true;
                 else
                     return false;
@@ -211,21 +267,23 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 using var httpResponseMessage = httpCliente.Send(requestMessage);
                 string jsonContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
                 var response = new Response();
-                if(httpResponseMessage.StatusCode == System.Net.HttpStatusCode.OK){
-                    
-                    var messagejson= JsonConvert.DeserializeObject<CallbackCreditCardPagBank>(jsonContent).ToString();
-                    response.Data= messagejson;
+                
+                if (httpResponseMessage.StatusCode == System.Net.HttpStatusCode.OK ||  httpResponseMessage.StatusCode == System.Net.HttpStatusCode.Created)
+                {
+                    response.Data = jsonContent;
                 }
-                else{
+                else
+                {
                     var messagejson = new StringBuilder();
-                    JsonConvert.DeserializeObject<CallbackErrorMessagePagBank>(jsonContent).Error_messages.ForEach(x=> {
-                        messagejson.Append(x.code+" = "+ x.parameter_name +" -- Error:"+ x.description +" : "+ x.parameter_name );
+                    JsonConvert.DeserializeObject<CallbackErrorMessagePagBank>(jsonContent).Error_messages.ForEach(x =>
+                    {
+                        messagejson.Append(x.code + " = " + x.parameter_name + " -- Error:" + x.description + " : " + x.parameter_name);
                     });
-                    response.Message=messagejson.ToString();
+                    response.Message = messagejson.ToString();
                 }
 
                 return response;
-                
+
             }
             catch (System.Exception ex)
             {

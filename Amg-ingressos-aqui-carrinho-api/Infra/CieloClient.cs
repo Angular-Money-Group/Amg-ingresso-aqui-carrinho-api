@@ -30,27 +30,22 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             return _httpClient;
         }
 
-        public Task<MessageReturn> PaymentCreditCardAsync(Transaction transaction)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<MessageReturn> PaymentCreditCardAsync(Transaction transaction, User user)
         {
             throw new NotImplementedException();
         }
 
-        public Task<MessageReturn> PaymentDebitCardAsync(Transaction transaction)
+        public Task<MessageReturn> PaymentDebitCardAsync(Transaction transaction, User user)
         {
             throw new NotImplementedException();
         }
 
-        public Task<MessageReturn> PaymentPixAsync(Transaction transaction)
+        public Task<MessageReturn> PaymentPixAsync(Transaction transaction, User user)
         {
             throw new NotImplementedException();
         }
 
-        public Task<MessageReturn> PaymentSlipAsync(Transaction transaction)
+        public Task<MessageReturn> PaymentSlipAsync(Transaction transaction, User user)
         {
             throw new NotImplementedException();
         }
