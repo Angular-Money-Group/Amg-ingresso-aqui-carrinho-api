@@ -33,8 +33,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto.Pagbank
                     name = user.Name,
                     phones = new List<Phone>(){
                         new Phone(){
-                            //area=user.Contact.PhoneNumber.Substring(0,2),
-                            //country="55",
+                            area=user.Contact.PhoneNumber.Substring(0,2),
+                            country="55",
                             number=user.Contact.PhoneNumber.Substring(2,(user.Contact.PhoneNumber.Length-2)),
                             type="MOBILE"
                         }
