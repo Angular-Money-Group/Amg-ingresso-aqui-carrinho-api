@@ -35,7 +35,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto.Pagbank
                         new Phone(){
                             area=user.Contact.PhoneNumber.Substring(0,2),
                             country="55",
-                            number=user.Contact.PhoneNumber.Substring(2,(user.Contact.PhoneNumber.Length-2)),
+                            number=user.Contact.PhoneNumber.Substring(2,(user.Contact.PhoneNumber.Length-2)).Replace("-",string.Empty),
                             type="MOBILE"
                         }
                     },
@@ -67,7 +67,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto.Pagbank
                                 holder=new Holder(){
                                     name=transaction.PaymentMethod.Holder,
                                 },
-                                number= "4111111111111111",//transaction.PaymentMethod.CardNumber.Trim(),
+                                number= transaction.PaymentMethod.CardNumber.Trim(),
                                 security_code=transaction.PaymentMethod.SecurityCode,
                                 store=false
                             },
