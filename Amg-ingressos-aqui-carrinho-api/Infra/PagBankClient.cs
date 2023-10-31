@@ -85,8 +85,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 if (!string.IsNullOrEmpty(response.Data))
                 {
                     var obj = JsonConvert.DeserializeObject<CallbackCreditCardPagBank>(response.Data);
-                    transaction.PaymentIdService = obj.id;
-                    _messageReturn.Data = "ok";
+                    if(obj.charges.FirstOrDefault().status.ToUpper()=="DECLINED"){
+                        _messageReturn.Message = obj.charges.FirstOrDefault().payment_response.message;
+                    }
+                    else{
+                        transaction.PaymentIdService = obj.id;
+                        _messageReturn.Data = "ok";
+                    }
+
                 }
                 else
                 {
