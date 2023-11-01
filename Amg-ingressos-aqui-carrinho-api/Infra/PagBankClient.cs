@@ -92,7 +92,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                         transaction.PaymentIdService = obj.id;
                         _messageReturn.Data = "ok";
                     }
-
                 }
                 else
                 {
