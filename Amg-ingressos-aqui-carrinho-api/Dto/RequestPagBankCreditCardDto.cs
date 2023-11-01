@@ -25,6 +25,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto.Pagbank
 
         public Request TransactionToRequest(Transaction transaction, User user)
         {
+            var totalValue= transaction.TotalValue.ToString().Contains(".") ? transaction.TotalValue.ToString(): String.Format("{0:0.00}", transaction.TotalValue).Replace(".","");
+            
+
             RequestPagBankCreditCardDto request = new RequestPagBankCreditCardDto()
             {
                 customer = new Customer()
@@ -46,14 +49,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto.Pagbank
                         name = "Ingresso",
                         quantity = 1,
                         reference_id = transaction.Id,
-                        unit_amount = (int)transaction.TotalValue
+                        unit_amount = Convert.ToInt32(totalValue)
                     }
                 },
                 reference_id = transaction.Id,
                 charges = new List<Charge>(){
                     new Charge(){
                         amount = new Amount(){
-                            value= (int)transaction.TotalValue,
+                            value = Convert.ToInt32(totalValue),
                             currency = "BRL"
                         },
                         reference_id = transaction.Id,
