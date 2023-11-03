@@ -14,5 +14,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
         public PaymentMethod payment_method { get; set; }
         [JsonIgnore]
         public List<string> notification_urls { get; set; }
+        public Authentication_method authentication_meethod { get; set; }
     }
 }

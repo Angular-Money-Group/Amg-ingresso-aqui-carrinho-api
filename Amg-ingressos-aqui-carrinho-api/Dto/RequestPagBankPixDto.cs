@@ -26,7 +26,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
                         new Phone(){
                             area=user.Contact.PhoneNumber.Substring(0,2),
                             country="55",
-                            number=user.Contact.PhoneNumber.Substring(2,(user.Contact.PhoneNumber.Length-2)),
+                            number=user.Contact.PhoneNumber.Substring(2,(user.Contact.PhoneNumber.Length-2)).Replace("-",string.Empty),
                             type="MOBILE"
                         }
                     },
@@ -48,13 +48,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
                 shipping= new Shipping(){
                     address = new Model.Pagbank.Address(){
                         country= "BRA",
-                        region= user.Address.State,
-                        region_code= user.Address.State,
-                        city= user.Address.City,
-                        postal_code= user.Address.Cep,
-                        street= user.Address.AddressDescription,
-                        number= user.Address.Number,
-                        locality= user.Address.Neighborhood
+                        region= user.Address.State??"",
+                        region_code= user.Address.State??"",
+                        city= user.Address.City??"",
+                        postal_code= user.Address.Cep??"",
+                        street= user.Address.AddressDescription?? user.Address.Neighborhood ?? "N/a",
+                        number= user.Address.Number??"",
+                        locality= user.Address.Neighborhood??""
                     }
                 }
             };

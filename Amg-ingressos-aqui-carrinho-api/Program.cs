@@ -39,6 +39,7 @@ builder.Services.AddScoped<IDbConnection<TransactionIten>, DbConnection<Transact
 builder.Services.AddScoped<IDbConnection<Email>, DbConnection<Email>>();
 builder.Services.AddScoped<ITransactionGatewayClient, CieloClient>();
 builder.Services.AddScoped<ITransactionGatewayClient, PagBankClient>();
+builder.Services.AddScoped<IPagbankService, PagbankService>();
 
 builder.Services.AddCors(options =>
 {

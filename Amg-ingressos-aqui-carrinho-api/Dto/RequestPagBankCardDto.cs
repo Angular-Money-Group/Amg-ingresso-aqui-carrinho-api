@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Amg_ingressos_aqui_carrinho_api.Enum;
 using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Model.Pagbank;
 using Customer = Amg_ingressos_aqui_carrinho_api.Model.Pagbank.Customer;
@@ -7,7 +8,7 @@ using PaymentMethod = Amg_ingressos_aqui_carrinho_api.Model.Pagbank.PaymentMetho
 
 namespace Amg_ingressos_aqui_carrinho_api.Dto.Pagbank
 {
-    public class RequestPagBankCreditCardDto
+    public class RequestPagBankCardDto
     {
         public string reference_id { get; set; }
         public Customer customer { get; set; }
@@ -26,26 +27,25 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto.Pagbank
         public Request TransactionToRequest(Transaction transaction, User user)
         {
             var totalValue= transaction.TotalValue.ToString().Contains(".") ? transaction.TotalValue.ToString(): String.Format("{0:0.00}", transaction.TotalValue).Replace(".","");
-            
 
-            RequestPagBankCreditCardDto request = new RequestPagBankCreditCardDto()
+            RequestPagBankCardDto request = new RequestPagBankCardDto()
             {
                 customer = new Customer()
                 {
                     email = user.Contact.Email,
                     name = user.Name,
-                    phones = new List<Phone>(){
-                        new Phone(){
-                            area=user.Contact.PhoneNumber.Substring(0,2),
-                            country="55",
-                            number=user.Contact.PhoneNumber.Substring(2,(user.Contact.PhoneNumber.Length-2)).Replace("-",string.Empty),
-                            type="MOBILE"
+                    phones = new List<Phone>() {
+                        new Phone() {
+                            area = user.Contact.PhoneNumber.Substring(0, 2),
+                            country = "55",
+                            number = user.Contact.PhoneNumber.Substring(2, (user.Contact.PhoneNumber.Length - 2)).Replace("-", string.Empty),
+                            type = "MOBILE"
                         }
                     },
                     tax_id = user.DocumentId
                 },
-                items = new List<Item>(){
-                    new Item(){
+                items = new List<Item>() {
+                    new Item() {
                         name = "Ingresso",
                         quantity = 1,
                         reference_id = transaction.Id,
@@ -75,7 +75,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto.Pagbank
                                 store=false
                             },
                             installments= 1,
-                            type="CREDIT_CARD"
+                            type= transaction.PaymentMethod.TypePayment.Equals(TypePaymentEnum.CreditCard) ? "CREDIT_CARD" : "DEBIT_CARD"
+                        },
+                        authentication_meethod = new Authentication_method(){
+                            id = "3DS_15CB7893-4D23-44FA-97B7-AC1BE516D418",
+                            type = "THREEDS"
                         }
                     }
                 }
