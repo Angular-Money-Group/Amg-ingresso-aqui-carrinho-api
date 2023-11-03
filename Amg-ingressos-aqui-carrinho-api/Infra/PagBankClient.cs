@@ -19,23 +19,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
         private IOptions<PaymentSettings> _config;
         private MessageReturn _messageReturn;
         private HttpClient _httpClient = new HttpClient();
+        private string _url;
         public PagBankClient(IOptions<PaymentSettings> transactionDatabaseSettings)
         {
             _config = transactionDatabaseSettings;
             _messageReturn = new MessageReturn();
-            CreateClient();
-        }
+            _url = _config.Value.PagBankSettings.UrlApiHomolog + "/orders";
 
-        private HttpClient CreateClient()
-        {
-            _httpClient.BaseAddress = new Uri(_config.Value.PagBankSettings.UrlApiHomolog);
-            _httpClient.DefaultRequestHeaders.Add(
-                HeaderNames.Accept, "application/json");
-            _httpClient.DefaultRequestHeaders.Add(
-                "Authorization", _config.Value.PagBankSettings.TokenHomolog);
-            _httpClient.Timeout = TimeSpan.FromMinutes(10);
-
-            return _httpClient;
         }
 
         public async Task<MessageReturn> PaymentSlipAsync(Transaction transaction, User user)
@@ -45,7 +35,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             {
                 //cria pedido e paga
                 Request request = new RequestPagBankBoletoDto().TransactionToRequest(transaction, user);
-                Response response = SendRequestAsync(request);
+                Response response = new OperatorRest().SendRequestAsync(request,_url,_config.Value.PagBankSettings.TokenHomolog);
 
                 if (!string.IsNullOrEmpty(response.Data))
                 {
@@ -79,8 +69,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 //throw new CreditCardNotValidExeption("cartao expirado");
 
                 //cria pedido e paga
-                Request request = new RequestPagBankCreditCardDto().TransactionToRequest(transaction, user);
-                Response response = SendRequestAsync(request);
+                Request request = new RequestPagBankCardDto().TransactionToRequest(transaction, user);
+                Response response = new OperatorRest().SendRequestAsync(request,_url,_config.Value.PagBankSettings.TokenHomolog);
 
                 if (!string.IsNullOrEmpty(response.Data))
                 {
@@ -108,9 +98,44 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             return _messageReturn;
         }
 
-        public Task<MessageReturn> PaymentDebitCardAsync(Transaction transaction, User user)
+        public async Task<MessageReturn> PaymentDebitCardAsync(Transaction transaction, User user)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //valida cartao
+                //var cardIsValid = ValidateCard(transaction).Result;
+
+                //if (!cardIsValid)
+                //throw new CreditCardNotValidExeption("cartao expirado");
+
+                //cria pedido e paga
+                Request request = new RequestPagBankCardDto().TransactionToRequest(transaction, user);
+                Response response = new OperatorRest().SendRequestAsync(request,_url,_config.Value.PagBankSettings.TokenHomolog);
+
+                if (!string.IsNullOrEmpty(response.Data))
+                {
+                    var obj = JsonConvert.DeserializeObject<CallbackCreditCardPagBank>(response.Data);
+                    if(obj.charges.FirstOrDefault().status.ToUpper()=="DECLINED"){
+                        _messageReturn.Message = obj.charges.FirstOrDefault().payment_response.message;
+                    }
+                    else{
+                        transaction.PaymentIdService = obj.id;
+                        _messageReturn.Data = "Ok";
+                    }
+                }
+                else
+                {
+                    _messageReturn.Message = response.Message;
+                    transaction.Status = StatusPaymentEnum.ErrorPayment;
+                    transaction.Details = response.Message;
+                }
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+
+            return _messageReturn;
         }
 
         public async Task<MessageReturn> PaymentPixAsync(Transaction transaction, User user)
@@ -119,7 +144,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             {
                 //cria pedido e paga
                 Request request = new RequestPagBankPixDto().TransactionToRequest(transaction, user);
-                Response response = SendRequestAsync(request);
+                Response response = new OperatorRest().SendRequestAsync(request,_url,_config.Value.PagBankSettings.TokenHomolog);
 
                 if (!string.IsNullOrEmpty(response.Data))
                 {
@@ -131,6 +156,12 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 }
                 else
                 {
+                    StringBuilder messagejson = new StringBuilder();
+                    JsonConvert.DeserializeObject<CallbackErrorMessagePagBank>(response.Message).Error_messages.ForEach(x =>
+                    {
+                        messagejson.Append(x.code + " = " + x.parameter_name + " -- Error:" + x.description + " : " + x.parameter_name);
+                    });
+                    response.Message = messagejson.ToString();
                     _messageReturn.Message = response.Message;
                     transaction.Status = StatusPaymentEnum.ErrorPayment;
                     transaction.Details = response.Message;
@@ -247,52 +278,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             catch (System.Exception ex)
             {
                 throw ex;
-            }
-        }
-
-        private Response SendRequestAsync(Request transactionJson)
-        {
-            try
-            {
-                var httpCliente = new HttpClient();
-                var requestMessage = new HttpRequestMessage(
-                    HttpMethod.Post,
-                    "https://sandbox.api.pagseguro.com/orders"
-                );
-                requestMessage.Headers.Add("Accept", "*/*");
-                //requestMessage.Headers.Add("Accept-Encoding", "gzip, deflate, br");
-                //requestMessage.Headers.Add("Content-Type", "application/json");
-                requestMessage.Headers.Add("Authorization", _config.Value.PagBankSettings.TokenHomolog);
-                var requestJson = new StringContent(transactionJson.Data,
-                    Encoding.UTF8,
-                    Application.Json
-                );
-                requestMessage.Content = requestJson;
-
-                using var httpResponseMessage = httpCliente.Send(requestMessage);
-                string jsonContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
-                var response = new Response();
-                
-                if (httpResponseMessage.StatusCode == System.Net.HttpStatusCode.OK ||  httpResponseMessage.StatusCode == System.Net.HttpStatusCode.Created)
-                {
-                    response.Data = jsonContent;
-                }
-                else
-                {
-                    var messagejson = new StringBuilder();
-                    JsonConvert.DeserializeObject<CallbackErrorMessagePagBank>(jsonContent).Error_messages.ForEach(x =>
-                    {
-                        messagejson.Append(x.code + " = " + x.parameter_name + " -- Error:" + x.description + " : " + x.parameter_name);
-                    });
-                    response.Message = messagejson.ToString();
-                }
-
-                return response;
-
-            }
-            catch (System.Exception ex)
-            {
-                throw;
             }
         }
     }

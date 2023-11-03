@@ -4,7 +4,6 @@ using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Model.Cielo.Callback;
 using Amg_ingressos_aqui_carrinho_api.Model.Cielo.CreditCard;
 using Amg_ingressos_aqui_carrinho_api.Model.Cielo.DebitCard;
-using Amg_ingressos_aqui_carrinho_api.Model.Cielo.Pix;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Enum;
 using Newtonsoft.Json;
@@ -38,6 +37,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         public async Task<MessageReturn> Payment(Transaction transaction)
         {
             var result = _userService.FindByIdAsync(transaction.IdPerson).Result;
+            if (result.Message.Any())
+                throw new Exception(result.Message);
+                
             User user = result.Data as User;
             try
             {
