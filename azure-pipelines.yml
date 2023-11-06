@@ -10,7 +10,7 @@ jobs:
   - job: Build
     displayName: Build .NET Application
     pool:
-      vmImage: 'windows-latest'  # Usaremos o ambiente Windows para construir a aplicação .NET, mas você pode escolher outro ambiente se preferir.
+      vmImage: 'ubuntu-latest'  # Usaremos o ambiente Windows para construir a aplicação .NET, mas você pode escolher outro ambiente se preferir.
 
     steps:
       - task: UseDotNet@2  # Essa tarefa define a versão do .NET a ser usada no build.

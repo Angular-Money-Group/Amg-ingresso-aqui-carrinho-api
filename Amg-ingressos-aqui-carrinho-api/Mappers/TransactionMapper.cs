@@ -36,7 +36,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Mappers
                     SaveCard = stagePayment.SaveCard,
                     SecurityCode = stagePayment.SecurityCode,
                     TypePayment = stagePayment.TypePayment,
-                    Installments = stagePayment.Installments
+                    Installments = stagePayment.Installments,
+                    EncryptedCard = stagePayment.EncryptedCard,
+                    Authentication_Method = stagePayment.Authentication_Method
                 },
                 Stage = Enum.StageTransactionEnum.PaymentData
             };
@@ -74,7 +76,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Mappers
                     SaveCard = getTransaction.PaymentMethod.SaveCard,
                     SecurityCode = getTransaction.PaymentMethod.SecurityCode,
                     TypePayment = getTransaction.PaymentMethod.TypePayment,
-                    Installments = getTransaction.PaymentMethod.Installments
+                    Installments = getTransaction.PaymentMethod.Installments,
+                    Authentication_Method = getTransaction.PaymentMethod.Authentication_Method,
+                    EncryptedCard = getTransaction.PaymentMethod.EncryptedCard
                 },
                 Stage = getTransaction.Stage,
                 Discount = getTransaction.Discount,

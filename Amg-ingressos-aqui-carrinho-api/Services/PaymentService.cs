@@ -37,7 +37,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         public async Task<MessageReturn> Payment(Transaction transaction)
         {
             var result = _userService.FindByIdAsync(transaction.IdPerson).Result;
-            if (result.Message.Any())
+            if (result.Message!=null && result.Message.Any())
                 throw new Exception(result.Message);
                 
             User user = result.Data as User;

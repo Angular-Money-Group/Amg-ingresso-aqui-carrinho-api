@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using Amg_ingressos_aqui_carrinho_api.Enum;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-using ThirdParty.Json.LitJson;
+using Amg_ingressos_aqui_carrinho_api.Model.Pagbank;
 
 namespace Amg_ingressos_aqui_carrinho_api.Model
 {
@@ -58,6 +52,12 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// Numero de parcelas
         /// </summary>
         public int? Installments { get; set; }
+        /// <summary>
+        /// cartao criptografado pagbank
+        /// </summary>
+        public string EncryptedCard { get; set;}
+
+        public Authentication_method Authentication_Method {get;set;}
     }
 
     public class PaymentMethodPix

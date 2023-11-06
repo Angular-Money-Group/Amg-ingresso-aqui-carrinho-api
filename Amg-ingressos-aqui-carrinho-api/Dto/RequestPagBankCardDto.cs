@@ -26,7 +26,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto.Pagbank
 
         public Request TransactionToRequest(Transaction transaction, User user)
         {
-            var totalValue= transaction.TotalValue.ToString().Contains(".") ? transaction.TotalValue.ToString(): String.Format("{0:0.00}", transaction.TotalValue).Replace(".","");
+            var totalValue= transaction.TotalValue.ToString().Contains(".") ? transaction.TotalValue.ToString().Replace(".",string.Empty).Replace(",",string.Empty) : String.Format("{0:0.00}", transaction.TotalValue).Replace(".",string.Empty).Replace(",",string.Empty);
 
             RequestPagBankCardDto request = new RequestPagBankCardDto()
             {
@@ -65,17 +65,18 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto.Pagbank
                         payment_method= new PaymentMethod(){
                             capture=true,
                             card= new Card(){
-                                exp_month=transaction.PaymentMethod.ExpirationDate.Split("/")[0],
-                                exp_year=transaction.PaymentMethod.ExpirationDate.Split("/")[1],
+                                //exp_month=transaction.PaymentMethod.ExpirationDate.Split("/")[0],
+                                //exp_year=transaction.PaymentMethod.ExpirationDate.Split("/")[1],
                                 holder=new Holder(){
                                     name=transaction.PaymentMethod.Holder,
                                 },
-                                number= transaction.PaymentMethod.CardNumber.Trim(),
+                                //number= transaction.PaymentMethod.CardNumber.Trim(),
                                 security_code=transaction.PaymentMethod.SecurityCode,
-                                store=false
+                                store=false,
+                                encrypted =transaction.PaymentMethod.EncryptedCard 
                             },
                             installments= 1,
-                            type= transaction.PaymentMethod.TypePayment.Equals(TypePaymentEnum.CreditCard) ? "CREDIT_CARD" : "DEBIT_CARD"
+                            type= transaction.PaymentMethod.TypePayment.Equals(TypePaymentEnum.CreditCard) ? "CREDIT_CARD" : "DEBIT_CARD",
                         },
                         authentication_meethod = new Authentication_method(){
                             id = "3DS_15CB7893-4D23-44FA-97B7-AC1BE516D418",

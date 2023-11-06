@@ -90,9 +90,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                     transaction.Details = response.Message;
                 }
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
-                throw;
+                throw ex;
             }
 
             return _messageReturn;
