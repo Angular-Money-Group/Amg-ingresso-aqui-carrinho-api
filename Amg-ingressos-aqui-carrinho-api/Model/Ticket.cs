@@ -53,5 +53,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// </summary>
         [JsonProperty("qrCode")]
         public string QrCode { get; set; }
+        /// <summary>
+        /// Enum Status do Ticket
+        /// </summary>
+        public int Status { get; set; }
     }
 }
