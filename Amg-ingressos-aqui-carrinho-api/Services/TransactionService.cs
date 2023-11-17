@@ -62,6 +62,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                         isSold = ticketUserDto.isSold,
                         Position = ticketUserDto.Position,
                         Value = ticketUserDto.Value,
+                        Status = (int)Enum.StatusTicket.VENDIDO,
                         QrCode = "https://api.ingressosaqui.com/imagens/" + nameImagem
                     };
                     _ticketService.UpdateTicketsAsync(ticket);
@@ -380,6 +381,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                             //atualiza Ticket
                             ticket.isSold = true;
                             ticket.IdUser = IdUser;
+                            ticket.Status = (int)Enum.StatusTicket.VENDIDO;
                             _ticketService.UpdateTicketsAsync(ticket);
                         }
                     }
