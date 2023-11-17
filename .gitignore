@@ -6,3 +6,14 @@ Amg-ingressos-aqui-carrinho-api/bin/Debug/
 Amg-ingressos-aqui-carrinho-api/bin/Debug/
 .vscode/
 Amg-ingresso-aqui-carrinho-api/bin/Publish
+
+# User-specific files
+*.suo
+*.vsidx
+*.dtbcache.v2
+
+# Config files
+applicationhost*.config
+
+# Lock files
+read*.lock
