@@ -16,7 +16,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// </summary>
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        [JsonProperty("_id")]
+        [JsonProperty("id")]
         public string Id { get; set; }
         
         /// <summary>
