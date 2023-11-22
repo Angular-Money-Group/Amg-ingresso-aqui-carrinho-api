@@ -172,10 +172,29 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                     @"{$match: { '$and': [{ 'IdPerson': ObjectId('" + idPerson + "') },{'IdEvent': ObjectId('" + idEvent + "')} ] }}"
                 );
                 BsonDocument document = BsonDocument.Parse(json);
+                
+                 BsonDocument lookup =BsonDocument.Parse(
+                        @"{
+                            $lookup: {
+                                from: 'events',
+                                localField: 'IdEvent',
+                                foreignField: '_id',
+                                as: 'Event'
+                            }
+                        }"
+                    );
+
+                BsonDocument uniwindEvent = BsonDocument.Parse(
+                    @"{
+                        $unwind: '$Event'
+                    }"
+                );
                 BsonDocument[] pipeline = new BsonDocument[]
                 {
                     documentFilter,
-                    document
+                    document,
+                    lookup,
+                    uniwindEvent
                 };
 
                 List<GetTransactionEventData> pResults = _transactionCollection

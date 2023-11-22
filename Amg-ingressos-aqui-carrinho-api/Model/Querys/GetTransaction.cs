@@ -65,5 +65,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Querys
         [BsonRepresentation(BsonType.ObjectId)]
         public string IdColab { get; set; }
         public object Status { get; set; }
+        public Boolean ticketCortesia { get; set; }
     }
 }

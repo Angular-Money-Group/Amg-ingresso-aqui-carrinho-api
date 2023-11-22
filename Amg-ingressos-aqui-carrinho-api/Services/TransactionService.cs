@@ -7,6 +7,7 @@ using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Utils;
 using Amg_ingressos_aqui_carrinho_api.Model.Cielo.Callback;
 using Newtonsoft.Json;
+using Amg_ingressos_aqui_carrinho_api.Model.Querys;
 
 namespace Amg_ingressos_aqui_carrinho_api.Services
 {
@@ -54,7 +55,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     var ticketUserDto = (TicketUserDataDto)resultUserData;
                     var ticketEventDto = (TicketEventDataDto)resultEventData;
                     var nameImagem = GenerateQrCode(i.IdTicket).Result;
-                    var ticket = new Ticket()
+                    var ticket = new Model.Ticket()
                     {
                         Id = ticketUserDto.Id,
                         IdLot = ticketUserDto.IdLot,
@@ -355,7 +356,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                         if (messageTicket.Message != null && messageTicket.Message.Any())
                             throw new Exception("Erro ao buscar Ingressos");
 
-                        var listTickets = (List<Ticket>)messageTicket.Data;
+                        var listTickets = (List<Model.Ticket>)messageTicket.Data;
                         if (listTickets?.Count == 0 || listTickets?.Count < i.AmountTicket)
                             throw new SaveTransactionException("Número de ingressos inválido");
 
@@ -475,13 +476,39 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
             return _messageReturn;
         }
-        public async Task<MessageReturn> GetByUserTicketEventDataAsync(string idUser, string idEvent){
+        public async Task<MessageReturn> GetByUserTicketEventDataAsync(string idUser, string idEvent)
+        {
             try
             {
                 idUser.ValidateIdMongo("Usuário");
                 idUser.ValidateIdMongo("Evento");
-
-                _messageReturn.Data = await _transactionRepository.GetByUserTicketData(idUser, idEvent);
+                var result = (List<GetTransactionEventData>)await _transactionRepository.GetByUserTicketData(idUser, idEvent);
+                List<TransactionTicketDto> transaction = new List<TransactionTicketDto>();
+                result.ForEach(i =>
+                {
+                    transaction.Add(
+                        new TransactionTicketDto()
+                        {
+                            CountTickets = i.TotalTicket,
+                            NameUser = i.IdPerson,
+                            NameEvent = i?.Event?.Name??string.Empty,
+                            PaymentMethod = i?.PaymentMethod?.TypePayment.ToString()??string.Empty,
+                            PurchaseDate = i.DateRegister.ToLocalTime().ToString("dd-MM-yyyy"),
+                            PurchaseTime = i.DateRegister.ToLocalTime().ToString("hh:mm:ss"),
+                            SubTotal = i.TotalValue,
+                            Tax = i.Tax,
+                            Total = (i.TotalValue + i.Tax) - i.Discount,
+                            ListTickets = i.TransactionIten.Select(x =>
+                                new TicketDto()
+                                {
+                                    NameVariant = x.Details,
+                                    QrCodeLink = x.ticket?.FirstOrDefault(y => y._id == x.IdTicket).QrCode??string.Empty
+                                }
+                            ).ToList()
+                        }
+                    );
+                });
+                _messageReturn.Data = transaction;
             }
             catch (IdMongoException ex)
             {
@@ -506,16 +533,17 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             {
                 var data = (List<Model.Querys.GetTransactionEventData>)await _transactionRepository.GetByUserEventData(idUser);
                 var listEvents = data.GroupBy(x => x.IdEvent)
-                      .Select(y => new EventDto{ 
-                                id= y.FirstOrDefault().IdEvent,
-                                Address= y.FirstOrDefault().Event.Address,
-                                EndDate = y.FirstOrDefault().Event.EndDate,
-                                StartDate = y.FirstOrDefault().Event.StartDate,
-                                Image = y.FirstOrDefault().Event.Image,
-                                Local = y.FirstOrDefault().Event.Local,
-                                Name= y.FirstOrDefault().Event.Name,
-                                Status= y.FirstOrDefault().Event.Status
-                              }).ToList();  
+                      .Select(y => new EventDto
+                      {
+                          id = y.FirstOrDefault().IdEvent,
+                          Address = y.FirstOrDefault().Event.Address,
+                          EndDate = y.FirstOrDefault().Event.EndDate,
+                          StartDate = y.FirstOrDefault().Event.StartDate,
+                          Image = y.FirstOrDefault().Event.Image,
+                          Local = y.FirstOrDefault().Event.Local,
+                          Name = y.FirstOrDefault().Event.Name,
+                          Status = y.FirstOrDefault().Event.Status
+                      }).ToList();
 
                 _messageReturn.Data = listEvents;
             }
@@ -538,7 +566,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         }
         private async Task<string> GenerateQrCode(string idTicket)
         {
-            HttpClient httpClient= new HttpClient(); 
+            HttpClient httpClient = new HttpClient();
             var url = "http://api.ingressosaqui.com:3004/";
             var uri = "v1/generate-qr-code?data=" + idTicket;
             using var httpResponseMessage = await httpClient.GetAsync(url + uri);
@@ -596,7 +624,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
 
             return _messageReturn;
-            
+
         }
 
     }
