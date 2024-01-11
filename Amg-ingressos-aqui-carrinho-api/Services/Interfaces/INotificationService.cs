@@ -5,6 +5,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services.Interfaces
 {
     public interface INotificationService
     {
-        Task<MessageReturn> SaveAsync(NotificationEmailTicketDto email);
+        Task<MessageReturn> SaveAsync(NotificationEmailTicketDto notification);
     }
 }

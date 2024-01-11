@@ -1,6 +1,5 @@
 using System.Text;
 using System.Text.Json;
-using Amg_ingressos_aqui_carrinho_api.Infra;
 using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Repository.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
@@ -14,7 +13,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
     public class NotificationService : INotificationService
     {
         private MessageReturn _messageReturn;
-        private IEmailRepository _emailRepository;
         private HttpClient _HttpClient;
         private readonly ILogger<NotificationService> _logger;
 
@@ -24,17 +22,16 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             _HttpClient.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
             _HttpClient.Timeout = TimeSpan.FromMinutes(10);
             _logger = logger;
-            _emailRepository = emailRepository;
             _messageReturn = new MessageReturn();
         }
 
-        public async Task<MessageReturn> SaveAsync(NotificationEmailTicketDto email)
+        public async Task<MessageReturn> SaveAsync(NotificationEmailTicketDto notification)
         {
             _logger.LogInformation(string.Format("Init - Save: {0}",this.GetType().Name));
             try
             {
                 _logger.LogInformation(string.Format("Save Repository - Save: {0}",this.GetType().Name));
-                var jsonBody = new StringContent(JsonSerializer.Serialize(email),
+                var jsonBody = new StringContent(JsonSerializer.Serialize(notification),
                 Encoding.UTF8, Application.Json);
                 var url = Settings.EmailServiceApi;
                 var uri = Settings.UriEmailTicket;
@@ -42,16 +39,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 _logger.LogInformation(string.Format("Call PostAsync - Send: {0}",this.GetType().Name));
                 _HttpClient.PostAsync(url + uri, jsonBody).Wait();
 
-                _logger.LogInformation(string.Format("Finished - Send: {0}",this.GetType().Name));
+                _logger.LogInformation(string.Format("Finished - Save: {0}",this.GetType().Name));
                 return _messageReturn;
-                //_messageReturn.Data = await _emailRepository.SaveAsync(email);
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-            _logger.LogInformation(string.Format("Finished - Save: {0}",this.GetType().Name));
-            return _messageReturn;
         }
         public MessageReturn Send(string idEmail)
         {
