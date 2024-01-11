@@ -6,9 +6,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository.Interfaces
         Task<object> Update<T>(object objectTransaction);
         Task<object> Delete(string id);
         Task<object> GetById(string id);
-        Task<object> GetByUser(string idUser);
-        Task<object> GetByUserEventData(string idUser);
-        Task<object> GetByUserTicketData(string idUser, string idEvent);
+        Task<List<T>> GetByUser<T>(string idUser);
+        Task<List<T>> GetByUserEventData<T>(string idUser);
+        Task<List<T>> GetByUserTicketData<T>(string idUser, string idEvent);
         
     }
 }

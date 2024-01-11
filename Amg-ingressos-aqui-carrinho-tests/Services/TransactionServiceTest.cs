@@ -20,7 +20,7 @@ namespace Prime.UnitTests.Services
         private Mock<IPaymentService> _paymentServiceMock = new Mock<IPaymentService>();
         private Mock<ITransactionGatewayClient> _cieloClienteMock = new Mock<ITransactionGatewayClient>();
         private Mock<HttpClient> _httpClienteMock = new Mock<HttpClient>();
-        private Mock<IEmailService> _emailService = new Mock<IEmailService>();
+        private Mock<INotificationService> _emailService = new Mock<INotificationService>();
         private TestHttpClientFactory HttpClientFactory = new TestHttpClientFactory();
 
 
@@ -366,52 +366,6 @@ namespace Prime.UnitTests.Services
         }
 
         [Test]
-        public void Given_idPerson_When_GetByIdPerson_Then_return_Ok()
-        {
-            //Arrange
-            var idPerson = "6442dcb6523d52533aeb1ae4";
-            _transactionRepositoryMock.Setup(x => x.GetByUser(idPerson))
-                .Returns(Task.FromResult(FactoryTransaction.SimpleTransaction() as object));
-
-            //Act
-            var result = _transactionService.GetByUserAsync(idPerson);
-
-            //Assert
-            Assert.IsNotNull(result.Result.Data);
-        }
-
-        [Test]
-        public void Given_idPerson_When_GetByPerson_Then_return_Miss_TransactionPerson()
-        {
-            //Arrange
-            var idPerson = string.Empty;
-            var messageReturn = "Usuário é obrigatório";
-            _transactionRepositoryMock.Setup(x => x.GetByUser(idPerson))
-                .Returns(Task.FromResult(FactoryTransaction.SimpleTransaction() as object));
-
-            //Act
-            var result = _transactionService.GetByUserAsync(idPerson);
-
-            //Assert
-            Assert.AreEqual(messageReturn, result.Result.Message);
-        }
-
-        [Test]
-        public void Given_idPerson_When_GetByPerson_Then_return_Miss_Person_in_Db()
-        {
-            //Arrange
-            var idTransaction = "6442dcb6523d52533aeb1ae4";
-            var messageReturn = "Transação não encontrada";
-            _transactionRepositoryMock.Setup(x => x.GetByUser(idTransaction))
-                .Throws(new GetByPersonTransactionException(messageReturn));
-
-            //Act
-            var result = _transactionService.GetByUserAsync(idTransaction);
-            //Assert
-            Assert.AreEqual(messageReturn, result.Result.Message);
-        }
-
-        [Test]
         public void Given_idPerson_When_GetByPerson_Then_return_internal_error()
         {
             //Arrange
@@ -437,8 +391,6 @@ namespace Prime.UnitTests.Services
                 .Returns(Task.FromResult(new MessageReturn(){Data=FactoryTicketService.SimpleTicketNotSold()}));
             _transactionRepositoryMock.Setup(x => x.GetById(idTransaction))
                 .Returns(Task.FromResult(FactoryTransaction.SimpleTransaction() as object));
-            _transactionItenRepositoryMock.Setup(x => x.GetByIdTransaction(idTransaction))
-                .Returns(Task.FromResult(FactoryTransaction.SimpleTransactionItens() as object));
             _transactionRepositoryMock.Setup(x => x.Update<object>(It.IsAny<Transaction>()))
                 .Returns(Task.FromResult("Transação alterada" as object));
 

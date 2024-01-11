@@ -18,14 +18,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         private MessageReturn _messageReturn;
         private ITicketService _ticketService;
         private IPaymentService _paymentService;
-        private IEmailService _emailService;
+        private INotificationService _notificationService;
 
         public TransactionService(
             ITransactionRepository transactionRepository,
             ITransactionItenRepository transactionItenRepository,
             ITicketService ticketService,
             IPaymentService paymentService,
-            IEmailService emailService
+            INotificationService notificationService
         )
         {
             _transactionRepository = transactionRepository;
@@ -33,7 +33,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             _paymentService = paymentService;
             _transactionItenRepository = transactionItenRepository;
             _messageReturn = new MessageReturn();
-            _emailService = emailService;
+            _notificationService = notificationService;
         }
 
         public async Task<MessageReturn> FinishedTransactionAsync(Transaction transaction)
@@ -99,25 +99,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             bool halfprice
         )
         {
-            var email = new Email
-            {
-                Body = _emailService.GenerateBody(),
-                Subject = "Ingressos",
-                Sender = "suporte@ingressosaqui.com",
-                To = ticketUserDto.User.email,
-                DataCadastro = DateTime.Now
-            };
-            //alterar pra urlQrCode
-            email.Body = email.Body.Replace("{nome_usuario}", ticketUserDto.User.name);
-            email.Body = email.Body.Replace("{nome_evento}", ticketEventDto.@event.name);
-            email.Body = email.Body.Replace(
-                "{data_evento}",
-                ticketEventDto.@event.startDate + " as " + ticketEventDto.@event.endDate
-            );
-            email.Body = email.Body.Replace("{local_evento}", ticketEventDto.@event.local);
-            email.Body = email.Body.Replace(
-                "{endereco_evento}",
-                ticketEventDto.@event.address.addressDescription
+
+            var notification = new NotificationEmailTicketDto(){
+                AddressEvent = ticketEventDto.@event.address.addressDescription
                     + " - "
                     + ticketEventDto.@event.address.number
                     + " - "
@@ -125,17 +109,23 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     + " - "
                     + ticketEventDto.@event.address.city
                     + " - "
-                    + ticketEventDto.@event.address.state
-            );
-            email.Body = email.Body.Replace("{area_evento}", ticketEventDto.variant.name);
-            email.Body = email.Body.Replace(
-                "{tipo_ingresso}",
-                halfprice ? "Meia Entrada" : "Inteira"
-            );
-            email.Body = email.Body.Replace("{qr_code}", urlQrCode);
+                    + ticketEventDto.@event.address.state,
+                    EndDateEvent = ticketEventDto.@event.endDate.ToString(),
+                    EventName = ticketEventDto.@event.name,
+                    LocalEvent = ticketEventDto.@event.local,
+                    Sender = "suporte@ingressosaqui.com",
+                    StartDateEvent = ticketEventDto.@event.startDate.ToString(),
+                    Subject = "Ingressos",
+                    To = ticketUserDto.User.email,
+                    TypeTicket = halfprice ? "Meia Entrada" : "Inteira" ,
+                    UrlQrCode = urlQrCode,
+                    UserName = ticketUserDto.User.name,
+                    VariantName = ticketEventDto.variant.name,
 
-            _ = _emailService.SaveAsync(email);
-            _ = _emailService.Send(email.id);
+            };
+
+            _ = _notificationService.SaveAsync(notification);
+            //_ = _emailService.Send(email.id);
         }
 
         public async Task<MessageReturn> GetByIdAsync(string id)
@@ -457,7 +447,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             {
                 idUser.ValidateIdMongo("Usuário");
 
-                _messageReturn.Data = await _transactionRepository.GetByUser(idUser);
+                _messageReturn.Data = await _transactionRepository.GetByUser<TransactionComplet>(idUser);
             }
             catch (IdMongoException ex)
             {
@@ -482,33 +472,12 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             {
                 idUser.ValidateIdMongo("Usuário");
                 idUser.ValidateIdMongo("Evento");
-                var result = (List<GetTransactionEventData>)await _transactionRepository.GetByUserTicketData(idUser, idEvent);
-                List<TransactionTicketDto> transaction = new List<TransactionTicketDto>();
-                result.ForEach(i =>
-                {
-                    transaction.Add(
-                        new TransactionTicketDto()
-                        {
-                            CountTickets = i.TotalTicket,
-                            NameUser = i.IdPerson,
-                            NameEvent = i?.Event?.Name??string.Empty,
-                            PaymentMethod = i?.PaymentMethod?.TypePayment.ToString()??string.Empty,
-                            PurchaseDate = i.DateRegister.ToLocalTime().ToString("dd-MM-yyyy"),
-                            PurchaseTime = i.DateRegister.ToLocalTime().ToString("hh:mm:ss"),
-                            SubTotal = i.TotalValue,
-                            Tax = i.Tax,
-                            Total = (i.TotalValue + i.Tax) - i.Discount,
-                            ListTickets = i.TransactionIten.Select(x =>
-                                new TicketDto()
-                                {
-                                    NameVariant = x.Details,
-                                    QrCodeLink = x.ticket?.FirstOrDefault(y => y._id == x.IdTicket).QrCode??string.Empty
-                                }
-                            ).ToList()
-                        }
-                    );
-                });
-                _messageReturn.Data = transaction;
+                List<TransactionComplet> result = await _transactionRepository
+                                                            .GetByUserTicketData<TransactionComplet>(
+                                                                idUser,
+                                                                idEvent
+                                                            );
+                _messageReturn.Data = new TransactionTicketDto().ListModelToListDto(result);
             }
             catch (IdMongoException ex)
             {
@@ -527,43 +496,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
             return _messageReturn;
         }
-        public async Task<MessageReturn> GetByUserEventDataAsync(string idUser)
-        {
-            try
-            {
-                var data = (List<Model.Querys.GetTransactionEventData>)await _transactionRepository.GetByUserEventData(idUser);
-                var listEvents = data.GroupBy(x => x.IdEvent)
-                      .Select(y => new EventDto
-                      {
-                          id = y.FirstOrDefault().IdEvent,
-                          Address = y.FirstOrDefault().Event.Address,
-                          EndDate = y.FirstOrDefault().Event.EndDate,
-                          StartDate = y.FirstOrDefault().Event.StartDate,
-                          Image = y.FirstOrDefault().Event.Image,
-                          Local = y.FirstOrDefault().Event.Local,
-                          Name = y.FirstOrDefault().Event.Name,
-                          Status = y.FirstOrDefault().Event.Status
-                      }).ToList();
-
-                _messageReturn.Data = listEvents;
-            }
-            catch (IdMongoException ex)
-            {
-                _messageReturn.Data = string.Empty;
-                _messageReturn.Message = ex.Message;
-            }
-            catch (GetByPersonTransactionException ex)
-            {
-                _messageReturn.Data = string.Empty;
-                _messageReturn.Message = ex.Message;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-            return _messageReturn;
-        }
+        
         private async Task<string> GenerateQrCode(string idTicket)
         {
             HttpClient httpClient = new HttpClient();

@@ -25,14 +25,14 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                 IdPerson = "6442dcb6523d52533aeb1ae4",
                 Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
                 Tax = new decimal(10.0),
-                TransactionItens = SimpleTransactionItens()
+                TransactionItens = SimpleTransactionIten()
             };
         }
-        internal static List<GetTransactionEventData> SimpleListTransactionQueryStagePaymentTransaction(){
-            return new List<GetTransactionEventData>()
+        internal static List<TransactionComplet> SimpleListTransactionQueryStagePaymentTransaction(){
+            return new List<TransactionComplet>()
             {
-                new GetTransactionEventData(){
-                    _id = "6442dcb6523d52533aeb1ae4",
+                new TransactionComplet(){
+                    Id = "6442dcb6523d52533aeb1ae4",
                     PaymentMethod = new PaymentMethod()
                     {
                         IdPaymentMethod = "6442dcb6523d52533aeb1ae4",
@@ -48,31 +48,31 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                     Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
                     Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.PaymentTransaction,
                     Tax = new decimal(10.0),
-                    TransactionIten = new List<TransactionItens>(){
-                        new TransactionItens(){
-                            _id ="6442dcb6523d52533aeb1ae4",
+                    TransactionItens = new List<TransactionIten>(){
+                        new TransactionIten(){
+                            Id ="6442dcb6523d52533aeb1ae4",
                             IdTransaction = "6442dcb6523d52533aeb1ae4",
                             IdTicket = "6442dcb6523d52533aeb1ae4",
                             HalfPrice = false,
-                            TicketPrice = "150"
+                            TicketPrice = 150
                         },
-                        new TransactionItens(){
-                            _id ="6442dcb6523d52533aeb1ae4",
+                        new TransactionIten(){
+                            Id ="6442dcb6523d52533aeb1ae4",
                             IdTransaction = "6442dcb6523d52533aeb1ae4",
                             IdTicket = "6442dcb6523d52533aeb1ae4",
                             HalfPrice = true,
-                            TicketPrice = "75",
+                            TicketPrice = 75,
                         },
                     }
                 },
                 
             };
         }
-        internal static List<GetTransactionEventData> SimpleListTransactionQueryStagePaymentData(){
-            return new List<GetTransactionEventData>()
+        internal static List<TransactionComplet> SimpleListTransactionQueryStagePaymentData(){
+            return new List<TransactionComplet>()
             {
-                new GetTransactionEventData(){
-                    _id = "6442dcb6523d52533aeb1ae4",
+                new TransactionComplet(){
+                    Id = "6442dcb6523d52533aeb1ae4",
                     PaymentMethod = new PaymentMethod()
                     {
                         IdPaymentMethod = "6442dcb6523d52533aeb1ae4",
@@ -88,31 +88,31 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                     Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
                     Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.PaymentData,
                     Tax = new decimal(10.0),
-                    TransactionIten = new List<TransactionItens>(){
-                        new TransactionItens(){
-                            _id ="6442dcb6523d52533aeb1ae4",
+                    TransactionItens = new List<TransactionIten>(){
+                        new TransactionIten(){
+                            Id ="6442dcb6523d52533aeb1ae4",
                             IdTransaction = "6442dcb6523d52533aeb1ae4",
                             IdTicket = "6442dcb6523d52533aeb1ae4",
                             HalfPrice = false,
-                            TicketPrice = "150"
+                            TicketPrice = 150
                         },
-                        new TransactionItens(){
-                            _id ="6442dcb6523d52533aeb1ae4",
+                        new TransactionIten(){
+                            Id ="6442dcb6523d52533aeb1ae4",
                             IdTransaction = "6442dcb6523d52533aeb1ae4",
                             IdTicket = "6442dcb6523d52533aeb1ae4",
                             HalfPrice = true,
-                            TicketPrice = "75",
+                            TicketPrice = 75,
                         },
                     }
                 },
                 
             };
         }
-        internal static List<GetTransactionEventData> SimpleListTransactionQueryStageConfirm(){
-            return new List<GetTransactionEventData>()
+        internal static List<TransactionComplet> SimpleListTransactionQueryStageConfirm(){
+            return new List<TransactionComplet>()
             {
-                new GetTransactionEventData(){
-                    _id = "6442dcb6523d52533aeb1ae4",
+                new TransactionComplet(){
+                    Id = "6442dcb6523d52533aeb1ae4",
                     PaymentMethod = new PaymentMethod()
                     {
                         IdPaymentMethod = "6442dcb6523d52533aeb1ae4",
@@ -128,31 +128,31 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                     Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
                     Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.Confirm,
                     Tax = new decimal(10.0),
-                    TransactionIten = new List<TransactionItens>(){
-                        new TransactionItens(){
-                            _id ="6442dcb6523d52533aeb1ae4",
+                    TransactionItens = new List<TransactionIten>(){
+                        new TransactionIten(){
+                            Id ="6442dcb6523d52533aeb1ae4",
                             IdTransaction = "6442dcb6523d52533aeb1ae4",
                             IdTicket = "6442dcb6523d52533aeb1ae4",
                             HalfPrice = false,
-                            TicketPrice = "150"
+                            TicketPrice = 150
                         },
-                        new TransactionItens(){
-                            _id ="6442dcb6523d52533aeb1ae4",
+                        new TransactionIten(){
+                            Id ="6442dcb6523d52533aeb1ae4",
                             IdTransaction = "6442dcb6523d52533aeb1ae4",
                             IdTicket = "6442dcb6523d52533aeb1ae4",
                             HalfPrice = true,
-                            TicketPrice = "75",
+                            TicketPrice = 75,
                         },
                     }
                 },
                 
             };
         }
-        internal static List<GetTransactionEventData> SimpleListTransactionQueryStagePersonData(){
-            return new List<GetTransactionEventData>()
+        internal static List<TransactionComplet> SimpleListTransactionQueryStagePersonData(){
+            return new List<TransactionComplet>()
             {
-                new GetTransactionEventData(){
-                    _id = "6442dcb6523d52533aeb1ae4",
+                new TransactionComplet(){
+                    Id = "6442dcb6523d52533aeb1ae4",
                     PaymentMethod = new PaymentMethod()
                     {
                         IdPaymentMethod = "6442dcb6523d52533aeb1ae4",
@@ -168,31 +168,31 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                     Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
                     Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.PersonData,
                     Tax = new decimal(10.0),
-                    TransactionIten = new List<TransactionItens>(){
-                        new TransactionItens(){
-                            _id ="6442dcb6523d52533aeb1ae4",
+                    TransactionItens = new List<TransactionIten>(){
+                        new TransactionIten(){
+                            Id ="6442dcb6523d52533aeb1ae4",
                             IdTransaction = "6442dcb6523d52533aeb1ae4",
                             IdTicket = "6442dcb6523d52533aeb1ae4",
                             HalfPrice = false,
-                            TicketPrice = "150"
+                            TicketPrice = 150
                         },
-                        new TransactionItens(){
-                            _id ="6442dcb6523d52533aeb1ae4",
+                        new TransactionIten(){
+                            Id ="6442dcb6523d52533aeb1ae4",
                             IdTransaction = "6442dcb6523d52533aeb1ae4",
                             IdTicket = "6442dcb6523d52533aeb1ae4",
                             HalfPrice = true,
-                            TicketPrice = "75",
+                            TicketPrice = 75,
                         },
                     }
                 },
                 
             };
         }
-        internal static List<GetTransactionEventData> SimpleListTransactionQueryStageTicketData(){
-            return new List<GetTransactionEventData>()
+        internal static List<TransactionComplet> SimpleListTransactionQueryStageTicketData(){
+            return new List<TransactionComplet>()
             {
-                new GetTransactionEventData(){
-                    _id = "6442dcb6523d52533aeb1ae4",
+                new TransactionComplet(){
+                    Id = "6442dcb6523d52533aeb1ae4",
                     PaymentMethod = new PaymentMethod()
                     {
                         IdPaymentMethod = "6442dcb6523d52533aeb1ae4",
@@ -208,20 +208,20 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                     Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
                     Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.TicketsData,
                     Tax = new decimal(10.0),
-                    TransactionIten = new List<TransactionItens>(){
-                        new TransactionItens(){
-                            _id ="6442dcb6523d52533aeb1ae4",
+                    TransactionItens = new List<TransactionIten>(){
+                        new TransactionIten(){
+                            Id ="6442dcb6523d52533aeb1ae4",
                             IdTransaction = "6442dcb6523d52533aeb1ae4",
                             IdTicket = "6442dcb6523d52533aeb1ae4",
                             HalfPrice = false,
-                            TicketPrice = "150"
+                            TicketPrice = 150
                         },
-                        new TransactionItens(){
-                            _id ="6442dcb6523d52533aeb1ae4",
+                        new TransactionIten(){
+                            Id ="6442dcb6523d52533aeb1ae4",
                             IdTransaction = "6442dcb6523d52533aeb1ae4",
                             IdTicket = "6442dcb6523d52533aeb1ae4",
                             HalfPrice = true,
-                            TicketPrice = "75",
+                            TicketPrice = 75,
                         },
                     }
                 },
@@ -236,7 +236,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                 Stage = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.PersonData
             };
         }
-        internal static List<TransactionIten> SimpleTransactionItens()
+        internal static List<TransactionIten> SimpleTransactionIten()
         {
             return new List<TransactionIten>()
             {
@@ -261,10 +261,10 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
             return new TransactionDto()
             {
                 IdUser = "6442dcb6523d52533aeb1ae4",
-                TransactionItensDto = SimpleListTransactionItensDto()
+                TransactionItensDto = SimpleListTransactionItenDto()
             };
         }
-        internal static List<TransactionItenDto> SimpleListTransactionItensDto()
+        internal static List<TransactionItenDto> SimpleListTransactionItenDto()
         {
             return new List<TransactionItenDto>()
             {

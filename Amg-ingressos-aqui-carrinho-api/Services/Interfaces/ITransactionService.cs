@@ -11,7 +11,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services.Interfaces
         Task<MessageReturn> GetByIdAsync(string idTransaction);
         Task<MessageReturn> GetStatusPixPaymentAsync(string paymentId);
         Task<MessageReturn> GetByUserAsync(string idUser);
-        Task<MessageReturn> GetByUserEventDataAsync(string idUser);
         Task<MessageReturn> GetByUserTicketEventDataAsync(string idUser,string idEvent);
         Task<MessageReturn> RefundPaymentPixAsync(string idTransaction, long? amount);
         Task<MessageReturn> Payment(Transaction transaction);

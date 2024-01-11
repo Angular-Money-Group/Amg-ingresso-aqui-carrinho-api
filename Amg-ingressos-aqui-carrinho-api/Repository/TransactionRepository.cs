@@ -11,7 +11,7 @@ using Amg_ingressos_aqui_carrinho_api.Model.Querys;
 namespace Amg_ingressos_aqui_carrinho_api.Repository
 {
     [ExcludeFromCodeCoverage]
-    public class TransactionRepository<T> : ITransactionRepository
+    public class TransactionRepository : ITransactionRepository
     {
         private readonly IMongoCollection<Transaction> _transactionCollection;
 
@@ -63,27 +63,33 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
             }
         }
 
-        public async Task<object> GetByUser(string idPerson)
+        public async Task<List<T>> GetByUser<T>(string idUser)
         {
             try
             {
-                var builder = Builders<Transaction>.Filter;
-                var filter = builder.Empty;
+                // var builder = Builders<Transaction>.Filter;
+                // var filter = builder.Empty;
 
-                if (!string.IsNullOrWhiteSpace(idPerson))
-                {
-                    var idPersonFilter = builder.Eq(x => x.IdPerson, idPerson);
-                    var statusFilter = builder.Eq(x => x.Status, Enum.StatusPaymentEnum.InProgress);
-                    filter &= idPersonFilter;
-                    filter &= statusFilter;
-                }
+                // if (!string.IsNullOrWhiteSpace(idUser))
+                // {
+                //     var idPersonFilter = builder.Eq(x => x.IdPerson, idUser);
+                //     var statusFilter = builder.Eq(x => x.Status, Enum.StatusPaymentEnum.InProgress);
+                //     filter &= idPersonFilter;
+                //     filter &= statusFilter;
+                // }
 
-                var result = await _transactionCollection.Find(filter).ToListAsync();
+                // var result = await _transactionCollection.Find(filter).ToListAsync();
 
-                if (result == null)
-                    throw new GetByIdTransactionException("Transação não encontrada");
+                // if (result == null)
+                //     throw new GetByIdTransactionException("Transação não encontrada");
 
-                return result;
+                // return result;
+                var transactions = await _transactionCollection.Aggregate()
+                    .Match(new BsonDocument { { "IdPerson", ObjectId.Parse(idUser) } })
+                    .Lookup("events", "IdEvent", "_id", "Events")
+                    .As<T>()
+                    .ToListAsync();
+                return transactions;
             }
             catch (GetByIdTransactionException ex)
             {
@@ -95,62 +101,67 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
             }
         }
 
-        public async Task<object> GetByUserEventData(string idPerson)
+        public async Task<List<T>> GetByUserEventData<T>(string idUser)
         {
             try
             {
-                List<BsonDocument> pipeline = new List<BsonDocument>();
+                // List<BsonDocument> pipeline = new List<BsonDocument>();
 
 
-                pipeline.Add(
-                    BsonDocument.Parse(
-                        @"{$addFields:{'IdPerson': { '$toString': '$IdPerson' }}}"
-                    )
-                );
-                pipeline.Add(
-                    BsonDocument.Parse(
-                        @"{ $match: { '$and': [{ 'IdPerson': '"
-                            + idPerson.ToString()
-                            + "' }] }}"
-                    )
-                );
+                // pipeline.Add(
+                //     BsonDocument.Parse(
+                //         @"{$addFields:{'IdPerson': { '$toString': '$IdPerson' }}}"
+                //     )
+                // );
+                // pipeline.Add(
+                //     BsonDocument.Parse(
+                //         @"{ $match: { '$and': [{ 'IdPerson': '"
+                //             + idUser.ToString()
+                //             + "' }] }}"
+                //     )
+                // );
 
-                pipeline.Add(
-                    BsonDocument.Parse(@"{$addFields:{'Stage': { '$toString': '$Stage' }}}")
-                );
-                pipeline.Add(
-                    BsonDocument.Parse(
-                        @"{ $match: { '$and': [{ 'Stage': '" + 5 + "' }] }}"
-                    )
-                );
+                // pipeline.Add(
+                //     BsonDocument.Parse(@"{$addFields:{'Stage': { '$toString': '$Stage' }}}")
+                // );
+                // pipeline.Add(
+                //     BsonDocument.Parse(
+                //         @"{ $match: { '$and': [{ 'Stage': '" + 5 + "' }] }}"
+                //     )
+                // );
 
-                pipeline.Add(
-                    BsonDocument.Parse(
-                        @"{
-                            $lookup: {
-                                from: 'events',
-                                localField: 'IdEvent',
-                                foreignField: '_id',
-                                as: 'Event'
-                            }
-                        }"
-                    )
-                );
+                // pipeline.Add(
+                //     BsonDocument.Parse(
+                //         @"{
+                //             $lookup: {
+                //                 from: 'events',
+                //                 localField: 'IdEvent',
+                //                 foreignField: '_id',
+                //                 as: 'Event'
+                //             }
+                //         }"
+                //     )
+                // );
 
-                BsonDocument uniwindEvent = BsonDocument.Parse(
-                    @"{
-                        $unwind: '$Event'
-                    }"
-                );
+                // BsonDocument uniwindEvent = BsonDocument.Parse(
+                //     @"{
+                //         $unwind: '$Event'
+                //     }"
+                // );
 
-                pipeline.Add(uniwindEvent);
+                // pipeline.Add(uniwindEvent);
 
-                var result = _transactionCollection.Aggregate<GetTransactionEventData>(pipeline).ToList();
+                // var result = _transactionCollection.Aggregate<GetTransactionEventData>(pipeline).ToList();
 
-                if (result == null)
-                    throw new GetByIdTransactionException("Transação não encontrada");
+                // if (result == null)
+                //     throw new GetByIdTransactionException("Transação não encontrada");
 
-                return result;
+                // return result;
+                var transactions = await _transactionCollection.Aggregate()
+                    .Lookup("events", "IdEvent", "_id", "Events")
+                    .As<T>()
+                    .ToListAsync();
+                return transactions;
             }
             catch (GetByIdTransactionException ex)
             {
@@ -162,53 +173,16 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
             }
         }
 
-        public async Task<object> GetByUserTicketData(string idPerson, string idEvent)
+        public async Task<List<T>> GetByUserTicketData<T>(string idPerson, string idEvent)
         {
             try
             {
-                var json = QuerysMongo.GetTransactionTicketQuery;
+                var transactions = await _transactionCollection.Aggregate()
+                    .Lookup("events", "IdEvent", "_id", "Events")
+                    .As<T>()
+                    .ToListAsync();
 
-                BsonDocument documentFilter = BsonDocument.Parse(
-                    @"{$match: { '$and': [{ 'IdPerson': ObjectId('" + idPerson + "') },{'IdEvent': ObjectId('" + idEvent + "')} ] }}"
-                );
-                BsonDocument document = BsonDocument.Parse(json);
-                
-                 BsonDocument lookup =BsonDocument.Parse(
-                        @"{
-                            $lookup: {
-                                from: 'events',
-                                localField: 'IdEvent',
-                                foreignField: '_id',
-                                as: 'Event'
-                            }
-                        }"
-                    );
-
-                BsonDocument uniwindEvent = BsonDocument.Parse(
-                    @"{
-                        $unwind: '$Event'
-                    }"
-                );
-                BsonDocument[] pipeline = new BsonDocument[]
-                {
-                    documentFilter,
-                    document,
-                    lookup,
-                    uniwindEvent
-                };
-
-                List<GetTransactionEventData> pResults = _transactionCollection
-                    .Aggregate<GetTransactionEventData>(pipeline)
-                    .ToList();
-
-                //var result = await _eventCollection.FindAsync<Event>(x => x._Id == id as string)
-                //    .Result.FirstOrDefaultAsync();
-
-
-                if (pResults == null)
-                    throw new GetByIdTransactionException("Evento não encontrado");
-
-                return pResults;
+            return transactions;
             }
             catch (GetByIdTransactionException ex)
             {

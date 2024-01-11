@@ -26,10 +26,10 @@ builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
-builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 //repository
-builder.Services.AddScoped<ITransactionRepository, TransactionRepository<object>>();
+builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<ITransactionItenRepository, TransactionItenRepository<object>>();
 builder.Services.AddScoped<IEmailRepository, EmailRepository>();
 

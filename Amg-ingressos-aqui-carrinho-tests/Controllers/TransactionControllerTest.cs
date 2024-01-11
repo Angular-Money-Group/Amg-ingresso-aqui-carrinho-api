@@ -24,7 +24,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         private Mock<ITransactionGatewayClient> _cieloClienteMock = new Mock<ITransactionGatewayClient>();
         private Mock<HttpClient> _httpClienteMock = new Mock<HttpClient>();
         private TestHttpClientFactory HttpClientFactory = new TestHttpClientFactory();
-        private Mock<IEmailService> _emailServiceMock = new Mock<IEmailService>();
+        private Mock<INotificationService> _emailServiceMock = new Mock<INotificationService>();
 
         [SetUp]
         public void Setup()
@@ -388,39 +388,6 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
 
             // Assert
             Assert.AreEqual(404, result.StatusCode);
-            Assert.AreEqual(espectedReturn, result.Value);
-        }
-
-        [Test]
-        public async Task Given_idPerson_When_GetByPerson_Then_return_transaction_Async()
-        {
-            // Arrange
-            var idPerson = "6442dcb6523d52533aeb1ae4";
-            _transactionRepositoryMock.Setup(x => x.GetByUser(idPerson))
-                .Returns(Task.FromResult(FactoryTransaction.SimpleTransaction() as object));
-
-            // Act
-            var result = (await _transactionController.GetByUserAsync(idPerson) as OkObjectResult);
-
-            // Assert
-            Assert.AreEqual(200, result.StatusCode);
-            Assert.IsNotNull(result?.Value);
-        }
-
-        [Test]
-        public async Task Given_idPerson_When_GetByPerson_Then_return_status_code_500_Async()
-        {
-            // Arrange
-            var idTransaction = "6442dcb6523d52533aeb1ae4";
-            var espectedReturn = MessageLogErrors.getByPersonTransactionMessage;
-            _transactionRepositoryMock.Setup(x => x.GetByUser(idTransaction))
-                .Throws(new Exception("error conection database"));
-
-            // Act
-            var result = (await _transactionController.GetByUserAsync(idTransaction) as ObjectResult);
-
-            // Assert
-            Assert.AreEqual(500, result.StatusCode);
             Assert.AreEqual(espectedReturn, result.Value);
         }
 

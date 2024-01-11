@@ -6,17 +6,19 @@ using Amg_ingressos_aqui_carrinho_api.Repository.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
 using static System.Net.Mime.MediaTypeNames;
 using Microsoft.Net.Http.Headers;
+using Amg_ingressos_aqui_carrinho_api.Dto;
+using Amg_ingressos_aqui_carrinho_api.Consts;
 
 namespace Amg_ingressos_aqui_carrinho_api.Services
 {
-    public class EmailService : IEmailService
+    public class NotificationService : INotificationService
     {
         private MessageReturn _messageReturn;
         private IEmailRepository _emailRepository;
         private HttpClient _HttpClient;
-        private readonly ILogger<EmailService> _logger;
+        private readonly ILogger<NotificationService> _logger;
 
-        public EmailService(IEmailRepository emailRepository,ILogger<EmailService> logger)
+        public NotificationService(IEmailRepository emailRepository,ILogger<NotificationService> logger)
         {
             _HttpClient = new HttpClient();
             _HttpClient.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
@@ -26,13 +28,23 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             _messageReturn = new MessageReturn();
         }
 
-        public async Task<MessageReturn> SaveAsync(Email email)
+        public async Task<MessageReturn> SaveAsync(NotificationEmailTicketDto email)
         {
             _logger.LogInformation(string.Format("Init - Save: {0}",this.GetType().Name));
             try
             {
                 _logger.LogInformation(string.Format("Save Repository - Save: {0}",this.GetType().Name));
-                _messageReturn.Data = await _emailRepository.SaveAsync(email);
+                var jsonBody = new StringContent(JsonSerializer.Serialize(email),
+                Encoding.UTF8, Application.Json);
+                var url = Settings.EmailServiceApi;
+                var uri = Settings.UriEmailTicket;
+
+                _logger.LogInformation(string.Format("Call PostAsync - Send: {0}",this.GetType().Name));
+                _HttpClient.PostAsync(url + uri, jsonBody).Wait();
+
+                _logger.LogInformation(string.Format("Finished - Send: {0}",this.GetType().Name));
+                return _messageReturn;
+                //_messageReturn.Data = await _emailRepository.SaveAsync(email);
             }
             catch (Exception ex)
             {
