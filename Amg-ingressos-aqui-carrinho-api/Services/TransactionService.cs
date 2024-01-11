@@ -125,7 +125,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             };
 
             _ = _notificationService.SaveAsync(notification);
-            //_ = _emailService.Send(email.id);
         }
 
         public async Task<MessageReturn> GetByIdAsync(string id)

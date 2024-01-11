@@ -1,7 +1,6 @@
 using System.Text;
 using System.Text.Json;
 using Amg_ingressos_aqui_carrinho_api.Model;
-using Amg_ingressos_aqui_carrinho_api.Repository.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
 using static System.Net.Mime.MediaTypeNames;
 using Microsoft.Net.Http.Headers;
@@ -13,14 +12,10 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
     public class NotificationService : INotificationService
     {
         private MessageReturn _messageReturn;
-        private HttpClient _HttpClient;
         private readonly ILogger<NotificationService> _logger;
 
-        public NotificationService(IEmailRepository emailRepository,ILogger<NotificationService> logger)
+        public NotificationService(ILogger<NotificationService> logger)
         {
-            _HttpClient = new HttpClient();
-            _HttpClient.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
-            _HttpClient.Timeout = TimeSpan.FromMinutes(10);
             _logger = logger;
             _messageReturn = new MessageReturn();
         }
@@ -30,14 +25,16 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             _logger.LogInformation(string.Format("Init - Save: {0}",this.GetType().Name));
             try
             {
-                _logger.LogInformation(string.Format("Save Repository - Save: {0}",this.GetType().Name));
+                var httpClient = new HttpClient();
+                httpClient.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
+                httpClient.Timeout = TimeSpan.FromMinutes(10);
                 var jsonBody = new StringContent(JsonSerializer.Serialize(notification),
                 Encoding.UTF8, Application.Json);
                 var url = Settings.EmailServiceApi;
                 var uri = Settings.UriEmailTicket;
 
                 _logger.LogInformation(string.Format("Call PostAsync - Send: {0}",this.GetType().Name));
-                _HttpClient.PostAsync(url + uri, jsonBody).Wait();
+                httpClient.PostAsync(url + uri, jsonBody).Wait();
 
                 _logger.LogInformation(string.Format("Finished - Save: {0}",this.GetType().Name));
                 return _messageReturn;
@@ -46,20 +43,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             {
                 throw ex;
             }
-        }
-        public MessageReturn Send(string idEmail)
-        {
-            _logger.LogInformation(string.Format("Init - Send: {0}",this.GetType().Name));
-            var jsonBody = new StringContent(JsonSerializer.Serialize(new {emailID = idEmail}),
-             Encoding.UTF8, Application.Json); // using static System.Net.Mime.MediaTypeNames;
-            var url = "http://api.ingressosaqui.com:3006/";
-            var uri = "v1/email/";
-
-            _logger.LogInformation(string.Format("Call PostAsync - Send: {0}",this.GetType().Name));
-            _HttpClient.PostAsync(url + uri, jsonBody).Wait();
-
-            _logger.LogInformation(string.Format("Finished - Send: {0}",this.GetType().Name));
-            return _messageReturn;
         }
 
         public string GenerateBody()
