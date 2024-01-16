@@ -34,7 +34,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 var uri = Settings.UriEmailTicket;
 
                 _logger.LogInformation(string.Format("Call PostAsync - Send: {0}",this.GetType().Name));
-                httpClient.PostAsync(url + uri, jsonBody).Wait();
+                var result = httpClient.PostAsync(url + uri, jsonBody);
+                if(result.Result.IsSuccessStatusCode)
+                {
+                    _messageReturn.Message = "Success";
+                }
 
                 _logger.LogInformation(string.Format("Finished - Save: {0}",this.GetType().Name));
                 return _messageReturn;
