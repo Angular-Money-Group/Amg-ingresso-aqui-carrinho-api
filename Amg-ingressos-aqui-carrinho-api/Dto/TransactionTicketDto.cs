@@ -36,7 +36,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
                     new TicketDto()
                     {
                         NameVariant = x.Details,
-                        QrCodeLink = transaction.Tickets?.Find(t => t.Id == x.IdTicket).QrCode ?? string.Empty
+                        QrCodeLink = transaction.Tickets?.Find(t => t.Id == x.IdTicket)?.QrCode ?? string.Empty
                     }
                 ).ToList()
             };

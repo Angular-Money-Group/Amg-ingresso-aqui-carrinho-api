@@ -15,7 +15,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                 Id = "6442dcb6523d52533aeb1ae4",
                 IdLot = "6442dcb6523d52533aeb1ae4",
                 IdUser = null,
-                isSold = false,
+                IsSold = false,
                 Position= null,
                 Value= 50
             }});

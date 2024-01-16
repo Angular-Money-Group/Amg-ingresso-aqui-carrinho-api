@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Amg_ingressos_aqui_carrinho_api.Enum;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
@@ -9,6 +5,7 @@ using Newtonsoft.Json;
 
 namespace Amg_ingressos_aqui_carrinho_api.Model
 {
+    [BsonIgnoreExtraElements]
     public class Ticket
     {
         /// <summary>
@@ -45,7 +42,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// Se o ingresso já foi vendido
         /// </summary>
         [BsonDefaultValue(false)]
-        public bool isSold { get; set; }
+        public bool IsSold { get; set; }
 
         /// <summary>
         /// STATUS DO INGRESSO

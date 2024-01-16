@@ -60,7 +60,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                         Id = ticketUserDto.Id,
                         IdLot = ticketUserDto.IdLot,
                         IdUser = ticketUserDto.User.id,
-                        isSold = ticketUserDto.isSold,
+                        IsSold = ticketUserDto.isSold,
                         Position = ticketUserDto.Position,
                         Value = ticketUserDto.Value,
                         Status = (int)Enum.StatusTicket.VENDIDO,
@@ -352,7 +352,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                         //pra cada compra carimbar o ticket e criar transaction item
                         for (int amount = 0; amount < i.AmountTicket; amount++)
                         {
-                            var ticket = listTickets?.FirstOrDefault(i => i.isSold == false);
+                            var ticket = listTickets?.FirstOrDefault(i => i.IsSold == false);
                             if (ticket.Value == 0)
                                 throw new SaveTransactionException("Valor do Ingresso inválido.");
 
@@ -369,7 +369,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                             _transactionItenRepository.Save<object>(transactionItem);
 
                             //atualiza Ticket
-                            ticket.isSold = true;
+                            ticket.IsSold = true;
                             ticket.IdUser = IdUser;
                             ticket.Status = (int)Enum.StatusTicket.VENDIDO;
                             _ticketService.UpdateTicketsAsync(ticket);

@@ -15,7 +15,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                 Id = "6442dcb6523d52533aeb1ae4",
                 IdLot = "6442dcb6523d52533aeb1ae4",
                 IdUser = "6442dcb6523d52533aeb1ae4",
-                isSold = true,
+                IsSold = true,
                 Position = "A1",
                 Value = new decimal(50)
             };
@@ -27,7 +27,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                 Id = "6442dcb6523d52533aeb1ae4",
                 IdLot = "6442dcb6523d52533aeb1ae4",
                 IdUser = "6442dcb6523d52533aeb1ae4",
-                isSold = false,
+                IsSold = false,
                 Position = "A1",
                 Value = new decimal(50)
             };
@@ -40,7 +40,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                     Id = "6442dcb6523d52533aeb1ae4",
                     IdLot = "6442dcb6523d52533aeb1ae4",
                     IdUser = "6442dcb6523d52533aeb1ae4",
-                    isSold = true,
+                    IsSold = true,
                     Position= "A1",
                     Value= new decimal(50)
                 },
@@ -49,7 +49,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                     Id = "6552dcb6523d52533aeb1ae4",
                     IdLot = "6552dcb6523d52533aeb1ae4",
                     IdUser = "6552dcb6523d52533aeb1ae4",
-                    isSold = true,
+                    IsSold = true,
                     Position= "A2",
                     Value= new decimal(50)
                 }
@@ -63,7 +63,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                     Id = "6442dcb6523d52533aeb1ae4",
                     IdLot = "6442dcb6523d52533aeb1ae4",
                     IdUser = "6442dcb6523d52533aeb1ae4",
-                    isSold = false,
+                    IsSold = false,
                     Position= "A1",
                     Value= new decimal(50)
                 },
@@ -72,7 +72,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                     Id = "6552dcb6523d52533aeb1ae4",
                     IdLot = "6552dcb6523d52533aeb1ae4",
                     IdUser = "6552dcb6523d52533aeb1ae4",
-                    isSold = false,
+                    IsSold = false,
                     Position= "A2",
                     Value= new decimal(50)
                 }
@@ -86,7 +86,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                     Id = "6442dcb6523d52533aeb1ae4",
                     IdLot = "6442dcb6523d52533aeb1ae4",
                     IdUser = "6442dcb6523d52533aeb1ae4",
-                    isSold = false,
+                    IsSold = false,
                     Position= "A1",
                     Value= new decimal(0)
                 },
@@ -95,7 +95,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                     Id = "6552dcb6523d52533aeb1ae4",
                     IdLot = "6552dcb6523d52533aeb1ae4",
                     IdUser = "6552dcb6523d52533aeb1ae4",
-                    isSold = false,
+                    IsSold = false,
                     Position= "A2",
                     Value= new decimal(0)
                 }

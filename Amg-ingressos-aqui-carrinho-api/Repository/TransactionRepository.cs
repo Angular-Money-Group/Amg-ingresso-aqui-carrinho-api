@@ -157,7 +157,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                 //     throw new GetByIdTransactionException("Transação não encontrada");
 
                 // return result;
+                BsonDocument documentFilter = new BsonDocument { { "IdPerson", ObjectId.Parse(idUser) } };
                 var transactions = await _transactionCollection.Aggregate()
+                    .Match(documentFilter)
                     .Lookup("events", "IdEvent", "_id", "Events")
                     .As<T>()
                     .ToListAsync();
@@ -177,12 +179,22 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
         {
             try
             {
+                var filters = new List<FilterDefinition<Transaction>>
+                {
+                    Builders<Transaction>.Filter.Eq("IdPerson", idPerson),
+                    Builders<Transaction>.Filter.Eq("IdEvent", idEvent)
+                };
+                FilterDefinition<Transaction> filter = Builders<Transaction>.Filter.And(filters);
+
                 var transactions = await _transactionCollection.Aggregate()
+                    .Match(filter)
                     .Lookup("events", "IdEvent", "_id", "Events")
+                    .Lookup("transactionIten", "_id", "IdTransaction", "TransactionItens")
+                    .Lookup("tickets", "TransactionItens.IdTicket", "_id", "Tickets")
                     .As<T>()
                     .ToListAsync();
 
-            return transactions;
+                return transactions;
             }
             catch (GetByIdTransactionException ex)
             {
