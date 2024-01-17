@@ -440,13 +440,42 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             if (transactionIten.TicketPrice == new decimal(0))
                 throw new SaveTransactionException("Valor do Ingresso é obrigatório");
         }
-        public async Task<MessageReturn> GetByUserAsync(string idUser)
+        public async Task<MessageReturn> GetByUserActivesAsync(string idUser)
         {
             try
             {
                 idUser.ValidateIdMongo("Usuário");
-                var data =await _transactionRepository.GetByUser<TransactionComplet>(idUser);
-                var list = new TransactionCardDto().ModelListToDtoList(data);
+                var data =await _transactionRepository.GetByUserEventData<TransactionComplet>(idUser);
+                var listActives = data.Where(x=> x.Events.FirstOrDefault().StartDate >= DateTime.Now ).Select(t=> t);
+                var list = new TransactionCardDto().ModelListToDtoList(listActives);
+                _messageReturn.Data = list;
+            }
+            catch (IdMongoException ex)
+            {
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
+            catch (GetByPersonTransactionException ex)
+            {
+                _messageReturn.Data = string.Empty;
+                _messageReturn.Message = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return _messageReturn;
+        }
+
+        public async Task<MessageReturn> GetByUserHistoryAsync(string idUser)
+        {
+            try
+            {
+                idUser.ValidateIdMongo("Usuário");
+                var data =await _transactionRepository.GetByUserEventData<TransactionComplet>(idUser);
+                var listActives = data.Where(x=> x.Events.FirstOrDefault().StartDate < DateTime.Now ).Select(t=> t);
+                var list = new TransactionCardDto().ModelListToDtoList(listActives);
                 _messageReturn.Data = list;
             }
             catch (IdMongoException ex)

@@ -399,7 +399,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
             var espectedReturn = "Usuário é obrigatório";
 
             // Act
-            var result = (await _transactionController.GetByUserAsync(idTransaction) as ObjectResult);
+            var result = (await _transactionController.GetByUserActivesAsync(idTransaction) as ObjectResult);
 
             // Assert
             Assert.AreEqual(404, result.StatusCode);

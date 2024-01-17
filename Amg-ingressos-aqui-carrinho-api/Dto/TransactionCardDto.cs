@@ -45,7 +45,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
             Year = string.Empty;
         }
         
-        public List<TransactionCardDto> ModelListToDtoList(List<TransactionComplet> listTransaction)
+        public IEnumerable<TransactionCardDto> ModelListToDtoList(IEnumerable<TransactionComplet> listTransaction)
         {
 
             var listEvents = listTransaction.Select(e => e.Events.FirstOrDefault())
@@ -60,7 +60,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
                 State = c?.FirstOrDefault()?.Address?.State ?? string.Empty,
                 Description = c?.FirstOrDefault()?.Description ?? string.Empty,
                 Image = c?.FirstOrDefault()?.Image ?? string.Empty
-            }).ToList();
+            });
             return listEvents;
         }
     }

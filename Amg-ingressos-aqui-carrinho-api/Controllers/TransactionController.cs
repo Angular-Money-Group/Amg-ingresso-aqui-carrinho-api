@@ -62,12 +62,12 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// <returns>500 Erro inesperado</returns>
         /// <returns>404 Erro tratado</returns>
         [HttpGet]
-        [Route("person/{idUser}")]
-        public async Task<IActionResult> GetByUserAsync([FromRoute] string idUser)
+        [Route("user/{idUser}/card/active")]
+        public async Task<IActionResult> GetByUserActivesAsync([FromRoute] string idUser)
         {
             try
             {
-                var result = await _transactionService.GetByUserAsync(idUser);
+                var result = await _transactionService.GetByUserActivesAsync(idUser);
                 if (result.Message != null && result.Message.Any())
                 {
                     _logger.LogInformation(result.Message);
@@ -87,31 +87,30 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// Busca Transação por id
         /// </summary>
         /// <param name="idUser">id do usuário</param>
-        /// <param name="idEvent">id do evento</param>
         /// <returns>200 Transação</returns>
         /// <returns>500 Erro inesperado</returns>
         /// <returns>404 Erro tratado</returns>
-        // [HttpGet]
-        // [Route("person/{idUser}/event")]
-        // public async Task<IActionResult> GetByUserEventAsync([FromRoute] string idUser)
-        // {
-        //     try
-        //     {
-        //         var result = await _transactionService.GetByUserEventDataAsync(idUser);
-        //         if (result.Message != null && result.Message.Any())
-        //         {
-        //             _logger.LogInformation(result.Message);
-        //             return NotFound(result.Message);
-        //         }
+        [HttpGet]
+        [Route("user/{idUser}/card/history")]
+        public async Task<IActionResult> GetByUserHistoryAsync([FromRoute] string idUser)
+        {
+            try
+            {
+                var result = await _transactionService.GetByUserHistoryAsync(idUser);
+                if (result.Message != null && result.Message.Any())
+                {
+                    _logger.LogInformation(result.Message);
+                    return NotFound(result.Message);
+                }
 
-        //         return Ok(result.Data);
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         _logger.LogError(MessageLogErrors.getByPersonTransactionMessage, ex);
-        //         return StatusCode(500, MessageLogErrors.getByPersonTransactionMessage);
-        //     }
-        // }
+                return Ok(result.Data);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(MessageLogErrors.getByPersonTransactionMessage, ex);
+                return StatusCode(500, MessageLogErrors.getByPersonTransactionMessage);
+            }
+        }
 
         /// <summary>
         /// Busca Transação por id

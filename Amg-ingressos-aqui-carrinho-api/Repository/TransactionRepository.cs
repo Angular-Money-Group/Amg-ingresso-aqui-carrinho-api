@@ -7,6 +7,7 @@ using MongoDB.Driver;
 using Amg_ingressos_aqui_carrinho_api.Repository.Querys;
 using MongoDB.Bson;
 using Amg_ingressos_aqui_carrinho_api.Model.Querys;
+using Amg_ingressos_aqui_carrinho_api.Enum;
 
 namespace Amg_ingressos_aqui_carrinho_api.Repository
 {
@@ -67,33 +68,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
         {
             try
             {
-                // var builder = Builders<Transaction>.Filter;
-                // var filter = builder.Empty;
-
-                // if (!string.IsNullOrWhiteSpace(idUser))
-                // {
-                //     var idPersonFilter = builder.Eq(x => x.IdPerson, idUser);
-                //     var statusFilter = builder.Eq(x => x.Status, Enum.StatusPaymentEnum.InProgress);
-                //     filter &= idPersonFilter;
-                //     filter &= statusFilter;
-                // }
-
-                // var result = await _transactionCollection.Find(filter).ToListAsync();
-
-                // if (result == null)
-                //     throw new GetByIdTransactionException("Transação não encontrada");
-
-                // return result;
-                var transactions = await _transactionCollection.Aggregate()
-                    .Match(new BsonDocument { { "IdPerson", ObjectId.Parse(idUser) } })
-                    .Lookup("events", "IdEvent", "_id", "Events")
+                var transactions = await _transactionCollection
+                    .Find(new BsonDocument { { "IdPerson", ObjectId.Parse(idUser) } })
                     .As<T>()
                     .ToListAsync();
                 return transactions;
-            }
-            catch (GetByIdTransactionException ex)
-            {
-                throw ex;
             }
             catch (System.Exception ex)
             {
@@ -105,69 +84,12 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
         {
             try
             {
-                // List<BsonDocument> pipeline = new List<BsonDocument>();
-
-
-                // pipeline.Add(
-                //     BsonDocument.Parse(
-                //         @"{$addFields:{'IdPerson': { '$toString': '$IdPerson' }}}"
-                //     )
-                // );
-                // pipeline.Add(
-                //     BsonDocument.Parse(
-                //         @"{ $match: { '$and': [{ 'IdPerson': '"
-                //             + idUser.ToString()
-                //             + "' }] }}"
-                //     )
-                // );
-
-                // pipeline.Add(
-                //     BsonDocument.Parse(@"{$addFields:{'Stage': { '$toString': '$Stage' }}}")
-                // );
-                // pipeline.Add(
-                //     BsonDocument.Parse(
-                //         @"{ $match: { '$and': [{ 'Stage': '" + 5 + "' }] }}"
-                //     )
-                // );
-
-                // pipeline.Add(
-                //     BsonDocument.Parse(
-                //         @"{
-                //             $lookup: {
-                //                 from: 'events',
-                //                 localField: 'IdEvent',
-                //                 foreignField: '_id',
-                //                 as: 'Event'
-                //             }
-                //         }"
-                //     )
-                // );
-
-                // BsonDocument uniwindEvent = BsonDocument.Parse(
-                //     @"{
-                //         $unwind: '$Event'
-                //     }"
-                // );
-
-                // pipeline.Add(uniwindEvent);
-
-                // var result = _transactionCollection.Aggregate<GetTransactionEventData>(pipeline).ToList();
-
-                // if (result == null)
-                //     throw new GetByIdTransactionException("Transação não encontrada");
-
-                // return result;
-                BsonDocument documentFilter = new BsonDocument { { "IdPerson", ObjectId.Parse(idUser) } };
                 var transactions = await _transactionCollection.Aggregate()
-                    .Match(documentFilter)
+                    .Match(new BsonDocument { { "IdPerson", ObjectId.Parse(idUser) } })
                     .Lookup("events", "IdEvent", "_id", "Events")
                     .As<T>()
                     .ToListAsync();
                 return transactions;
-            }
-            catch (GetByIdTransactionException ex)
-            {
-                throw ex;
             }
             catch (System.Exception ex)
             {
