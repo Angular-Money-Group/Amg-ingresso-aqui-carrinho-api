@@ -445,8 +445,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             try
             {
                 idUser.ValidateIdMongo("Usuário");
-
-                _messageReturn.Data = await _transactionRepository.GetByUser<TransactionComplet>(idUser);
+                var data =await _transactionRepository.GetByUser<TransactionComplet>(idUser);
+                var list = new TransactionCardDto().ModelListToDtoList(data);
+                _messageReturn.Data = list;
             }
             catch (IdMongoException ex)
             {

@@ -15,6 +15,16 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
         public decimal Total { get; set; }
         public List<TicketDto> ListTickets { get; set; }
 
+        public TransactionTicketDto()
+        {
+            NameUser = string.Empty;
+            NameEvent = string.Empty;
+            PaymentMethod = string.Empty;
+            PurchaseDate = string.Empty;
+            PurchaseTime = string.Empty;
+            ListTickets = new List<TicketDto>();
+        }
+
         public List<TransactionTicketDto> ListModelToListDto(List<TransactionComplet> transactions){
             return transactions.Select(t=> ModelToDto(t)).ToList();
         }
@@ -25,12 +35,12 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
             {
                 CountTickets = transaction.TotalTicket,
                 NameUser = transaction.IdPerson,
-                NameEvent = transaction.Events.Find(e => e._Id == transaction.IdEvent).Name,
+                NameEvent = transaction?.Events?.Find(e => e._Id == transaction.IdEvent)?.Name ?? string.Empty,
                 PaymentMethod = transaction?.PaymentMethod?.TypePayment.ToString() ?? string.Empty,
-                PurchaseDate = transaction.DateRegister.ToLocalTime().ToString("dd-MM-yyyy"),
-                PurchaseTime = transaction.DateRegister.ToLocalTime().ToString("hh:mm:ss"),
-                SubTotal = transaction.TotalValue,
-                Tax = transaction.Tax,
+                PurchaseDate = transaction?.DateRegister.ToLocalTime().ToString("dd-MM-yyyy") ?? string.Empty,
+                PurchaseTime = transaction?.DateRegister.ToLocalTime().ToString("hh:mm:ss")?? string.Empty,
+                SubTotal = transaction?.TotalValue ?? new decimal(0),
+                Tax = transaction?.Tax ?? new decimal(0),
                 Total = (transaction.TotalValue + transaction.Tax) - transaction.Discount,
                 ListTickets = transaction.TransactionItens.Select(x =>
                     new TicketDto()
