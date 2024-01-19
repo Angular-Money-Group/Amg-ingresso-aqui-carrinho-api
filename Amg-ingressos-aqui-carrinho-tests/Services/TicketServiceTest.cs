@@ -17,7 +17,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.Services
         {
             /*_cieloClienteMock.Setup(x => x.CreateClient())
                 .Returns(HttpClientFactory.CreateClient());*/
-            _ticketService = new TicketService(_cieloClienteMock.Object);
+            //_ticketService = new TicketService(_cieloClienteMock.Object);
 
         }
     }

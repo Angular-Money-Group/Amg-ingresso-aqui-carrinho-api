@@ -7,5 +7,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Consts
         public const string updateTransactionMessage = "UpdateTransactionAsync : Erro inesperado ao atualizar uma transação";
         public const string getByIdTransactionMessage = "GetByIdTransactionAsync : Erro inesperado ao buscar uma transação";
         public const string getByPersonTransactionMessage = "GetByPersonTransactionAsync : Erro inesperado ao buscar uma transação";
+        public const string Process = "{0}:{1} - erro ao processar transação.";
     }
 }

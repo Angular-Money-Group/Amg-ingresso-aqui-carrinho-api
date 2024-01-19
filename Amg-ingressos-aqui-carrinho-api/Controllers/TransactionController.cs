@@ -155,21 +155,12 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         {
             try
             {
-                var result = await _transactionService.SaveAsync(transaction);
+                var result = await _transactionService.ProcessSaveAsync(transaction);
                 if (result.Message != null && result.Message.Any())
                 {
                     _logger.LogInformation(result.Message);
                     return NotFound(result.Message);
                 }
-
-                var resultTransactionIten = _transactionService.SaveTransactionItenAsync(
-                                        (result.Data as Transaction).Id,
-                                        transaction.IdUser,
-                                        transaction.TransactionItensDto);
-                                        
-                if (resultTransactionIten.Result.Message != null &&
-                    !string.IsNullOrEmpty(resultTransactionIten.Result.Message))
-                    return NotFound(resultTransactionIten.Result.Message);
 
                 return Ok(result.Data);
             }

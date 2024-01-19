@@ -50,11 +50,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
 
 
                 if (pResults == null)
-                    throw new GetByIdTransactionException("Evento não encontrado");
+                    throw new GetException("Evento não encontrado");
 
                 return pResults;
             }
-            catch (GetByIdTransactionException ex)
+            catch (GetException ex)
             {
                 throw ex;
             }
@@ -118,7 +118,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
 
                 return transactions;
             }
-            catch (GetByIdTransactionException ex)
+            catch (GetException ex)
             {
                 throw ex;
             }

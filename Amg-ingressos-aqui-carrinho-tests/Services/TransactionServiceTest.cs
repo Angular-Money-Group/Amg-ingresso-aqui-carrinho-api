@@ -8,34 +8,34 @@ using Amg_ingressos_aqui_carrinho_api.Infra;
 using Amg_ingressos_aqui_carrinho_api.Dto;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Exceptions;
+using Amazon.Runtime.Internal.Util;
+using Microsoft.Extensions.Logging;
 
 namespace Prime.UnitTests.Services
 {
     public class TransactionServiceTest
     {
         private TransactionService _transactionService;
-        private Mock<ITransactionRepository> _transactionRepositoryMock = new Mock<ITransactionRepository>();
-        private Mock<ITransactionItenRepository> _transactionItenRepositoryMock = new Mock<ITransactionItenRepository>();
-        private Mock<ITicketService> _ticketServiceMock = new Mock<ITicketService>();
-        private Mock<IPaymentService> _paymentServiceMock = new Mock<IPaymentService>();
-        private Mock<ITransactionGatewayClient> _cieloClienteMock = new Mock<ITransactionGatewayClient>();
-        private Mock<HttpClient> _httpClienteMock = new Mock<HttpClient>();
-        private Mock<INotificationService> _emailService = new Mock<INotificationService>();
-        private TestHttpClientFactory HttpClientFactory = new TestHttpClientFactory();
+        private readonly Mock<ITransactionRepository> _transactionRepositoryMock = new Mock<ITransactionRepository>();
+        private readonly Mock<ITransactionItenRepository> _transactionItenRepositoryMock = new Mock<ITransactionItenRepository>();
+        private readonly Mock<ITicketService> _ticketServiceMock = new Mock<ITicketService>();
+        private readonly Mock<IPaymentService> _paymentServiceMock = new Mock<IPaymentService>();
+        private readonly Mock<INotificationService> _emailService = new Mock<INotificationService>();
+        private readonly Mock<ILogger<TransactionService>> _logger = new Mock<ILogger<TransactionService>>();
 
 
         [SetUp]
         public void SetUp()
         {
-            /*_cieloClienteMock.Setup(x => x.CreateClient())
-                .Returns(HttpClientFactory.CreateClient());*/
 
             _transactionService = new TransactionService(
                 _transactionRepositoryMock.Object,
                 _transactionItenRepositoryMock.Object,
                 _ticketServiceMock.Object,
                 _paymentServiceMock.Object,
-                _emailService.Object);
+                _emailService.Object,
+                _logger.Object
+                );
         }
 
         [Test]
@@ -47,16 +47,14 @@ namespace Prime.UnitTests.Services
             _transactionRepositoryMock.Setup(x => x.Save<object>(It.IsAny<Transaction>()))
                 .Returns(Task.FromResult(messageReturn as object));
             _ticketServiceMock.Setup(x => x.GetTicketsByLotAsync(It.IsAny<string>()))
-                .Returns(Task.FromResult(new MessageReturn(){
-                    Data = FactoryTicketService.SimpleListTicketNotSold()
-                }));
+                .Returns(Task.FromResult(new List<Ticket>()));
             _ticketServiceMock.Setup(x => x.UpdateTicketsAsync(It.IsAny<Ticket>()))
-                .Returns(Task.FromResult(new MessageReturn() { Data = "Ticket alterado" }));
+                .Returns(Task.FromResult(true));
             _transactionRepositoryMock.Setup(x => x.Update<object>(It.IsAny<Transaction>()))
                 .Returns(Task.FromResult("Transaction alterada" as object));
 
             //Act
-            var result = _transactionService.SaveAsync(transactionDto);
+            var result = _transactionService.ProcessSaveAsync(transactionDto);
 
             //Assert
             Assert.AreEqual(messageReturn, result.Result.Data);
@@ -75,7 +73,7 @@ namespace Prime.UnitTests.Services
                 .Returns(Task.FromResult("" as object));
 
             //Act
-            var result = _transactionService.SaveAsync(transaction);
+            var result = _transactionService.ProcessSaveAsync(transaction);
 
             //Assert
             Assert.AreEqual(messageReturn, result.Result.Message);
@@ -94,7 +92,7 @@ namespace Prime.UnitTests.Services
                 .Returns(Task.FromResult(messageReturn as object));
 
             //Act
-            var result = _transactionService.SaveAsync(transaction);
+            var result = _transactionService.ProcessSaveAsync(transaction);
 
             //Assert
             Assert.AreEqual(messageReturn, result.Result.Message);
@@ -113,7 +111,7 @@ namespace Prime.UnitTests.Services
                 .Returns(Task.FromResult(messageReturn as object));
 
             //Act
-            var result = _transactionService.SaveAsync(transaction);
+            var result = _transactionService.ProcessSaveAsync(transaction);
 
             //Assert
             Assert.AreEqual(messageReturn, result.Result.Message);
@@ -129,7 +127,7 @@ namespace Prime.UnitTests.Services
                 .Throws(new Exception(messageReturn));
 
             //Act
-            var result = _transactionService.SaveAsync(transactionDto);
+            var result = _transactionService.ProcessSaveAsync(transactionDto);
 
             //Assert
             Assert.IsNotEmpty(result.Exception.Message);
@@ -144,10 +142,10 @@ namespace Prime.UnitTests.Services
             _transactionRepositoryMock.Setup(x => x.Save<object>(It.IsAny<Transaction>()))
                 .Returns(Task.FromResult("6442dcb6523d52533aeb1ae4" as object));
             _ticketServiceMock.Setup(x => x.GetTicketsByLotAsync(It.IsAny<string>()))
-                .Returns(Task.FromResult(new MessageReturn() { Data = new List<Ticket>() }));
+                .Returns(Task.FromResult(new List<Ticket>()));
 
             //Act
-            var result = _transactionService.SaveAsync(transactionDto);
+            var result = _transactionService.ProcessSaveAsync(transactionDto);
 
             //Assert
             Assert.AreEqual(messageReturn, result.Result.Message);
@@ -162,14 +160,10 @@ namespace Prime.UnitTests.Services
             _transactionRepositoryMock.Setup(x => x.Save<object>(It.IsAny<Transaction>()))
                 .Returns(Task.FromResult("6442dcb6523d52533aeb1ae4" as object));
             _ticketServiceMock.Setup(x => x.GetTicketsByLotAsync(It.IsAny<string>()))
-                .Returns(Task.FromResult(new MessageReturn()
-                {
-                    Data = FactoryTicketService
-                    .SimpleListTicketNotSoldAndWithoutValue()
-                }));
+                .Returns(Task.FromResult(new List<Ticket>()));
 
             //Act
-            var result = _transactionService.SaveAsync(transactionDto);
+            var result = _transactionService.ProcessSaveAsync(transactionDto);
 
             //Assert
             Assert.AreEqual(messageReturn, result.Result.Message);
@@ -278,7 +272,7 @@ namespace Prime.UnitTests.Services
             var idTransaction = "6442dcb6523d52533aeb1ae4";
             var messageReturn = "Transação não encontrada";
             _transactionRepositoryMock.Setup(x => x.GetById(idTransaction))
-                .Throws(new GetByIdTransactionException(messageReturn));
+                .Throws(new GetException(messageReturn));
 
             //Act
             var result = _transactionService.GetByIdAsync(idTransaction);
@@ -388,7 +382,7 @@ namespace Prime.UnitTests.Services
             var idTransaction = "6442dcb6523d52533aeb1ae4";
             var transaction = FactoryTransaction.SimpleTransaction();
             _ticketServiceMock.Setup(x => x.GetTicketByIdDataUserAsync(It.IsAny<string>()))
-                .Returns(Task.FromResult(new MessageReturn(){Data=FactoryTicketService.SimpleTicketNotSold()}));
+                .Returns(Task.FromResult(new TicketUserDataDto()));
             _transactionRepositoryMock.Setup(x => x.GetById(idTransaction))
                 .Returns(Task.FromResult(FactoryTransaction.SimpleTransaction() as object));
             _transactionRepositoryMock.Setup(x => x.Update<object>(It.IsAny<Transaction>()))

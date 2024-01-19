@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -9,6 +5,12 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
 {
     public class TransactionItenDto
     {
+        public TransactionItenDto()
+        {
+            IdLot = string.Empty;
+            Details = string.Empty;
+        }
+
         /// <summary>
         /// Id Ticket
         /// </summary>
@@ -28,5 +30,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
         /// Detalhe
         /// </summary>
         public string Details { get; set; }
+
     }
 }

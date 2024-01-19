@@ -1,6 +1,7 @@
 using System.Text;
+using Amg_ingressos_aqui_carrinho_api.Consts;
 using Amg_ingressos_aqui_carrinho_api.Dto;
-using Amg_ingressos_aqui_carrinho_api.Infra;
+using Amg_ingressos_aqui_carrinho_api.Exceptions;
 using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
 using Newtonsoft.Json;
@@ -11,61 +12,46 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 {
     public class TicketService : ITicketService
     {
-        private MessageReturn _messageReturn;
-        private HttpClient _HttpClient = new HttpClient();
-        public TicketService(ITransactionGatewayClient cieloClient)
-        {
-            _messageReturn = new Model.MessageReturn();
-        }
+        private readonly HttpClient _httpClient = new HttpClient();
 
-        public async Task<MessageReturn> GetTicketsByLotAsync(string idLote)
+        public async Task<List<Ticket>> GetTicketsByLotAsync(string idLote)
         {
-            var url = "http://api.ingressosaqui.com/";
-            var uri = "v1/tickets/lote/" + idLote;
-            using var httpResponseMessage = await _HttpClient.GetAsync(url + uri);
+            var url = Settings.TicketServiceApi;
+            var uri = Settings.UriTicketsLot + idLote;
+            using var httpResponseMessage = await _httpClient.GetAsync(url + uri);
             string jsonContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
 
-            _messageReturn.Data = JsonConvert.DeserializeObject<List<Ticket>>(jsonContent);
-            return _messageReturn;
+            return JsonConvert.DeserializeObject<List<Ticket>>(jsonContent) ?? throw new RuleException("erro ao buscar tickets.");
         }
 
-        public async Task<MessageReturn> GetTicketByIdDataUserAsync(string id)
+        public async Task<TicketUserDataDto> GetTicketByIdDataUserAsync(string id)
         {
-            var url = "http://api.ingressosaqui.com/";
-            var uri = "v1/tickets/" + id + "/datauser";
-            using var httpResponseMessage = await _HttpClient.GetAsync(url + uri);
+            var url = Settings.TicketServiceApi;
+            var uri = string.Format(Settings.UriGetTicketDataUser, id);
+            using var httpResponseMessage = await _httpClient.GetAsync(url + uri);
             string jsonContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
 
-            _messageReturn.Data = JsonConvert.DeserializeObject<TicketUserDataDto>(jsonContent);
-            return _messageReturn;
+            return JsonConvert.DeserializeObject<TicketUserDataDto>(jsonContent) ?? throw new RuleException("erro ao buscar tickets.");
         }
 
-        public async Task<MessageReturn> GetTicketByIdDataEventAsync(string id)
+        public async Task<TicketEventDataDto> GetTicketByIdDataEventAsync(string id)
         {
-            var url = "http://api.ingressosaqui.com/";
-            var uri = "v1/tickets/" + id + "/dataevent";
-            using var httpResponseMessage = await _HttpClient.GetAsync(url + uri);
+            var url = Settings.TicketServiceApi;
+            var uri = string.Format(Settings.UriGetTicketDataEvent, id);
+            using var httpResponseMessage = await _httpClient.GetAsync(url + uri);
             string jsonContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
 
-            _messageReturn.Data = JsonConvert.DeserializeObject<TicketEventDataDto>(jsonContent);
-            return _messageReturn;
+            return JsonConvert.DeserializeObject<TicketEventDataDto>(jsonContent) ?? throw new RuleException("erro ao buscar tickets.");
         }
 
-        public async Task<MessageReturn> UpdateTicketsAsync(Ticket ticket)
+        public async Task<bool> UpdateTicketsAsync(Ticket ticket)
         {
-            try
-            {
-                var ticketJson = new StringContent(JsonSerializer.Serialize(ticket),Encoding.UTF8, Application.Json); // using static System.Net.Mime.MediaTypeNames;
-                var url = "http://api.ingressosaqui.com:3002/";
-                var uri = "v1/tickets/" + ticket.Id;
+            var ticketJson = new StringContent(JsonSerializer.Serialize(ticket), Encoding.UTF8, Application.Json);
+            var url = Settings.TicketServiceApi;
+            var uri = string.Format(Settings.UriUpdateTicket, ticket.Id);
 
-                _HttpClient.PutAsync(url + uri, ticketJson).Wait();
-                return _messageReturn;
-            }
-            catch (System.Exception ex)
-            {
-                throw;
-            }
+            await _httpClient.PutAsync(url + uri, ticketJson);
+            return true;
         }
     }
 }

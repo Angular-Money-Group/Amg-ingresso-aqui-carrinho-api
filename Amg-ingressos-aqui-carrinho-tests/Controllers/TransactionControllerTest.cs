@@ -16,22 +16,17 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
     public class TransactionControllerTest
     {
         private TransactionController _transactionController;
-        private Mock<ITransactionRepository> _transactionRepositoryMock = new Mock<ITransactionRepository>();
-        private Mock<ITransactionItenRepository> _transactionItenRepositoryMock = new Mock<ITransactionItenRepository>();
-        private Mock<ILogger<TransactionController>> _loggerMock = new Mock<ILogger<TransactionController>>();
-        private Mock<ITicketService> _ticketServiceMock = new Mock<ITicketService>();
-        private Mock<IPaymentService> _paymentServiceMock = new Mock<IPaymentService>();
-        private Mock<ITransactionGatewayClient> _cieloClienteMock = new Mock<ITransactionGatewayClient>();
-        private Mock<HttpClient> _httpClienteMock = new Mock<HttpClient>();
-        private TestHttpClientFactory HttpClientFactory = new TestHttpClientFactory();
-        private Mock<INotificationService> _emailServiceMock = new Mock<INotificationService>();
+        private readonly Mock<ITransactionRepository> _transactionRepositoryMock = new Mock<ITransactionRepository>();
+        private readonly Mock<ITransactionItenRepository> _transactionItenRepositoryMock = new Mock<ITransactionItenRepository>();
+        private readonly Mock<ILogger<TransactionController>> _loggerMock = new Mock<ILogger<TransactionController>>();
+        private readonly Mock<ITicketService> _ticketServiceMock = new Mock<ITicketService>();
+        private readonly Mock<IPaymentService> _paymentServiceMock = new Mock<IPaymentService>();
+        private readonly Mock<INotificationService> _emailServiceMock = new Mock<INotificationService>();
+        private readonly Mock<ILogger<TransactionService>> _logger = new Mock<ILogger<TransactionService>>();
 
         [SetUp]
         public void Setup()
         {
-            /*_cieloClienteMock.Setup(x => x.CreateClient())
-                .Returns(HttpClientFactory.CreateClient());*/
-
             _transactionController = new TransactionController(
                 _loggerMock.Object,
                 new TransactionService(
@@ -39,7 +34,8 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
                 _transactionItenRepositoryMock.Object,
                 _ticketServiceMock.Object,
                 _paymentServiceMock.Object,
-                _emailServiceMock.Object)
+                _emailServiceMock.Object,
+                _logger.Object)
             );
         }
 
@@ -52,9 +48,9 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
             _transactionRepositoryMock.Setup(x => x.Save<object>(It.IsAny<Transaction>()))
                 .Returns(Task.FromResult(messageReturn as object));
             _ticketServiceMock.Setup(x => x.GetTicketsByLotAsync(It.IsAny<string>()))
-                .Returns(Task.FromResult(new MessageReturn(){ Data=FactoryTicketService.SimpleListTicketNotSold()}));
+                .Returns(Task.FromResult(new List<Ticket>()));
             _ticketServiceMock.Setup(x => x.UpdateTicketsAsync(It.IsAny<Ticket>()))
-                .Returns(Task.FromResult(new MessageReturn(){ Data="Ticket alterado"}));
+                .Returns(Task.FromResult(true));
 
             // Act
             var result = await _transactionController.SaveTransactionAsync(transactionDto) as OkObjectResult;

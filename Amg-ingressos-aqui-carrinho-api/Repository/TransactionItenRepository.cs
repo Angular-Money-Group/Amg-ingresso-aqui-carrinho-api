@@ -49,11 +49,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                 
                 
                 if (result == null)
-                    throw new GetByIdTransactionException("Transacao itens nao encontrados");
+                    throw new GetException("Transacao itens nao encontrados");
 
                 return result;
             }
-            catch (GetByIdTransactionException ex)
+            catch (GetException ex)
             {
                 throw ex;
             }
