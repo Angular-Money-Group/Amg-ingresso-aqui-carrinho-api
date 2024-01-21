@@ -30,7 +30,7 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 
 //repository
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
-builder.Services.AddScoped<ITransactionItenRepository, TransactionItenRepository<object>>();
+builder.Services.AddScoped<ITransactionItenRepository, TransactionItenRepository>();
 
 //infra
 builder.Services.AddScoped<IDbConnection<Transaction>, DbConnection<Transaction>>();

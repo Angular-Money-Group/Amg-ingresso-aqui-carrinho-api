@@ -9,25 +9,28 @@ using NUnit.Framework;
 using Amg_ingressos_aqui_carrinho_tests.FactoryServices;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
+using Amg_ingressos_aqui_carrinho_api.Model;
 
 namespace Amg_ingressos_aqui_carrinho_tests.Services
 {
     public class PaymentServiceTest
     {
         private PaymentService _paymentService;
-        private UserService _userService;
-        private Mock<ITransactionGatewayClient> _cieloClienteMock = new Mock<ITransactionGatewayClient>();
-        private Mock<IOptions<PaymentSettings>> _paymentSettings = new Mock<IOptions<PaymentSettings>>();
-        private Mock<IUserService> _userServiceMock = new Mock<IUserService>();
-        private Mock<HttpClient> _httpClienteMock = new Mock<HttpClient>();
-        private FactoryServices.TestHttpClientFactory HttpClientFactory = new FactoryServices.TestHttpClientFactory();
+        private readonly UserService _userService;
+        private readonly Mock<ITransactionGatewayClient> _cieloClienteMock = new Mock<ITransactionGatewayClient>();
+        private readonly Mock<IOptions<PaymentSettings>> _paymentSettings = new Mock<IOptions<PaymentSettings>>();
+        private readonly Mock<IUserService> _userServiceMock = new Mock<IUserService>();
+        private readonly Mock<ILogger<PaymentService>> _loggerMock = new Mock<ILogger<PaymentService>>();
+        private readonly Mock<HttpClient> _httpClienteMock = new Mock<HttpClient>();
+        private readonly TestHttpClientFactory HttpClientFactory = new TestHttpClientFactory();
 
         [SetUp]
         public void SetUp()
         {
             /*_cieloClienteMock.Setup(x => x.CreateClient())
                 .Returns(HttpClientFactory.CreateClient());*/
-            _paymentService = new PaymentService(_paymentSettings.Object, _userService);
+            _paymentService = new PaymentService(_paymentSettings.Object, _userService,_loggerMock.Object);
             
         }
 

@@ -1,4 +1,3 @@
-using Amg_ingressos_aqui_carrinho_api.Consts;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,23 +27,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         [HttpGet]
         public async Task<IActionResult> GenerateSession()
         {
-            try
+            var result = await _pagbankService.GenerateSession();
+            if (result.Message != null && result.Message.Any())
             {
-                var result = await _pagbankService.GenerateSession();
-                if (result.Message != null && result.Message.Any())
-                {
-                    _logger.LogInformation(result.Message);
-                    return NotFound(result.Message);
-                }
+                _logger.LogInformation(result.Message);
+                return NotFound(result.Message);
+            }
 
-                return Ok(result.Data);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(MessageLogErrors.getByIdTransactionMessage, ex);
-                return StatusCode(500, MessageLogErrors.getByIdTransactionMessage);
-            }
+            return Ok(result.Data);
         }
-
     }
 }

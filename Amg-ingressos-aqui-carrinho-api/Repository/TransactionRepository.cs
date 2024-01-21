@@ -21,7 +21,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
             _transactionCollection = dbconnection.GetConnection("transaction");
         }
 
-        public async Task<object> GetById(string idTransaction)
+        public async Task<T> GetById<T>(string idTransaction)
         {
             try
             {
@@ -41,18 +41,15 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                     document
                 };
 
-                List<GetTransactionEventData> pResults = _transactionCollection
-                    .Aggregate<GetTransactionEventData>(pipeline)
+                List<T> pResults = _transactionCollection
+                    .Aggregate<T>(pipeline)
                     .ToList();
-
-                //var result = await _eventCollection.FindAsync<Event>(x => x._Id == id as string)
-                //    .Result.FirstOrDefaultAsync();
 
 
                 if (pResults == null)
                     throw new GetException("Evento não encontrado");
 
-                return pResults;
+                return pResults.FirstOrDefault();
             }
             catch (GetException ex)
             {
@@ -135,7 +132,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                 await _transactionCollection.InsertOneAsync(transaction as Transaction);
                 return transaction as Transaction;
             }
-            catch (SaveTransactionException ex)
+            catch (SaveException ex)
             {
                 throw ex;
             }
@@ -186,7 +183,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                 await _transactionCollection.UpdateOneAsync(filter, update);
                 return "Atualizado";
             }
-            catch (SaveTransactionException ex)
+            catch (SaveException ex)
             {
                 throw ex;
             }
@@ -210,7 +207,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                 else
                     return "erro ao deletar transação";
             }
-            catch (SaveTransactionException ex)
+            catch (SaveException ex)
             {
                 throw ex;
             }

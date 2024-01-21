@@ -179,7 +179,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
         {
             string jsonContent = response.Content.ReadAsStringAsync().Result;
             var obj = JsonConvert.DeserializeObject<CallbackErrorMessagePagBank>(response.ToString());
-            _messageReturn.Message = Consts.StatusCallbackCielo.NotAllowed;
+            _messageReturn.Message = Consts.TypeStatusCallbackCielo.NotAllowed;
 
             return obj.ToString();
             //valida retorno
