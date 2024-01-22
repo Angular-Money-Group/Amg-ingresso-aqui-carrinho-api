@@ -19,5 +19,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Consts
         public readonly static string UriGetUser = "v1/user/";
         //host img
         public readonly static string HostImg = "https://api.ingressosaqui.com/imagens/";
+        //cielo
+        public readonly static string CieloZeroAuth = "https://apisandbox.cieloecommerce.cielo.com.br/1/zeroauth";
+        public readonly static string CieloStatusPayment = "https://apiquerysandbox.cieloecommerce.cielo.com.br/1/sales/";
+
+        //Pagbank
+        public readonly static string PagbankStatusPayment = "https://apiquerysandbox.cieloecommerce.cielo.com.br/1/sales/";
+        
+        
+        
     }
 }

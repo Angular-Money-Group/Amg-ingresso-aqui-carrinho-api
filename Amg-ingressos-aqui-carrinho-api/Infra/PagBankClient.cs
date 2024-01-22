@@ -17,7 +17,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
     {
         private readonly IOptions<PaymentSettings> _config;
         private readonly MessageReturn _messageReturn;
-        private readonly HttpClient _httpClient = new HttpClient();
         private readonly string _url;
         private readonly ILogger<PagBankClient> _logger;
 
@@ -35,7 +34,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             _logger = logger;
         }
 
-        public async Task<MessageReturn> PaymentSlipAsync(Transaction transaction, User user)
+        public Task<MessageReturn> PaymentSlip(Transaction transaction, User user)
         {
 
             try
@@ -51,28 +50,24 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                     transaction.Details = response.Message;
                 }
 
-                var obj = JsonConvert.DeserializeObject<CallbackBoletoPagBank>(response.Data);
+                var obj = JsonConvert.DeserializeObject<CallbackBoletoPagBank>(response.Data) ?? new CallbackBoletoPagBank();
                 transaction.PaymentIdService = obj.Id;
                 _messageReturn.Data = "ok";
+                return Task.FromResult(_messageReturn);
+
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentSlipAsync)));
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentSlip)));
                 throw;
             }
-
-            return _messageReturn;
         }
 
-        public async Task<MessageReturn> PaymentCreditCardAsync(Transaction transaction, User user)
+        public Task<MessageReturn> PaymentCreditCard(Transaction transaction, User user)
         {
             try
             {
                 //valida cartao
-                //var cardIsValid = ValidateCard(transaction).Result;
-
-                //if (!cardIsValid)
-                //throw new CreditCardNotValidExeption("cartao expirado");
 
                 //cria pedido e paga
                 Request request = new RequestPagBankCardDto().TransactionToRequest(transaction, user);
@@ -85,33 +80,29 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                     transaction.Details = response.Message;
                 }
 
-                var obj = JsonConvert.DeserializeObject<CallbackCreditCardPagBank>(response.Data);
-                if (obj.Charges.FirstOrDefault().Status.ToUpper() == "DECLINED")
-                    _messageReturn.Message = obj.Charges.FirstOrDefault().PaymentResponse.Message;
+                var obj = JsonConvert.DeserializeObject<CallbackCreditCardPagBank>(response.Data) ?? new CallbackCreditCardPagBank();
+                if (obj.Charges[0].Status.ToUpper() == "DECLINED")
+                    _messageReturn.Message = obj.Charges[0].PaymentResponse.Message;
                 else
                 {
                     transaction.PaymentIdService = obj.Id;
                     _messageReturn.Data = "ok";
                 }
+
+                return Task.FromResult(_messageReturn);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentCreditCardAsync)));
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentCreditCard)));
                 throw;
             }
-
-            return _messageReturn;
         }
 
-        public async Task<MessageReturn> PaymentDebitCardAsync(Transaction transaction, User user)
+        public Task<MessageReturn> PaymentDebitCard(Transaction transaction, User user)
         {
             try
             {
                 //valida cartao
-                //var cardIsValid = ValidateCard(transaction).Result;
-
-                //if (!cardIsValid)
-                //throw new CreditCardNotValidExeption("cartao expirado");
 
                 //cria pedido e paga
                 Request request = new RequestPagBankCardDto().TransactionToRequest(transaction, user);
@@ -124,25 +115,25 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                     transaction.Details = response.Message;
                 }
 
-                var obj = JsonConvert.DeserializeObject<CallbackCreditCardPagBank>(response.Data);
-                if (obj.Charges.FirstOrDefault().Status.ToUpper() == "DECLINED")
-                    _messageReturn.Message = obj.Charges.FirstOrDefault().PaymentResponse.Message;
+                var obj = JsonConvert.DeserializeObject<CallbackCreditCardPagBank>(response.Data) ?? new CallbackCreditCardPagBank();
+                if (obj.Charges[0].Status.ToUpper() == "DECLINED")
+                    _messageReturn.Message = obj.Charges[0].PaymentResponse.Message;
                 else
                 {
                     transaction.PaymentIdService = obj.Id;
                     _messageReturn.Data = "Ok";
                 }
 
-                return _messageReturn;
+                return Task.FromResult(_messageReturn);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentDebitCardAsync)));
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentDebitCard)));
                 throw;
             }
         }
 
-        public async Task<MessageReturn> PaymentPixAsync(Transaction transaction, User user)
+        public Task<MessageReturn> PaymentPix(Transaction transaction, User user)
         {
             try
             {
@@ -153,7 +144,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 if (!string.IsNullOrEmpty(response.Data))
                 {
                     StringBuilder messagejson = new StringBuilder();
-                    JsonConvert.DeserializeObject<CallbackErrorMessagePagBank>(response.Message).ErrorMessages.ForEach(x =>
+                    var messageError = JsonConvert.DeserializeObject<CallbackErrorMessagePagBank>(response.Message) ?? new CallbackErrorMessagePagBank();
+                    
+                    messageError.ErrorMessages.ForEach(x =>
                     {
                         messagejson.Append(x.Code + " = " + x.ParameterName + " -- Error:" + x.Description + " : " + x.ParameterName);
                     });
@@ -163,16 +156,16 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                     transaction.Details = response.Message;
                 }
 
-                var obj = JsonConvert.DeserializeObject<CallbackPixPagBank>(response.Data);
+                var obj = JsonConvert.DeserializeObject<CallbackPixPagBank>(response.Data) ?? new CallbackPixPagBank();
                 transaction.PaymentIdService = obj.id;
-                _messageReturn.Data = obj.QrCodes.FirstOrDefault()
-                                         .links.FirstOrDefault(i => i.Rel.Equals("QRCODE.PNG"))
+                _messageReturn.Data = obj.QrCodes[0]
+                                         .links.First(i => i.Rel.Equals("QRCODE.PNG"))
                                          .Href;
-                return _messageReturn;
+                return Task.FromResult(_messageReturn);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentDebitCardAsync)));
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentDebitCard)));
                 throw;
             }
         }
@@ -182,7 +175,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             try
             {
                 Request request = new Request() { Data = paymentId };
-                var url = "https://apiquerysandbox.cieloecommerce.cielo.com.br/1/sales/" + paymentId;
+                var url = Settings.PagbankStatusPayment + paymentId;
                 Response response = new OperatorRest().SendRequestAsync(request, url, _config.Value.PagBankSettings.TokenHomolog);
 
                 if (string.IsNullOrEmpty(response.Data))
@@ -193,7 +186,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentDebitCardAsync)));
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentDebitCard)));
                 throw;
             }
         }

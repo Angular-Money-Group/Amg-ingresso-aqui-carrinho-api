@@ -1,4 +1,3 @@
-using System.Text;
 using Amg_ingressos_aqui_carrinho_api.Consts;
 using Amg_ingressos_aqui_carrinho_api.Enum;
 using Amg_ingressos_aqui_carrinho_api.Exceptions;
@@ -9,18 +8,15 @@ using Amg_ingressos_aqui_carrinho_api.Model.Cielo.Callback.Slip;
 using Amg_ingressos_aqui_carrinho_api.Model.Cielo.CreditCard;
 using Amg_ingressos_aqui_carrinho_api.Model.Cielo.DebitCard;
 using Microsoft.Extensions.Options;
-using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Amg_ingressos_aqui_carrinho_api.Infra
 {
     public class CieloClient : ITransactionGatewayClient
     {
-        private readonly HttpClient _httpClient;
-        private IOptions<PaymentSettings> _config;
-        private MessageReturn _messageReturn;
-        private string _url;
+        private readonly IOptions<PaymentSettings> _config;
+        private readonly MessageReturn _messageReturn;
+        private readonly string _url;
         private readonly ILogger<CieloClient> _logger;
 
         public CieloClient(IOptions<PaymentSettings> transactionDatabaseSettings, ILogger<CieloClient> logger)
@@ -30,6 +26,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             _url = _config.Value.PagBankSettings.UrlApiHomolog + "/orders";
             _logger = logger;
         }
+
         public CieloClient(IOptions<PaymentSettings> transactionDatabaseSettings)
         {
             _config = transactionDatabaseSettings;
@@ -37,23 +34,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             _url = _config.Value.PagBankSettings.UrlApiHomolog + "/orders";
         }
 
-        public HttpClient CreateClient()
-        {
-            _httpClient.BaseAddress = new Uri(_config.Value.CieloSettings.UrlApiHomolog);
-            _httpClient.DefaultRequestHeaders.Add(
-                HeaderNames.Accept, "application/vnd.github.v3+json");
-            _httpClient.DefaultRequestHeaders.Add(
-                HeaderNames.UserAgent, "HttpRequestsSample");
-            _httpClient.DefaultRequestHeaders.Add(
-                "MerchantId", _config.Value.CieloSettings.MerchantIdHomolog);
-            _httpClient.DefaultRequestHeaders.Add(
-                "MerchantKey", _config.Value.CieloSettings.MerchantKeyHomolog);
-            _httpClient.Timeout = TimeSpan.FromMinutes(10);
-
-            return _httpClient;
-        }
-
-        public async Task<MessageReturn> PaymentCreditCardAsync(Transaction transaction, User user)
+        public Task<MessageReturn> PaymentCreditCard(Transaction transaction, User user)
         {
             try
             {
@@ -65,11 +46,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                         Amount = (int)(transaction.TotalValue + transaction.Tax - transaction.Discount),
                         CreditCard = new CreditCardCielo()
                         {
-                            Brand = transaction.PaymentMethod.Brand,
-                            CardNumber = transaction.PaymentMethod.CardNumber,
-                            ExpirationDate = transaction.PaymentMethod.ExpirationDate,
-                            Holder = transaction.PaymentMethod.Holder,
-                            SecurityCode = transaction.PaymentMethod.SecurityCode,
+                            Brand = transaction.PaymentMethod.Brand ?? string.Empty,
+                            CardNumber = transaction.PaymentMethod.CardNumber ?? string.Empty,
+                            ExpirationDate = transaction.PaymentMethod.ExpirationDate ?? string.Empty,
+                            Holder = transaction.PaymentMethod.Holder ?? string.Empty,
+                            SecurityCode = transaction.PaymentMethod.SecurityCode ?? string.Empty,
                             SaveCard = "false",
                             CardOnFile = new CardOnFile()
                         },
@@ -78,32 +59,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                         SoftDescriptor = "Tiquetera"
                     }
                 };
-                // var transactionToJson = new PaymentCieloCreditCard()
-                //     {
-                //         MerchantOrderId = "2014111703",
-                //         Payment = new Model.Cielo.CreditCard.Payment()
-                //         {
-                //             Amount = 500,//(int)transaction.TransactionItens.Sum(i => i.TicketPrice),
-                //             CreditCard = new Model.Cielo.CreditCard.CreditCard()
-                //             {
-                //                 Brand = "Visa",
-                //                 CardNumber = "4551870000000184",
-                //                 ExpirationDate = "12/2021",
-                //                 Holder = "Teste Holder",
-                //                 SecurityCode = "123"
-                //             },
-                //             Type = "CreditCard",
-                //             Installments = 1,
-                //             SoftDescriptor = "Tiquetera"
-                //         }
-                //     };
 
-                var transactionJson = new StringContent(
-                    System.Text.Json.JsonSerializer.Serialize(transactionToJson),
-                    Encoding.UTF8,
-                    Application.Json
-                );
-                var cardIsValid = ValidateCard(transactionToJson.Payment.CreditCard).Result;
+                var cardIsValid = ValidateCard(transactionToJson.Payment.CreditCard);
 
                 if (!cardIsValid.Valid)
                     throw new CreditCardNotValidException(cardIsValid.ReturnMessage);
@@ -118,72 +75,59 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                     transaction.Details = response.Message;
                 }
 
-                var obj = JsonConvert.DeserializeObject<CallbackCreditCard>(response.Data);
+                var obj = JsonConvert.DeserializeObject<CallbackCreditCard>(response.Data) ?? new CallbackCreditCard();
                 transaction.PaymentIdService = obj.Payment.PaymentId;
-                
+
                 switch (obj.Payment.ReturnCode)
                 {
                     case StatusCallbackCielo.SuccessfullyPerformedOperation:
-                        _messageReturn.Data = Consts
-                            .TypeStatusCallbackCielo
-                            .SuccessfullyPerformedOperation;
+                        _messageReturn.Data = TypeStatusCallbackCielo.SuccessfullyPerformedOperation;
                         transaction.Status = StatusPayment.Aproved;
-                        transaction.Details = Consts
-                            .TypeStatusCallbackCielo
-                            .SuccessfullyPerformedOperation;
+                        transaction.Details = TypeStatusCallbackCielo.SuccessfullyPerformedOperation;
                         break;
                     case StatusCallbackCielo.NotAllowed:
-                        _messageReturn.Message = Consts.TypeStatusCallbackCielo.NotAllowed;
+                        _messageReturn.Message = TypeStatusCallbackCielo.NotAllowed;
                         transaction.Status = StatusPayment.ErrorPayment;
-                        transaction.Details = Consts.TypeStatusCallbackCielo.NotAllowed;
+                        transaction.Details = TypeStatusCallbackCielo.NotAllowed;
                         break;
                     case StatusCallbackCielo.ExpiredCard:
-                        _messageReturn.Message = Consts.TypeStatusCallbackCielo.ExpiredCard;
+                        _messageReturn.Message = TypeStatusCallbackCielo.ExpiredCard;
                         transaction.Status = StatusPayment.ErrorPayment;
-                        transaction.Details = Consts.TypeStatusCallbackCielo.ExpiredCard;
+                        transaction.Details = TypeStatusCallbackCielo.ExpiredCard;
                         break;
                     case StatusCallbackCielo.BlockedCard:
-                        _messageReturn.Message = Consts.TypeStatusCallbackCielo.BlockedCard;
+                        _messageReturn.Message = TypeStatusCallbackCielo.BlockedCard;
                         transaction.Status = StatusPayment.ErrorPayment;
-                        transaction.Details = Consts.TypeStatusCallbackCielo.BlockedCard;
+                        transaction.Details = TypeStatusCallbackCielo.BlockedCard;
                         break;
                     case StatusCallbackCielo.TimeOut:
-                        _messageReturn.Message = Consts.TypeStatusCallbackCielo.TimeOut;
+                        _messageReturn.Message = TypeStatusCallbackCielo.TimeOut;
                         transaction.Status = StatusPayment.ErrorPayment;
-                        transaction.Details = Consts.TypeStatusCallbackCielo.TimeOut;
+                        transaction.Details = TypeStatusCallbackCielo.TimeOut;
                         break;
                     case StatusCallbackCielo.CanceledCard:
-                        _messageReturn.Message = Consts.TypeStatusCallbackCielo.CanceledCard;
+                        _messageReturn.Message = TypeStatusCallbackCielo.CanceledCard;
                         transaction.Status = StatusPayment.ErrorPayment;
-                        transaction.Details = Consts.TypeStatusCallbackCielo.CanceledCard;
+                        transaction.Details = TypeStatusCallbackCielo.CanceledCard;
                         break;
                     case StatusCallbackCielo.CreditCardProblems:
-                        _messageReturn.Message = Consts.TypeStatusCallbackCielo.CreditCardProblems;
+                        _messageReturn.Message = TypeStatusCallbackCielo.CreditCardProblems;
                         transaction.Status = StatusPayment.ErrorPayment;
-                        transaction.Details = Consts.TypeStatusCallbackCielo.CreditCardProblems;
-                        break;
-                    case StatusCallbackCielo.SuccessfullyPerformedOperation2:
-                        _messageReturn.Data = Consts
-                            .TypeStatusCallbackCielo
-                            .SuccessfullyPerformedOperation;
-                        transaction.Status = StatusPayment.Aproved;
-                        transaction.Details = Consts
-                            .TypeStatusCallbackCielo
-                            .SuccessfullyPerformedOperation;
+                        transaction.Details = TypeStatusCallbackCielo.CreditCardProblems;
                         break;
                 }
                 transaction.PaymentIdService = obj.Payment.PaymentId;
                 _messageReturn.Data = obj;
-                return _messageReturn;
+                return Task.FromResult(_messageReturn);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentCreditCardAsync)));
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentCreditCard)));
                 throw;
             }
         }
 
-        public async Task<MessageReturn> PaymentDebitCardAsync(Transaction transaction, User user)
+        public Task<MessageReturn> PaymentDebitCard(Transaction transaction, User user)
         {
             try
             {
@@ -196,11 +140,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                         Amount = (int)(transaction.TotalValue + transaction.Tax - transaction.Discount),
                         DebitCard = new DebitCardCielo()
                         {
-                            Brand = transaction.PaymentMethod.Brand,
-                            CardNumber = transaction.PaymentMethod.CardNumber,
-                            ExpirationDate = transaction.PaymentMethod.ExpirationDate,
-                            Holder = transaction.PaymentMethod.Holder,
-                            SecurityCode = transaction.PaymentMethod.SecurityCode
+                            Brand = transaction.PaymentMethod.Brand ?? string.Empty,
+                            CardNumber = transaction.PaymentMethod.CardNumber ?? string.Empty,
+                            ExpirationDate = transaction.PaymentMethod.ExpirationDate ?? string.Empty,
+                            Holder = transaction.PaymentMethod.Holder ?? string.Empty,
+                            SecurityCode = transaction.PaymentMethod.SecurityCode ?? string.Empty
                         },
                         Type = transaction.PaymentMethod.TypePayment.ToString(),
                         Provider = "Simulado",
@@ -218,55 +162,55 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                     transaction.Details = response.Message;
                 }
 
-                var obj = JsonConvert.DeserializeObject<CallbackCreditCard>(response.Data);
+                var obj = JsonConvert.DeserializeObject<CallbackCreditCard>(response.Data) ?? new CallbackCreditCard();
                 transaction.PaymentIdService = obj.Payment.PaymentId;
 
                 switch (obj.Payment.ReturnCode)
                 {
                     case StatusCallbackCielo.SuccessfullyPerformedOperation:
-                        _messageReturn.Data = Consts.TypeStatusCallbackCielo.SuccessfullyPerformedOperation;
+                        _messageReturn.Data = TypeStatusCallbackCielo.SuccessfullyPerformedOperation;
                         transaction.Status = StatusPayment.Aproved;
                         break;
                     case StatusCallbackCielo.NotAllowed:
-                        _messageReturn.Message = Consts.TypeStatusCallbackCielo.NotAllowed;
+                        _messageReturn.Message = TypeStatusCallbackCielo.NotAllowed;
                         transaction.Status = StatusPayment.ErrorPayment;
-                        transaction.Details = Consts.TypeStatusCallbackCielo.NotAllowed;
+                        transaction.Details = TypeStatusCallbackCielo.NotAllowed;
                         break;
                     case StatusCallbackCielo.ExpiredCard:
-                        _messageReturn.Message = Consts.TypeStatusCallbackCielo.ExpiredCard;
+                        _messageReturn.Message = TypeStatusCallbackCielo.ExpiredCard;
                         transaction.Status = StatusPayment.ErrorPayment;
-                        transaction.Details = Consts.TypeStatusCallbackCielo.ExpiredCard;
+                        transaction.Details = TypeStatusCallbackCielo.ExpiredCard;
                         break;
                     case StatusCallbackCielo.BlockedCard:
-                        _messageReturn.Message = Consts.TypeStatusCallbackCielo.BlockedCard;
+                        _messageReturn.Message = TypeStatusCallbackCielo.BlockedCard;
                         transaction.Status = StatusPayment.ErrorPayment;
-                        transaction.Details = Consts.TypeStatusCallbackCielo.BlockedCard;
+                        transaction.Details = TypeStatusCallbackCielo.BlockedCard;
                         break;
                     case StatusCallbackCielo.TimeOut:
-                        _messageReturn.Message = Consts.TypeStatusCallbackCielo.TimeOut;
+                        _messageReturn.Message = TypeStatusCallbackCielo.TimeOut;
                         transaction.Status = StatusPayment.ErrorPayment;
-                        transaction.Details = Consts.TypeStatusCallbackCielo.TimeOut;
+                        transaction.Details = TypeStatusCallbackCielo.TimeOut;
                         break;
                     case StatusCallbackCielo.CanceledCard:
-                        _messageReturn.Message = Consts.TypeStatusCallbackCielo.CanceledCard;
+                        _messageReturn.Message = TypeStatusCallbackCielo.CanceledCard;
                         transaction.Status = StatusPayment.ErrorPayment;
-                        transaction.Details = Consts.TypeStatusCallbackCielo.CanceledCard;
+                        transaction.Details = TypeStatusCallbackCielo.CanceledCard;
                         break;
                     case StatusCallbackCielo.CreditCardProblems:
-                        _messageReturn.Message = Consts.TypeStatusCallbackCielo.CreditCardProblems;
+                        _messageReturn.Message = TypeStatusCallbackCielo.CreditCardProblems;
                         transaction.Status = StatusPayment.ErrorPayment;
-                        transaction.Details = Consts.TypeStatusCallbackCielo.CreditCardProblems;
+                        transaction.Details = TypeStatusCallbackCielo.CreditCardProblems;
                         break;
                     case StatusCallbackCielo.SuccessfullyPerformedOperation2:
-                        _messageReturn.Data = Consts.TypeStatusCallbackCielo.SuccessfullyPerformedOperation;
+                        _messageReturn.Data = TypeStatusCallbackCielo.SuccessfullyPerformedOperation;
                         transaction.Status = StatusPayment.Aproved;
-                        transaction.Details = Consts.TypeStatusCallbackCielo.SuccessfullyPerformedOperation;
+                        transaction.Details = TypeStatusCallbackCielo.SuccessfullyPerformedOperation;
                         break;
                 }
                 transaction.PaymentIdService = obj.Payment.PaymentId;
 
                 _messageReturn.Data = obj;
-                return _messageReturn;
+                return Task.FromResult(_messageReturn);
             }
             catch (Exception ex)
             {
@@ -275,7 +219,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             }
         }
 
-        public async Task<MessageReturn> PaymentPixAsync(Transaction transaction, User user)
+        public Task<MessageReturn> PaymentPix(Transaction transaction, User user)
         {
             try
             {
@@ -287,7 +231,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
 
                 if (!string.IsNullOrEmpty(response.Data))
                 {
-                    var obj = JsonConvert.DeserializeObject<CallbackPix>(response.Data);
+                    var obj = JsonConvert.DeserializeObject<CallbackPix>(response.Data) ?? new CallbackPix();
                     transaction.PaymentIdService = obj.Payment.PaymentId;
                     _messageReturn.Data = obj;
                 }
@@ -298,16 +242,16 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                     transaction.Details = response.Message;
                 }
 
-                return _messageReturn;
+                return Task.FromResult(_messageReturn);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentPixAsync)));
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentPix)));
                 throw;
             }
         }
 
-        public async Task<MessageReturn> PaymentSlipAsync(Transaction transaction, User user)
+        public Task<MessageReturn> PaymentSlip(Transaction transaction, User user)
         {
             try
             {
@@ -320,13 +264,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                         Identity = user.DocumentId,
                         Address = new Model.Cielo.Address
                         {
-                            Street = user.Address.AddressDescription,
-                            Number = user.Address.Number,
-                            Complement = user.Address.Complement,
-                            ZipCode = user.Address.Cep,
-                            District = user.Address.Neighborhood,
-                            City = user.Address.City,
-                            State = user.Address.State,
+                            Street = user.Address.AddressDescription ?? string.Empty,
+                            Number = user.Address.Number ?? string.Empty,
+                            Complement = user.Address.Complement ?? string.Empty,
+                            ZipCode = user.Address.Cep ?? string.Empty,
+                            District = user.Address.Neighborhood ?? string.Empty,
+                            City = user.Address.City ?? string.Empty,
+                            State = user.Address.State ?? string.Empty,
                             Country = "BRA"
                         }
                     },
@@ -351,7 +295,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
 
                 if (!string.IsNullOrEmpty(response.Data))
                 {
-                    var obj = JsonConvert.DeserializeObject<CallbackPaymentSlip>(response.Data);
+                    var obj = JsonConvert.DeserializeObject<CallbackPaymentSlip>(response.Data) ?? new CallbackPaymentSlip();
                     transaction.PaymentIdService = obj.Payment.PaymentId;
                     _messageReturn.Data = obj.Payment.Url;
                 }
@@ -362,27 +306,27 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                     transaction.Details = response.Message;
                 }
 
-                return _messageReturn;
+                return Task.FromResult(_messageReturn);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentSlipAsync)));
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentSlip)));
                 throw;
             }
         }
 
-        private async Task<CreditCardIsValid> ValidateCard(CreditCardCielo transactionJson)
+        private CreditCardIsValid ValidateCard(CreditCardCielo transactionJson)
         {
             try
             {
-                var url ="https://apisandbox.cieloecommerce.cielo.com.br/1/zeroauth";
+                var url = Settings.CieloZeroAuth;
                 Request request = new Request() { Data = System.Text.Json.JsonSerializer.Serialize(transactionJson) };
                 Response response = new OperatorRest().SendRequestAsync(request, url, _config.Value.CieloSettings.MerchantIdHomolog);
 
                 if (string.IsNullOrEmpty(response.Data))
                     throw new RuleException(response.Message);
 
-                return JsonConvert.DeserializeObject<CreditCardIsValid>(response.Data);
+                return JsonConvert.DeserializeObject<CreditCardIsValid>(response.Data) ?? new CreditCardIsValid();
             }
             catch (Exception ex)
             {
@@ -396,7 +340,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             try
             {
                 Request request = new Request() { Data = paymentId };
-                var url = "https://apiquerysandbox.cieloecommerce.cielo.com.br/1/sales/" + paymentId;
+                var url = Settings.CieloStatusPayment + paymentId;
                 Response response = new OperatorRest().SendRequestAsync(request, url, _config.Value.PagBankSettings.TokenHomolog);
 
                 if (string.IsNullOrEmpty(response.Data))
@@ -407,7 +351,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentDebitCardAsync)));
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentDebitCard)));
                 throw;
             }
         }

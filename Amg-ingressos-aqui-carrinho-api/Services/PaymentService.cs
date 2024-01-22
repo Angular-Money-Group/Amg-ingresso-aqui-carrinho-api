@@ -38,13 +38,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             try
             {
                 if (transaction.PaymentMethod.TypePayment == Enum.TypePayment.CreditCard)
-                    _messageReturn = await transactionClient.PaymentCreditCardAsync(transaction, user);
+                    _messageReturn = await transactionClient.PaymentCreditCard(transaction, user);
                 else if (transaction.PaymentMethod.TypePayment == Enum.TypePayment.DebitCard)
-                    _messageReturn = await transactionClient.PaymentDebitCardAsync(transaction, user);
+                    _messageReturn = await transactionClient.PaymentDebitCard(transaction, user);
                 else if (transaction.PaymentMethod.TypePayment == Enum.TypePayment.PaymentSlip)
-                    _messageReturn = await transactionClient.PaymentSlipAsync(transaction, user);
+                    _messageReturn = await transactionClient.PaymentSlip(transaction, user);
                 else if (transaction.PaymentMethod.TypePayment == Enum.TypePayment.Pix)
-                    _messageReturn = await transactionClient.PaymentPixAsync(transaction, user);
+                    _messageReturn = await transactionClient.PaymentPix(transaction, user);
                 else
                     throw new RuleException("Tipo não mapeado");
 
