@@ -1,12 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace Amg_ingressos_aqui_carrinho_api.Dto
 {
     public class EventDto
     {
+        public EventDto()
+        {
+            id = string.Empty;
+            Name = string.Empty;
+            Local = string.Empty;
+            Type = string.Empty;
+            Image = string.Empty;
+            Address = new Model.Address();
+        }
+
         public string id { get; set; }
         public string Name { get; set; }
         public string Local { get; set; }

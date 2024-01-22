@@ -41,14 +41,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
                 PurchaseTime = transaction?.DateRegister.ToLocalTime().ToString("hh:mm:ss")?? string.Empty,
                 SubTotal = transaction?.TotalValue ?? new decimal(0),
                 Tax = transaction?.Tax ?? new decimal(0),
-                Total = (transaction.TotalValue + transaction.Tax) - transaction.Discount,
-                ListTickets = transaction.TransactionItens.Select(x =>
+                Total = transaction?.TotalValue ?? 0 + transaction?.Tax ?? 0 - transaction?.Discount ?? 0,
+                ListTickets = transaction?.TransactionItens?.Select(x =>
                     new TicketDto()
                     {
                         NameVariant = x.Details,
                         QrCodeLink = transaction.Tickets?.Find(t => t.Id == x.IdTicket)?.QrCode ?? string.Empty
                     }
-                ).ToList()
+                ).ToList() ?? new List<TicketDto>()
             };
         }
     }

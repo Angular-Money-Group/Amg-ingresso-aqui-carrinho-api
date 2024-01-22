@@ -5,6 +5,16 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
 {
     public class TicketUserDataDto
     {
+        public TicketUserDataDto()
+        {
+            Id = string.Empty;
+            IdUser = string.Empty;
+            IdLot = string.Empty;
+            QrCode = string.Empty;
+            Position = string.Empty;
+            User = new UserDto();
+        }
+
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
         public string IdLot { get; set; }

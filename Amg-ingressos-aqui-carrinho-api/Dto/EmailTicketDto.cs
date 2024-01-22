@@ -29,7 +29,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
         public string UrlQrCode { get; set; }
         public int TypeTemplate { get; }
         public string Sender { get; set; }
-        public string To { get; set;}
+        public string To { get; set; }
         public string Subject { get; set; }
     }
 }

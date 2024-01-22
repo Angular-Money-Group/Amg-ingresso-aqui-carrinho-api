@@ -6,6 +6,7 @@ using static System.Net.Mime.MediaTypeNames;
 using Microsoft.Net.Http.Headers;
 using Amg_ingressos_aqui_carrinho_api.Dto;
 using Amg_ingressos_aqui_carrinho_api.Consts;
+using Amg_ingressos_aqui_carrinho_api.Exceptions;
 
 namespace Amg_ingressos_aqui_carrinho_api.Services
 {
@@ -56,26 +57,26 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             {
                 var notification = new NotificationEmailTicketDto()
                 {
-                    AddressEvent = ticketEventDto.@event.address.addressDescription
+                    AddressEvent = ticketEventDto.Event.Address.AddressDescription
                         + " - "
-                        + ticketEventDto.@event.address.number
+                        + ticketEventDto.Event.Address.Number
                         + " - "
-                        + ticketEventDto.@event.address.neighborhood
+                        + ticketEventDto.Event.Address.Neighborhood
                         + " - "
-                        + ticketEventDto.@event.address.city
+                        + ticketEventDto.Event.Address.City
                         + " - "
-                        + ticketEventDto.@event.address.state,
-                    EndDateEvent = ticketEventDto.@event.endDate.ToString(),
-                    EventName = ticketEventDto.@event.name,
-                    LocalEvent = ticketEventDto.@event.local,
+                        + ticketEventDto.Event.Address.State,
+                    EndDateEvent = ticketEventDto.Event.EndDate.ToString(),
+                    EventName = ticketEventDto.Event.Name,
+                    LocalEvent = ticketEventDto.Event.Local,
                     Sender = "suporte@ingressosaqui.com",
-                    StartDateEvent = ticketEventDto.@event.startDate.ToString(),
+                    StartDateEvent = ticketEventDto.Event.StartDate.ToString(),
                     Subject = "Ingressos",
-                    To = ticketUserDto.User.email,
+                    To = ticketUserDto.User.Email,
                     TypeTicket = halfprice ? "Meia Entrada" : "Inteira",
                     UrlQrCode = urlQrCode,
-                    UserName = ticketUserDto.User.name,
-                    VariantName = ticketEventDto.variant.name,
+                    UserName = ticketUserDto.User.Name,
+                    VariantName = ticketEventDto.Variant.Name,
                 };
 
                 _ = await SaveAsync(notification);

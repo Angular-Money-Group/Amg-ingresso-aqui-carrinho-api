@@ -189,7 +189,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     {
                         Id = ticketUserDto.Id,
                         IdLot = ticketUserDto.IdLot,
-                        IdUser = ticketUserDto.User.id,
+                        IdUser = ticketUserDto.User.Id,
                         IsSold = ticketUserDto.isSold,
                         Position = ticketUserDto.Position,
                         Value = ticketUserDto.Value,
