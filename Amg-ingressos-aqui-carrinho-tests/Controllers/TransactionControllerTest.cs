@@ -17,9 +17,6 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         private readonly Mock<ITransactionRepository> _transactionRepositoryMock = new Mock<ITransactionRepository>();
         private readonly Mock<ITransactionItenService> _transactionItenServiceMock = new Mock<ITransactionItenService>();
         private readonly Mock<ILogger<TransactionController>> _loggerMock = new Mock<ILogger<TransactionController>>();
-        private readonly Mock<ITicketService> _ticketServiceMock = new Mock<ITicketService>();
-        private readonly Mock<IPaymentService> _paymentServiceMock = new Mock<IPaymentService>();
-        private readonly Mock<INotificationService> _emailServiceMock = new Mock<INotificationService>();
         private readonly Mock<ILogger<TransactionService>> _logger = new Mock<ILogger<TransactionService>>();
 
         [SetUp]
@@ -153,7 +150,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
             var result = (await _transactionController.GetByIdTransactionAsync(idTransaction) as OkObjectResult);
 
             // Assert
-            Assert.AreEqual(200, result.StatusCode);
+            Assert.AreEqual(200, result?.StatusCode);
             Assert.IsNotNull(result?.Value);
         }
 
@@ -170,8 +167,8 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
             var result = (await _transactionController.GetByIdTransactionAsync(idTransaction) as ObjectResult);
 
             // Assert
-            Assert.AreEqual(500, result.StatusCode);
-            Assert.AreEqual(espectedReturn, result.Value);
+            Assert.AreEqual(500, result?.StatusCode);
+            Assert.AreEqual(espectedReturn, result?.Value);
         }
 
         [Test]
@@ -186,8 +183,8 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
             var result = (await _transactionController.GetByIdTransactionAsync(idTransaction) as ObjectResult);
 
             // Assert
-            Assert.AreEqual(404, result.StatusCode);
-            Assert.AreEqual(espectedReturn, result.Value);
+            Assert.AreEqual(404, result?.StatusCode);
+            Assert.AreEqual(espectedReturn, result?.Value);
         }
 
         /*[Test]

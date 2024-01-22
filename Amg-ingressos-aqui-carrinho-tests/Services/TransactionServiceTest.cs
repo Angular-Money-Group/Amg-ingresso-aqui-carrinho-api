@@ -15,11 +15,7 @@ namespace Prime.UnitTests.Services
         private TransactionService _transactionService;
         private readonly Mock<ITransactionRepository> _transactionRepositoryMock = new Mock<ITransactionRepository>();
         private readonly Mock<ITransactionItenService> _transactionItenServiceMock = new Mock<ITransactionItenService>();
-        private readonly Mock<ITicketService> _ticketServiceMock = new Mock<ITicketService>();
-        private readonly Mock<IPaymentService> _paymentServiceMock = new Mock<IPaymentService>();
-        private readonly Mock<INotificationService> _emailService = new Mock<INotificationService>();
         private readonly Mock<ILogger<TransactionService>> _logger = new Mock<ILogger<TransactionService>>();
-
 
         [SetUp]
         public void SetUp()
@@ -225,7 +221,7 @@ namespace Prime.UnitTests.Services
             var result = _transactionService.EditAsync(transaction);
 
             //Assert
-            Assert.IsNotEmpty(result.Exception.Message);
+            Assert.IsNotEmpty(result?.Exception?.Message);
         }
 
         [Test]
@@ -286,7 +282,7 @@ namespace Prime.UnitTests.Services
             var result = _transactionService.GetByIdAsync(idTransaction);
 
             //Assert
-            Assert.IsNotEmpty(result.Exception.Message);
+            Assert.IsNotEmpty(result?.Exception?.Message);
         }
 
         /*[Test]
@@ -365,7 +361,7 @@ namespace Prime.UnitTests.Services
             var result = _transactionService.GetByIdAsync(idTransaction);
 
             //Assert
-            Assert.IsNotEmpty(result.Exception.Message);
+            Assert.IsNotEmpty(result?.Exception?.Message);
         }
 
         /*[Test]
