@@ -7,6 +7,16 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
 {
     public class Variant
     {
+        public Variant()
+        {
+            Id = string.Empty;
+            Name = string.Empty;
+            Description = string.Empty;
+            IdEvent = string.Empty;
+            Positions = new Positions();
+            LocaleImage = string.Empty;
+        }
+
         /// <summary>
         /// Id mongo
         /// </summary>
@@ -52,13 +62,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         [Required]
         [JsonProperty("quantityCourtesy")]
         public int QuantityCourtesy { get; set; }
-        
-        /// <summary>
-        /// Lista de lotes
-        /// </summary>
-        [BsonIgnore]
-        [JsonProperty("Lot")]
-        public List<Lot> Lot { get; set; }
+
         /// <summary>
         /// Permitir venda de restante no proximo lote
         /// </summary>
@@ -87,8 +91,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// <summary>
         /// Posicoes/cadeiras
         /// </summary>
-         [JsonProperty("Positions")]
+        [JsonProperty("Positions")]
         public Positions Positions { get; set; }
-        
+
     }
 }

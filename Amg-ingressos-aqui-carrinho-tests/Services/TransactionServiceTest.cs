@@ -4,13 +4,9 @@ using NUnit.Framework;
 using Moq;
 using Amg_ingressos_aqui_carrinho_api.Repository.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Model;
-using Amg_ingressos_aqui_carrinho_api.Infra;
-using Amg_ingressos_aqui_carrinho_api.Dto;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Exceptions;
-using Amazon.Runtime.Internal.Util;
 using Microsoft.Extensions.Logging;
-using Amg_ingressos_aqui_carrinho_api.Model.Querys;
 
 namespace Prime.UnitTests.Services
 {
@@ -237,8 +233,8 @@ namespace Prime.UnitTests.Services
         {
             //Arrange
             var idTransaction = "6442dcb6523d52533aeb1ae4";
-            _transactionRepositoryMock.Setup(x => x.GetById<GetTransactionEventData>(idTransaction))
-                .Returns(Task.FromResult(new GetTransactionEventData()));
+            _transactionRepositoryMock.Setup(x => x.GetById<TransactionComplet>(idTransaction))
+                .Returns(Task.FromResult(new TransactionComplet()));
 
             //Act
             var result = _transactionService.GetByIdAsync(idTransaction);
@@ -253,8 +249,8 @@ namespace Prime.UnitTests.Services
             //Arrange
             var idTransaction = string.Empty;
             var messageReturn = "Transação é obrigatório";
-            _transactionRepositoryMock.Setup(x => x.GetById<GetTransactionEventData>(idTransaction))
-                .Returns(Task.FromResult(new GetTransactionEventData()));
+            _transactionRepositoryMock.Setup(x => x.GetById<TransactionComplet>(idTransaction))
+                .Returns(Task.FromResult(new TransactionComplet()));
 
             //Act
             var result = _transactionService.GetByIdAsync(idTransaction);
@@ -269,8 +265,8 @@ namespace Prime.UnitTests.Services
             //Arrange
             var idTransaction = "6442dcb6523d52533aeb1ae4";
             var messageReturn = "Transação não encontrada";
-            _transactionRepositoryMock.Setup(x => x.GetById<GetTransactionEventData>(idTransaction))
-                .Returns(Task.FromResult(new GetTransactionEventData()));
+            _transactionRepositoryMock.Setup(x => x.GetById<TransactionComplet>(idTransaction))
+                .Returns(Task.FromResult(new TransactionComplet()));
 
             //Act
             var result = _transactionService.GetByIdAsync(idTransaction);
@@ -283,8 +279,8 @@ namespace Prime.UnitTests.Services
         {
             //Arrange
             var idTransaction = "6442dcb6523d52533aeb1ae4";
-            _transactionRepositoryMock.Setup(x => x.GetById<GetTransactionEventData>(idTransaction))
-                .Returns(Task.FromResult(new GetTransactionEventData()));
+            _transactionRepositoryMock.Setup(x => x.GetById<TransactionComplet>(idTransaction))
+                .Returns(Task.FromResult(new TransactionComplet()));
 
             //Act
             var result = _transactionService.GetByIdAsync(idTransaction);
@@ -362,7 +358,7 @@ namespace Prime.UnitTests.Services
         {
             //Arrange
             var idTransaction = "6442dcb6523d52533aeb1ae4";
-             _transactionRepositoryMock.Setup(x => x.GetById<GetTransactionEventData>(idTransaction))
+             _transactionRepositoryMock.Setup(x => x.GetById<TransactionComplet>(idTransaction))
                 .Throws(new Exception("erro ao conectar na base de dados"));
 
             //Act
@@ -381,8 +377,8 @@ namespace Prime.UnitTests.Services
             var transaction = FactoryTransaction.SimpleTransaction();
             _ticketServiceMock.Setup(x => x.GetTicketByIdDataUserAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(new TicketUserDataDto()));
-            _transactionRepositoryMock.Setup(x => x.GetById<GetTransactionEventData>(idTransaction))
-                .Returns(Task.FromResult(new GetTransactionEventData()));
+            _transactionRepositoryMock.Setup(x => x.GetById<TransactionComplet>(idTransaction))
+                .Returns(Task.FromResult(new TransactionComplet()));
             _transactionRepositoryMock.Setup(x => x.Update<object>(It.IsAny<Transaction>()))
                 .Returns(Task.FromResult("Transação alterada" as object));
 

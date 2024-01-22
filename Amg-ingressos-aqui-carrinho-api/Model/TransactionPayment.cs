@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Amg_ingressos_aqui_carrinho_api.Enum;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
@@ -10,6 +6,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
 {
     public class TransactionPayment
     {
+
+        public TransactionPayment()
+        {
+            Id = string.Empty;
+            IdTransaction = string.Empty;
+            IdPaymentMethod = string.Empty;
+        }
+
         /// <summary>
         /// Id mongo
         /// </summary>
@@ -35,6 +39,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// </summary>
         [BsonRepresentation(BsonType.ObjectId)]
         public string IdPaymentMethod { get; set; }
-        
+
     }
 }

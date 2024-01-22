@@ -19,62 +19,62 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto.Pagbank
             {
                 customer = new Customer()
                 {
-                    email = user.Contact.Email,
-                    name = user.Name,
-                    phones = new List<Phone>(){
+                    Email = user.Contact.Email,
+                    Name = user.Name,
+                    Phones = new List<Phone>(){
                         new Phone(){
-                            area=user.Contact.PhoneNumber.Substring(0,2),
-                            country="55",
-                            number=user.Contact.PhoneNumber.Substring(2,(user.Contact.PhoneNumber.Length-2)),
-                            type="MOBILE"
+                            Area=user.Contact.PhoneNumber.Substring(0,2),
+                            Country="55",
+                            Number=user.Contact.PhoneNumber.Substring(2,(user.Contact.PhoneNumber.Length-2)),
+                            Type="MOBILE"
                         }
                     },
-                    tax_id = user.DocumentId
+                    TaxId = user.DocumentId
                 },
                 items = new List<Item>(){
                     new Item(){
-                        name = "Ingresso",
-                        quantity = 1,
-                        reference_id = transaction.Id,
-                        unit_amount = (int)transaction.TotalValue
+                        Name = "Ingresso",
+                        Quantity = 1,
+                        ReferenceId = transaction.Id,
+                        UnitAmount = (int)transaction.TotalValue
                     }
                 },
                 reference_id = transaction.Id,
                 charges = new List<Charge>(){
                     new Charge(){
-                        amount = new Amount(){
-                            value= (int)transaction.TotalValue,
-                            currency = "BRL"
+                        Amount = new Amount(){
+                            Value= (int)transaction.TotalValue,
+                            Currency = "BRL"
                         },
-                        reference_id = transaction.Id,
-                        description="Ingressos",
-                        notification_urls=new List<string>(),
-                        payment_method= new Model.Pagbank.PaymentMethod(){
-                            capture=true,
-                            boleto = new Boleto(){
+                        ReferenceId = transaction.Id,
+                        Description="Ingressos",
+                        NotificationUrls=new List<string>(),
+                        PaymentMethod= new Model.Pagbank.PaymentMethod(){
+                            Capture=true,
+                            Boleto = new Boleto(){
                                 due_date = DateTime.Now.ToString("yyyy-MM-dd"),
-                                instruction_lines = new InstructionLines(){
-                                    line_1 = "Pagamento processado para DESC Fatura",
-                                    line_2 = "via Pagseguro"
+                                InstructionLines = new InstructionLines(){
+                                    Line1 = "Pagamento processado para DESC Fatura",
+                                    Line2 = "via Pagseguro"
                                 },
-                                holder = new Model.Pagbank.Holder(){
-                                    address = new Model.Pagbank.Address(){
-                                        country= "Brasil",
-                                        region= user.Address.State,
-                                        region_code= user.Address.State,
-                                        city= user.Address.City,
-                                        postal_code= user.Address.Cep,
-                                        street= user.Address.AddressDescription,
-                                        number= user.Address.Number,
-                                        locality= user.Address.Neighborhood
+                                Holder = new Model.Pagbank.Holder(){
+                                    Address = new Model.Pagbank.Address(){
+                                        Country= "Brasil",
+                                        Region= user.Address.State,
+                                        RegionCode= user.Address.State,
+                                        City= user.Address.City,
+                                        PostalCode= user.Address.Cep,
+                                        Street= user.Address.AddressDescription,
+                                        Number= user.Address.Number,
+                                        Locality= user.Address.Neighborhood
                                     },
-                                    email=user.Contact.Email,
-                                    name=user.Name,
-                                    tax_id= user.DocumentId
+                                    Email=user.Contact.Email,
+                                    Name=user.Name,
+                                    TaxId= user.DocumentId
                                 }
                             },
-                            installments= 1,
-                            type="BOLETO"
+                            Installments= 1,
+                            Type="BOLETO"
                         }
                     }
                 }

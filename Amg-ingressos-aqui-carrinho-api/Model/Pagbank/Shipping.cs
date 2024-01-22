@@ -1,12 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
 {
     public class Shipping
     {
-         public Address address { get; set; }
+        public Shipping()
+        {
+            Address = new Address();
+        }
+
+        [JsonProperty("address")]
+        [JsonPropertyName("address")]
+        public Address Address { get; set; }
     }
 }

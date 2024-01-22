@@ -32,55 +32,55 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto.Pagbank
             {
                 customer = new Customer()
                 {
-                    email = user.Contact.Email,
-                    name = user.Name,
-                    phones = new List<Phone>() {
+                    Email = user.Contact.Email,
+                    Name = user.Name,
+                    Phones = new List<Phone>() {
                         new Phone() {
-                            area = user.Contact.PhoneNumber.Substring(0, 2),
-                            country = "55",
-                            number = user.Contact.PhoneNumber.Substring(2, (user.Contact.PhoneNumber.Length - 2)).Replace("-", string.Empty),
-                            type = "MOBILE"
+                            Area = user.Contact.PhoneNumber.Substring(0, 2),
+                            Country = "55",
+                            Number = user.Contact.PhoneNumber.Substring(2, (user.Contact.PhoneNumber.Length - 2)).Replace("-", string.Empty),
+                            Type = "MOBILE"
                         }
                     },
-                    tax_id = user.DocumentId
+                    TaxId = user.DocumentId
                 },
                 items = new List<Item>() {
                     new Item() {
-                        name = "Ingresso",
-                        quantity = 1,
-                        reference_id = transaction.Id,
-                        unit_amount = Convert.ToInt32(totalValue)
+                        Name = "Ingresso",
+                        Quantity = 1,
+                        ReferenceId = transaction.Id,
+                        UnitAmount = Convert.ToInt32(totalValue)
                     }
                 },
                 reference_id = transaction.Id,
                 charges = new List<Charge>(){
                     new Charge(){
-                        amount = new Amount(){
-                            value = Convert.ToInt32(totalValue),
-                            currency = "BRL"
+                        Amount = new Amount(){
+                            Value = Convert.ToInt32(totalValue),
+                            Currency = "BRL"
                         },
-                        reference_id = transaction.Id,
-                        description="Ingressos",
-                        notification_urls=new List<string>(),
-                        payment_method= new PaymentMethod(){
-                            capture=true,
-                            card= new Card(){
+                        ReferenceId = transaction.Id,
+                        Description="Ingressos",
+                        NotificationUrls=new List<string>(),
+                        PaymentMethod= new PaymentMethod(){
+                            Capture=true,
+                            Card= new Card(){
                                 //exp_month=transaction.PaymentMethod.ExpirationDate.Split("/")[0],
                                 //exp_year=transaction.PaymentMethod.ExpirationDate.Split("/")[1],
-                                holder=new Holder(){
-                                    name=transaction.PaymentMethod.Holder,
+                                Holder=new Holder(){
+                                    Name=transaction.PaymentMethod.Holder,
                                 },
                                 //number= transaction.PaymentMethod.CardNumber.Trim(),
-                                security_code=transaction.PaymentMethod.SecurityCode,
-                                store=false,
-                                encrypted =transaction.PaymentMethod.EncryptedCard 
+                                SecurityCode=transaction.PaymentMethod.SecurityCode,
+                                Store=false,
+                                Encrypted =transaction.PaymentMethod.EncryptedCard 
                             },
-                            installments= 1,
-                            type= transaction.PaymentMethod.TypePayment.Equals(TypePaymentEnum.CreditCard) ? "CREDIT_CARD" : "DEBIT_CARD",
+                            Installments= 1,
+                            Type= transaction.PaymentMethod.TypePayment.Equals(TypePaymentEnum.CreditCard) ? "CREDIT_CARD" : "DEBIT_CARD",
                         },
-                        authentication_meethod = new Authentication_method(){
-                            id = "3DS_15CB7893-4D23-44FA-97B7-AC1BE516D418",
-                            type = "THREEDS"
+                        AuthenticationMethod = new AuthenticationMethod(){
+                            Id = "3DS_15CB7893-4D23-44FA-97B7-AC1BE516D418",
+                            Type = "THREEDS"
                         }
                     }
                 }

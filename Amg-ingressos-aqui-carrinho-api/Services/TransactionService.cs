@@ -5,7 +5,6 @@ using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Utils;
 using Amg_ingressos_aqui_carrinho_api.Consts;
 using System.Data;
-using Amg_ingressos_aqui_carrinho_api.Model.Querys;
 
 namespace Amg_ingressos_aqui_carrinho_api.Services
 {
@@ -33,7 +32,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             try
             {
                 id.ValidateIdMongo("Transação");
-                _messageReturn.Data = await _transactionRepository.GetById<GetTransactionEventData>(id);
+                _messageReturn.Data = await _transactionRepository.GetById<TransactionComplet>(id);
                 return _messageReturn;
             }
             catch (Exception ex)

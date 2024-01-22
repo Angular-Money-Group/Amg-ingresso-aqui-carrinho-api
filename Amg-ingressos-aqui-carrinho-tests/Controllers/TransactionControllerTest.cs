@@ -3,14 +3,11 @@ using NUnit.Framework;
 using Moq;
 using Amg_ingressos_aqui_carrinho_api.Repository.Interfaces;
 using Microsoft.Extensions.Logging;
-using Amg_ingressos_aqui_carrinho_tests.FactoryServices;
 using Amg_ingressos_aqui_carrinho_api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Amg_ingressos_aqui_carrinho_api.Consts;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
-using Amg_ingressos_aqui_carrinho_api.Infra;
 using Amg_ingressos_aqui_carrinho_api.Model;
-using Amg_ingressos_aqui_carrinho_api.Model.Querys;
 
 namespace Amg_ingressos_aqui_carrinho_tests.Controllers
 {
@@ -149,8 +146,8 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
         {
             // Arrange
             var idTransaction = "6442dcb6523d52533aeb1ae4";
-            _transactionRepositoryMock.Setup(x => x.GetById<GetTransactionEventData>(idTransaction))
-                .Returns(Task.FromResult(new GetTransactionEventData()));
+            _transactionRepositoryMock.Setup(x => x.GetById<TransactionComplet>(idTransaction))
+                .Returns(Task.FromResult(new TransactionComplet()));
 
             // Act
             var result = (await _transactionController.GetByIdTransactionAsync(idTransaction) as OkObjectResult);
@@ -166,7 +163,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
             // Arrange
             var idTransaction = "6442dcb6523d52533aeb1ae4";
             var espectedReturn = MessageLogErrors.getByIdTransactionMessage;
-            _transactionRepositoryMock.Setup(x => x.GetById<GetTransactionEventData>(idTransaction))
+            _transactionRepositoryMock.Setup(x => x.GetById<TransactionComplet>(idTransaction))
                 .Throws(new Exception("error conection database"));
 
             // Act
@@ -201,8 +198,8 @@ namespace Amg_ingressos_aqui_carrinho_tests.Controllers
             var idTransaction = "6442dcb6523d52533aeb1ae4";
             var messageReturn = "Transação alterada";
             var simpleListTransaction = FactoryTransaction.SimpleListTransactionQueryStagePersonData();
-            _transactionRepositoryMock.Setup(x => x.GetById<GetTransactionEventData>(idTransaction))
-                .Returns(Task.FromResult(new GetTransactionEventData()));
+            _transactionRepositoryMock.Setup(x => x.GetById<TransactionComplet>(idTransaction))
+                .Returns(Task.FromResult(new TransactionComplet()));
             _transactionRepositoryMock.Setup(x => x.Update<object>(It.IsAny<Transaction>()))
                 .Returns(Task.FromResult(messageReturn as object));
 

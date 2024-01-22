@@ -6,8 +6,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         {
             Events = new List<Event>();
             TransactionItens = new List<TransactionIten>();
-            Tickets= new List<Ticket>();
+            Tickets = new List<Ticket>();
         }
+
         public List<Event> Events { get; set; }
         public List<Ticket> Tickets { get; set; }
         public List<TransactionIten> TransactionItens { get; set; }

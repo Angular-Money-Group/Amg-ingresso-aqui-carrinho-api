@@ -1,29 +1,27 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Amg_ingressos_aqui_carrinho_api.Enum;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Amg_ingressos_aqui_carrinho_api.Model.Cielo.Pix
 {
     public class PaymentCieloPix
     {
+        public PaymentCieloPix()
+        {
+            MerchantOrderId = string.Empty;
+            Customer = new Customer();
+            Payment = new Payment();
+        }
+
+        [JsonProperty("MerchantOrderId")]
+        [JsonPropertyName("MerchantOrderId")]
         public string MerchantOrderId { get; set; }
-        public CustomerPix Customer { get; set; }
-        public PaymentPix Payment { get; set; }
 
-    }
-    public class CustomerPix
-    {
-        public string Name { get; set; }
-        public string Identity { get; set; }
-        public string IdentityType { get; set; }
-    }
+        [JsonProperty("Customer")]
+        [JsonPropertyName("Customer")]
+        public Customer Customer { get; set; }
 
-    public class PaymentPix
-    {
-        public string Type { get; set; }
-        public int Amount { get; set; }
+        [JsonProperty("Payment")]
+        [JsonPropertyName("Payment")]
+        public Payment Payment { get; set; }
     }
-
 }

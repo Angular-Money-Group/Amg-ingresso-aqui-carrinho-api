@@ -1,13 +1,26 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
 {
     public class Amount
     {
-        public int value { get; set; }
-        public string currency { get; set; }
+        public Amount()
+        {
+            Currency = string.Empty;
+            Summary = new Summary();
+        }
+
+        [JsonProperty("value")]
+        [JsonPropertyName("value")]
+        public int Value { get; set; }
+
+        [JsonProperty("currency")]
+        [JsonPropertyName("currency")]
+        public string Currency { get; set; }
+
+        [JsonProperty("summary")]
+        [JsonPropertyName("summary")]
+        public Summary Summary { get; set; }
     }
 }

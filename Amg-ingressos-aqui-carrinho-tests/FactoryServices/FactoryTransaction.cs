@@ -1,6 +1,5 @@
 using Amg_ingressos_aqui_carrinho_api.Dto;
 using Amg_ingressos_aqui_carrinho_api.Model;
-using Amg_ingressos_aqui_carrinho_api.Model.Querys;
 
 namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
 {
@@ -25,7 +24,6 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                 IdPerson = "6442dcb6523d52533aeb1ae4",
                 Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
                 Tax = new decimal(10.0),
-                TransactionItens = SimpleTransactionIten()
             };
         }
         internal static List<TransactionComplet> SimpleListTransactionQueryStagePaymentTransaction(){

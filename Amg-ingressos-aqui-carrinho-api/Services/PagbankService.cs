@@ -33,10 +33,10 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 if (string.IsNullOrEmpty(response.Data))
                 {
                     StringBuilder messagejson = new StringBuilder();
-                    response.MessageJsonToModel<CallbackErrorMessagePagBank>().Error_messages
+                    response.MessageJsonToModel<CallbackErrorMessagePagBank>().ErrorMessages
                     .ForEach(x =>
                     {
-                        messagejson.Append(x.code + " = " + x.parameter_name + " -- Error:" + x.description + " : " + x.parameter_name);
+                        messagejson.Append(x.Code + " = " + x.ParameterName + " -- Error:" + x.Description + " : " + x.ParameterName);
                     });
                     response.Message = messagejson.ToString();
                     _messageReturn.Message = response.Message;

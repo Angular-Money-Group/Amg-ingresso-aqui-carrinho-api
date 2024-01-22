@@ -5,6 +5,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
 {
     public class TransactionIten
     {
+        public TransactionIten()
+        {
+            Id = string.Empty;
+            IdTransaction = string.Empty;
+            IdTicket = string.Empty;
+            Details = string.Empty;
+        }
+
         /// <summary>
         /// Id mongo
         /// </summary>
@@ -33,6 +41,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// Preco Ingresso
         /// </summary>
         public decimal TicketPrice { get; set; }
+
         /// <summary>
         /// Preco Ingresso
         /// </summary>

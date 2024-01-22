@@ -5,7 +5,6 @@ using Amg_ingressos_aqui_carrinho_api.Exceptions;
 using Amg_ingressos_aqui_carrinho_api.Mappers;
 using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Model.Cielo.Callback;
-using Amg_ingressos_aqui_carrinho_api.Model.Querys;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Utils;
 
@@ -70,7 +69,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             {
 
                 idTransaction.ValidateIdMongo("idTransaction");
-                var transactionDb = _transactionService.GetByIdAsync(idTransaction).Result.ToObject<GetTransactionEventData>();
+                var transactionDb = _transactionService.GetByIdAsync(idTransaction).Result.ToObject<TransactionComplet>();
 
                 if (transactionDb.Stage != StageTransactionEnum.Confirm)
                     throw new RuleException("Estágio fora do padrão");
@@ -100,7 +99,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 idTransaction.ValidateIdMongo("idTransaction");
                 var transaction = transactionDto.StageTicketDataDtoToTransaction();
                 transaction.Id = idTransaction;
-                var transactionDb = _transactionService.GetByIdAsync(idTransaction).Result.ToObject<GetTransactionEventData>();
+                var transactionDb = _transactionService.GetByIdAsync(idTransaction).Result.ToObject<TransactionComplet>();
 
                 if (transactionDb.Stage != StageTransactionEnum.PersonData)
                     throw new RuleException("Estágio fora do padrão");
@@ -126,7 +125,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 idTransaction.ValidateIdMongo("idTransaction");
                 var transaction = transactionDto.StagePaymentDataDtoToTransaction();
                 transaction.Id = idTransaction;
-                var transactionDb = _transactionService.GetByIdAsync(idTransaction).Result.ToObject<GetTransactionEventData>();
+                var transactionDb = _transactionService.GetByIdAsync(idTransaction).Result.ToObject<TransactionComplet>();
 
                 if (transactionDb.Stage != StageTransactionEnum.TicketsData &&
                 transactionDb.Stage != StageTransactionEnum.PaymentData)
@@ -153,12 +152,12 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             try
             {
                 idTransaction.ValidateIdMongo("idTransaction");
-                var transactionDb = _transactionService.GetByIdAsync(idTransaction).Result.ToObject<GetTransactionEventData>();
+                var transactionDb = _transactionService.GetByIdAsync(idTransaction).Result.ToObject<TransactionComplet>();
 
                 if (transactionDb.Stage != StageTransactionEnum.PaymentData)
                     throw new RuleException("Estágio fora do padrão");
 
-                var transaction = transactionDb.GeTransactionToTransaction();
+                var transaction = new TransactionCompletDto().ModelToDto(transactionDb);
 
                 await Payment(transaction);
                 transaction.Stage = StageTransactionEnum.PaymentTransaction;
@@ -177,8 +176,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         {
             try
             {
-                var transactionDb = _transactionService.GetByIdAsync(idTransaction).Result.ToObject<GetTransactionEventData>();
-                var transaction = transactionDb.GeTransactionToTransaction();
+                var transactionDb = _transactionService.GetByIdAsync(idTransaction).Result.ToObject<TransactionComplet>();
+                var transaction = new TransactionCompletDto().ModelToDto(transactionDb);
 
                 transaction.Id.ValidateIdMongo("Transação");
                 transaction.TransactionItens = _transactionItenService.GetByIdTransaction(transaction.Id).Result.ToListObject<TransactionIten>();
@@ -220,8 +219,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             try
             {
                 idTransaction.ValidateIdMongo("Transação");
-                var transactionDb = _transactionService.GetByIdAsync(idTransaction).Result.ToObject<GetTransactionEventData>();
-                var transaction = transactionDb.GeTransactionToTransaction();
+                var transactionDb = _transactionService.GetByIdAsync(idTransaction).Result.ToObject<TransactionComplet>();
+                var transaction = new TransactionCompletDto().ModelToDto(transactionDb);
                 transaction.Status = StatusPaymentEnum.Canceled;
 
                 await _transactionService.EditAsync(transaction);

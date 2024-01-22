@@ -8,6 +8,16 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
     [BsonIgnoreExtraElements]
     public class Ticket
     {
+        public Ticket()
+        {
+            Id = string.Empty;
+            IdLot = string.Empty;
+            IdUser = string.Empty;
+            QrCode = string.Empty;
+            Position = string.Empty;
+            IdColab = string.Empty;
+        }
+
         /// <summary>
         /// Id mongo
         /// </summary>
@@ -15,7 +25,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         [BsonRepresentation(BsonType.ObjectId)]
         [JsonProperty("id")]
         public string Id { get; set; }
-        
+
         /// <summary>
         /// Id mongo Lote
         /// </summary>
@@ -27,7 +37,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// </summary>
         [BsonRepresentation(BsonType.ObjectId)]
         public string IdUser { get; set; }
-        
+
         /// <summary>
         /// Posicao
         /// </summary>
@@ -53,7 +63,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// Colaborador que realizou a leitura
         /// </summary>
         public string? IdColab { get; set; }
-        
+
         /// <summary>
         /// Precisa verificar os documentos?
         /// </summary>
@@ -63,9 +73,10 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// QrCode
         /// </summary>
         public string QrCode { get; set; }
+
         /// <summary>
         /// Indica se o ticket é cortesia
         /// </summary>
-        public Boolean ticketCortesia { get; set; }
+        public bool ticketCortesia { get; set; }
     }
 }

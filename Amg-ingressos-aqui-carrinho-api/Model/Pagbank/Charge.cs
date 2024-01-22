@@ -1,19 +1,71 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
 {
     public class Charge
     {
-        public string reference_id { get; set; }
-        public string description { get; set; }
-        public Amount amount { get; set; }
-        public PaymentMethod payment_method { get; set; }
-        [JsonIgnore]
-        public List<string> notification_urls { get; set; }
-        public Authentication_method authentication_meethod { get; set; }
+        public Charge()
+        {
+            ReferenceId = string.Empty;
+            Description = string.Empty;
+            Amount = new Amount();
+            PaymentMethod = new PaymentMethod();
+            NotificationUrls = new List<string>();
+            AuthenticationMethod = new AuthenticationMethod();
+            id = string.Empty;
+            Status = string.Empty;
+            PaymentResponse = new PaymentResponse();
+            Links = new List<Link>();
+        }
+
+        [JsonProperty("reference_id")]
+        [JsonPropertyName("reference_id")]
+        public string ReferenceId { get; set; }
+
+        [JsonProperty("description")]
+        [JsonPropertyName("description")]
+        public string Description { get; set; }
+
+        [JsonProperty("amount")]
+        [JsonPropertyName("amount")]
+        public Amount Amount { get; set; }
+
+        [JsonProperty("payment_method")]
+        [JsonPropertyName("payment_method")]
+        public PaymentMethod PaymentMethod { get; set; }
+
+        [JsonProperty("notification_urls")]
+        [JsonPropertyName("notification_urls")]
+        [System.Text.Json.Serialization.JsonIgnore]
+        public List<string> NotificationUrls { get; set; }
+
+        [JsonProperty("AuthenticationMethod")]
+        [JsonPropertyName("AuthenticationMethod")]
+        public AuthenticationMethod AuthenticationMethod { get; set; }
+
+        [JsonProperty("id")]
+        [JsonPropertyName("id")]
+        public string id { get; set; }
+
+        [JsonProperty("status")]
+        [JsonPropertyName("status")]
+        public string Status { get; set; }
+
+        [JsonProperty("created_at")]
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+
+        [JsonProperty("paid_at")]
+        [JsonPropertyName("paid_at")]
+        public DateTime PaidAt { get; set; }
+
+        [JsonProperty("payment_response")]
+        [JsonPropertyName("payment_response")]
+        public PaymentResponse PaymentResponse { get; set; }
+
+        [JsonProperty("links")]
+        [JsonPropertyName("links")]
+        public List<Link> Links { get; set; }
     }
 }

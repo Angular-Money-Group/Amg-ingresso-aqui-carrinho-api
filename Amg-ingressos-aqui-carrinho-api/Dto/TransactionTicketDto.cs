@@ -35,7 +35,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
             {
                 CountTickets = transaction.TotalTicket,
                 NameUser = transaction.IdPerson,
-                NameEvent = transaction?.Events?.Find(e => e._Id == transaction.IdEvent)?.Name ?? string.Empty,
+                NameEvent = transaction?.Events?.Find(e => e.Id == transaction.IdEvent)?.Name ?? string.Empty,
                 PaymentMethod = transaction?.PaymentMethod?.TypePayment.ToString() ?? string.Empty,
                 PurchaseDate = transaction?.DateRegister.ToLocalTime().ToString("dd-MM-yyyy") ?? string.Empty,
                 PurchaseTime = transaction?.DateRegister.ToLocalTime().ToString("hh:mm:ss")?? string.Empty,

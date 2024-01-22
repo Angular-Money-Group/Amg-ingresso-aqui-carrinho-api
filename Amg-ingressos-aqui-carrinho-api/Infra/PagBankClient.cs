@@ -52,7 +52,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 }
 
                 var obj = JsonConvert.DeserializeObject<CallbackBoletoPagBank>(response.Data);
-                transaction.PaymentIdService = obj.id;
+                transaction.PaymentIdService = obj.Id;
                 _messageReturn.Data = "ok";
             }
             catch (Exception ex)
@@ -86,11 +86,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 }
 
                 var obj = JsonConvert.DeserializeObject<CallbackCreditCardPagBank>(response.Data);
-                if (obj.charges.FirstOrDefault().status.ToUpper() == "DECLINED")
-                    _messageReturn.Message = obj.charges.FirstOrDefault().payment_response.message;
+                if (obj.Charges.FirstOrDefault().Status.ToUpper() == "DECLINED")
+                    _messageReturn.Message = obj.Charges.FirstOrDefault().PaymentResponse.Message;
                 else
                 {
-                    transaction.PaymentIdService = obj.id;
+                    transaction.PaymentIdService = obj.Id;
                     _messageReturn.Data = "ok";
                 }
             }
@@ -125,11 +125,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 }
 
                 var obj = JsonConvert.DeserializeObject<CallbackCreditCardPagBank>(response.Data);
-                if (obj.charges.FirstOrDefault().status.ToUpper() == "DECLINED")
-                    _messageReturn.Message = obj.charges.FirstOrDefault().payment_response.message;
+                if (obj.Charges.FirstOrDefault().Status.ToUpper() == "DECLINED")
+                    _messageReturn.Message = obj.Charges.FirstOrDefault().PaymentResponse.Message;
                 else
                 {
-                    transaction.PaymentIdService = obj.id;
+                    transaction.PaymentIdService = obj.Id;
                     _messageReturn.Data = "Ok";
                 }
 
@@ -153,9 +153,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 if (!string.IsNullOrEmpty(response.Data))
                 {
                     StringBuilder messagejson = new StringBuilder();
-                    JsonConvert.DeserializeObject<CallbackErrorMessagePagBank>(response.Message).Error_messages.ForEach(x =>
+                    JsonConvert.DeserializeObject<CallbackErrorMessagePagBank>(response.Message).ErrorMessages.ForEach(x =>
                     {
-                        messagejson.Append(x.code + " = " + x.parameter_name + " -- Error:" + x.description + " : " + x.parameter_name);
+                        messagejson.Append(x.Code + " = " + x.ParameterName + " -- Error:" + x.Description + " : " + x.ParameterName);
                     });
                     response.Message = messagejson.ToString();
                     _messageReturn.Message = response.Message;
@@ -165,9 +165,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
 
                 var obj = JsonConvert.DeserializeObject<CallbackPixPagBank>(response.Data);
                 transaction.PaymentIdService = obj.id;
-                _messageReturn.Data = obj.qr_codes.FirstOrDefault()
-                                         .links.FirstOrDefault(i => i.rel.Equals("QRCODE.PNG"))
-                                         .href;
+                _messageReturn.Data = obj.QrCodes.FirstOrDefault()
+                                         .links.FirstOrDefault(i => i.Rel.Equals("QRCODE.PNG"))
+                                         .Href;
                 return _messageReturn;
             }
             catch (Exception ex)

@@ -20,41 +20,41 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
                 reference_id = transaction.Id,
                 customer = new Customer()
                 {
-                    email = user.Contact.Email,
-                    name = user.Name,
-                    phones = new List<Phone>(){
+                    Email = user.Contact.Email,
+                    Name = user.Name,
+                    Phones = new List<Phone>(){
                         new Phone(){
-                            area=user.Contact.PhoneNumber.Substring(0,2),
-                            country="55",
-                            number=user.Contact.PhoneNumber.Substring(2,(user.Contact.PhoneNumber.Length-2)).Replace("-",string.Empty),
-                            type="MOBILE"
+                            Area=user.Contact.PhoneNumber.Substring(0,2),
+                            Country="55",
+                            Number=user.Contact.PhoneNumber.Substring(2,(user.Contact.PhoneNumber.Length-2)).Replace("-",string.Empty),
+                            Type="MOBILE"
                         }
                     },
-                    tax_id = user.DocumentId
+                    TaxId = user.DocumentId
                 },
                 items = new List<Item>(){
                     new Item(){
-                        name = "Ingresso",
-                        quantity = 1,
-                        unit_amount = (int)transaction.TotalValue
+                        Name = "Ingresso",
+                        Quantity = 1,
+                        UnitAmount = (int)transaction.TotalValue
                     }
                 },
                 qr_codes = new List<QrCode>{
                     new QrCode(){
-                        amount = new Amount(){ value = (int)transaction.TotalValue },
-                        expiration_date= DateTime.Now.AddDays(3)
+                        Amount = new Amount(){ Value = (int)transaction.TotalValue },
+                        ExpirationDate= DateTime.Now.AddDays(3)
                     }
                 },
                 shipping= new Shipping(){
-                    address = new Model.Pagbank.Address(){
-                        country= "BRA",
-                        region= user.Address.State??"",
-                        region_code= user.Address.State??"",
-                        city= user.Address.City??"",
-                        postal_code= user.Address.Cep??"",
-                        street= user.Address.AddressDescription?? user.Address.Neighborhood ?? "N/a",
-                        number= user.Address.Number??"",
-                        locality= user.Address.Neighborhood??""
+                    Address = new Model.Pagbank.Address(){
+                        Country= "BRA",
+                        Region= user.Address.State??"",
+                        RegionCode= user.Address.State??"",
+                        City= user.Address.City??"",
+                        PostalCode= user.Address.Cep??"",
+                        Street= user.Address.AddressDescription?? user.Address.Neighborhood ?? "N/a",
+                        Number= user.Address.Number??"",
+                        Locality= user.Address.Neighborhood??""
                     }
                 }
             };

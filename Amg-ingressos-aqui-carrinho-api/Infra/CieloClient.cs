@@ -60,10 +60,10 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 var transactionToJson = new PaymentCieloCreditCard()
                 {
                     MerchantOrderId = transaction.Id,
-                    Payment = new Model.Cielo.CreditCard.Payment()
+                    Payment = new Model.Cielo.Payment()
                     {
                         Amount = (int)(transaction.TotalValue + transaction.Tax - transaction.Discount),
-                        CreditCard = new Model.Cielo.CreditCard.CreditCard()
+                        CreditCard = new CreditCardCielo()
                         {
                             Brand = transaction.PaymentMethod.Brand,
                             CardNumber = transaction.PaymentMethod.CardNumber,
@@ -190,11 +190,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 var transactionToJson = new PaymentCieloDebitCard()
                 {
                     MerchantOrderId = transaction.Id,
-                    Customer = new Model.Cielo.DebitCard.Customer() { Name = user.Name },
-                    Payment = new Model.Cielo.DebitCard.Payment()
+                    Customer = new Model.Cielo.Customer() { Name = user.Name },
+                    Payment = new Model.Cielo.Payment()
                     {
                         Amount = (int)(transaction.TotalValue + transaction.Tax - transaction.Discount),
-                        DebitCard = new DebitCard()
+                        DebitCard = new DebitCardCielo()
                         {
                             Brand = transaction.PaymentMethod.Brand,
                             CardNumber = transaction.PaymentMethod.CardNumber,
@@ -371,7 +371,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             }
         }
 
-        private async Task<CreditCardIsValid> ValidateCard(Model.Cielo.CreditCard.CreditCard transactionJson)
+        private async Task<CreditCardIsValid> ValidateCard(CreditCardCielo transactionJson)
         {
             try
             {
