@@ -83,7 +83,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     TotalValue = transactionDb.TotalValue
                 };
 
-                _ = await _transactionService.UpdateAsync(transaction);
+                _ = await _transactionService.EditAsync(transaction);
                 return _messageReturn;
             }
             catch (Exception ex)
@@ -108,7 +108,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 transaction.IdPerson = transactionDb.IdPerson;
                 transaction.TotalValue = transactionDb.TotalValue;
 
-                _ = await _transactionService.UpdateAsync(transaction);
+                _ = await _transactionService.EditAsync(transaction);
 
                 return _messageReturn;
             }
@@ -137,7 +137,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 transaction.Discount = transactionDb.Discount;
                 transaction.Tax = transactionDb.Tax;
 
-                _ = await _transactionService.UpdateAsync(transaction);
+                _ = await _transactionService.EditAsync(transaction);
 
                 return _messageReturn;
             }
@@ -162,7 +162,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
                 await Payment(transaction);
                 transaction.Stage = StageTransactionEnum.PaymentTransaction;
-                await _transactionService.UpdateAsync(transaction);
+                await _transactionService.EditAsync(transaction);
                 _messageReturn.Data = "ok";
                 return _messageReturn;
             }
@@ -205,7 +205,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
                 transaction.Status = StatusPaymentEnum.Finished;
                 transaction.Stage = StageTransactionEnum.Finished;
-                await _transactionService.UpdateAsync(transaction);
+                await _transactionService.EditAsync(transaction);
                 return _messageReturn;
             }
             catch (Exception ex)
@@ -224,7 +224,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 var transaction = transactionDb.GeTransactionToTransaction();
                 transaction.Status = StatusPaymentEnum.Canceled;
 
-                await _transactionService.UpdateAsync(transaction);
+                await _transactionService.EditAsync(transaction);
                 return _messageReturn;
             }
             catch (Exception ex)
@@ -248,7 +248,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 transaction.PaymentPix = _messageReturn.Data as CallbackPix;
                 transaction.Status = StatusPaymentEnum.Pending;
 
-                await _transactionService.UpdateAsync(transaction);
+                await _transactionService.EditAsync(transaction);
                 return _messageReturn;
             }
             catch (Exception ex)
@@ -299,7 +299,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             finally
             {
-                await _transactionService.UpdateAsync(transaction);
+                await _transactionService.EditAsync(transaction);
             }
         }
     }

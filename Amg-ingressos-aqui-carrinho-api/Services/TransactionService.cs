@@ -47,7 +47,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         {
             try
             {
-                _messageReturn.Data = await _transactionRepository.Save<object>(transaction);
+                _messageReturn.Data = await _transactionRepository.Save(transaction);
                 return _messageReturn;
             }
             catch (Exception ex)
@@ -57,16 +57,16 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
         }
 
-        public async Task<MessageReturn> UpdateAsync(Transaction transaction)
+        public async Task<MessageReturn> EditAsync(Transaction transaction)
         {
             try
             {
                 transaction.Id.ValidateIdMongo("Transação");
-                await _transactionRepository.Update<object>(transaction);
+                await _transactionRepository.Edit(transaction.Id, transaction);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(UpdateAsync)));
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(EditAsync)));
                 throw;
             }
 
@@ -151,7 +151,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             try
             {
                 transaction.Status = Enum.StatusPaymentEnum.Canceled;
-                _messageReturn.Data = await _transactionRepository.Update<object>(transaction);
+                _messageReturn.Data = await _transactionRepository.Edit(transaction.Id, transaction);
 
                 return _messageReturn;
             }

@@ -1,5 +1,4 @@
 using Amg_ingressos_aqui_carrinho_api.Infra;
-using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Repository;
 using Amg_ingressos_aqui_carrinho_api.Repository.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Services;
@@ -33,9 +32,7 @@ builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<ITransactionItenRepository, TransactionItenRepository>();
 
 //infra
-builder.Services.AddScoped<IDbConnection<Transaction>, DbConnection<Transaction>>();
-builder.Services.AddScoped<IDbConnection<TransactionIten>, DbConnection<TransactionIten>>();
-builder.Services.AddScoped<IDbConnection<Email>, DbConnection<Email>>();
+builder.Services.AddScoped<IDbConnection, DbConnection>();
 builder.Services.AddScoped<ITransactionGatewayClient, CieloClient>();
 builder.Services.AddScoped<ITransactionGatewayClient, PagBankClient>();
 builder.Services.AddScoped<IPagbankService, PagbankService>();

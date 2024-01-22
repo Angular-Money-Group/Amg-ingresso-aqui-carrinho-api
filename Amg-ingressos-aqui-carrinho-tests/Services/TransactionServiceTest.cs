@@ -174,11 +174,11 @@ namespace Prime.UnitTests.Services
             var transaction = FactoryTransaction.SimpleTransactionPersonData();
             
                        var messageReturn = "Transação alterada";
-            _transactionRepositoryMock.Setup(x => x.Update<object>(It.IsAny<Transaction>()))
-                .Returns(Task.FromResult(messageReturn as object));
+            _transactionRepositoryMock.Setup(x => x.Edit(It.IsAny<string>(),It.IsAny<Transaction>()))
+                .Returns(Task.FromResult(true));
 
             //Act
-            var result = _transactionService.UpdateAsync(transaction);
+            var result = _transactionService.EditAsync(transaction);
 
             //Assert
             Assert.AreEqual(messageReturn, result.Result.Data);
@@ -191,11 +191,11 @@ namespace Prime.UnitTests.Services
             var transaction = FactoryTransaction.SimpleTransactionPersonData();
             transaction.Id= string.Empty;
             var messageReturn = "Transação é obrigatório";
-            _transactionRepositoryMock.Setup(x => x.Update<object>(It.IsAny<Transaction>()))
-                .Returns(Task.FromResult(messageReturn as object));
+            _transactionRepositoryMock.Setup(x => x.Edit(It.IsAny<string>(),It.IsAny<Transaction>()))
+                .Returns(Task.FromResult(true));
 
             //Act
-            var result = _transactionService.UpdateAsync(transaction);
+            var result = _transactionService.EditAsync(transaction);
 
             //Assert
             Assert.AreEqual(messageReturn, result.Result.Message);
@@ -207,11 +207,11 @@ namespace Prime.UnitTests.Services
             //Arrange
             var transaction = FactoryTransaction.SimpleTransactionPersonData();
             var messageReturn = "Transação não encontrada";
-            _transactionRepositoryMock.Setup(x => x.Update<object>(It.IsAny<Transaction>()))
+            _transactionRepositoryMock.Setup(x => x.Edit(It.IsAny<string>(),It.IsAny<Transaction>()))
                 .Throws(new UpdateTransactionException(messageReturn));
 
             //Act
-            var result = _transactionService.UpdateAsync(transaction);
+            var result = _transactionService.EditAsync(transaction);
 
             //Assert
             Assert.AreEqual(messageReturn, result.Result.Message);
@@ -222,11 +222,11 @@ namespace Prime.UnitTests.Services
         {
             //Arrange
             var transaction = FactoryTransaction.SimpleTransactionPersonData();
-            _transactionRepositoryMock.Setup(x => x.Update<object>(It.IsAny<Transaction>()))
+            _transactionRepositoryMock.Setup(x => x.Edit(It.IsAny<string>(),It.IsAny<Transaction>()))
                 .Throws(new Exception("erro ao conectar na base de dados"));
 
             //Act
-            var result = _transactionService.UpdateAsync(transaction);
+            var result = _transactionService.EditAsync(transaction);
 
             //Assert
             Assert.IsNotEmpty(result.Exception.Message);

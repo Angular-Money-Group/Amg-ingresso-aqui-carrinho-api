@@ -11,27 +11,28 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
     public class TransactionItenRepository : ITransactionItenRepository
     {
         private readonly IMongoCollection<TransactionIten> _transactionItenCollection;
-        public TransactionItenRepository(IDbConnection<TransactionIten> dbconnectionIten)
+        public TransactionItenRepository(IDbConnection dbconnectionIten)
         {
-            _transactionItenCollection = dbconnectionIten.GetConnection("transactionIten");
+            _transactionItenCollection = dbconnectionIten.GetConnection<TransactionIten>("transactionIten");
         }
 
         public async Task<TransactionIten> Save(TransactionIten transaction)
         {
-            _ = _transactionItenCollection.InsertOneAsync(transaction);
+            await _transactionItenCollection.InsertOneAsync(transaction);
             return transaction;
 
         }
+
         public async Task<List<T>> GetByIdTransaction<T>(string idTransaction)
         {
             var builder = Builders<TransactionIten>.Filter;
             var filter = builder.Empty;
 
-            if (!string.IsNullOrWhiteSpace(idTransaction))
-            {
-                var firstNameFilter = builder.Eq(x => x.IdTransaction, idTransaction);
+            if (string.IsNullOrWhiteSpace(idTransaction))
+                throw new GetException("idTransactin é necessário.");
+
+            var firstNameFilter = builder.Eq(x => x.IdTransaction, idTransaction);
                 filter &= firstNameFilter;
-            }
 
             var result = await _transactionItenCollection.Find(filter)
             .As<T>()
@@ -39,7 +40,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
 
 
             if (result == null)
-                throw new GetException("Transacao itens nao encontrados");
+                throw new GetException("Itens da transação não encontrados");
 
             return result;
         }

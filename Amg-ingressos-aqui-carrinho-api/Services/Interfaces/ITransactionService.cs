@@ -5,7 +5,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services.Interfaces
     public interface ITransactionService
     {
         
-        Task<MessageReturn> UpdateAsync(Transaction transaction);
+        Task<MessageReturn> EditAsync(Transaction transaction);
         Task<MessageReturn> GetByIdAsync(string id);
         Task<MessageReturn> GetByUserActivesAsync(string idUser);
         Task<MessageReturn> GetByUserHistoryAsync(string idUser);
