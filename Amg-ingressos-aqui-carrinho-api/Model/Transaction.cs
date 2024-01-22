@@ -30,13 +30,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// Meio de pagamento
         /// </summary>
 
-        public PaymentMethod? PaymentMethod { get; set; }
+        public PaymentMethod PaymentMethod { get; set; }
 
         /// <summary>
         /// Meio de pagamento
         /// </summary>
 
-        public PaymentMethodPix? PaymentMethodPix { get; set; }
+        public PaymentMethodPix PaymentMethodPix { get; set; }
 
         /// <summary>
         /// Meio de pagamento

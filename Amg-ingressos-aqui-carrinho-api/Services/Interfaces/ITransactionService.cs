@@ -1,4 +1,3 @@
-using Amg_ingressos_aqui_carrinho_api.Dto;
 using Amg_ingressos_aqui_carrinho_api.Model;
 
 namespace Amg_ingressos_aqui_carrinho_api.Services.Interfaces
@@ -12,6 +11,5 @@ namespace Amg_ingressos_aqui_carrinho_api.Services.Interfaces
         Task<MessageReturn> GetByUserHistoryAsync(string idUser);
         Task<MessageReturn> GetByUserTicketEventDataAsync(string idUser, string idEvent);
         Task<MessageReturn> SaveAsync(Transaction transaction);
-        
     }
 }

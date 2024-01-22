@@ -1,4 +1,5 @@
 using Amg_ingressos_aqui_carrinho_api.Consts;
+using Amg_ingressos_aqui_carrinho_api.Dto;
 using Amg_ingressos_aqui_carrinho_api.Exceptions;
 using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Repository.Interfaces;
@@ -21,13 +22,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             _messageReturn = new MessageReturn();
             _logger = logger;
         }
-        public Task<bool> DeleteByIdTransaction(string idTransaction)
+        public Task<MessageReturn> DeleteByIdTransaction(string idTransaction)
         {
             try
             {
                 idTransaction.ValidateIdMongo("idTransaction");
-                var result = _transactionItenRepository.DeleteByIdTransaction(idTransaction);
-                return result;
+                _messageReturn.Data = _transactionItenRepository.DeleteByIdTransaction(idTransaction);
+                return Task.FromResult(_messageReturn);
             }
             catch (Exception ex)
             {
@@ -36,13 +37,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
         }
 
-        public Task<List<TransactionIten>> GetByIdTransaction<TransactionIten>(string idTransaction)
+        public Task<MessageReturn> GetByIdTransaction(string idTransaction)
         {
             try
             {
                 idTransaction.ValidateIdMongo("idTransaction");
-                var result = _transactionItenRepository.GetByIdTransaction<TransactionIten>(idTransaction);
-                return result;
+                _messageReturn.Data = _transactionItenRepository.GetByIdTransaction<TransactionIten>(idTransaction);
+                return Task.FromResult(_messageReturn);
             }
             catch (Exception ex)
             {
@@ -51,19 +52,53 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
         }
 
-        public Task<TransactionIten> Save(TransactionIten transactionItem)
+        public Task<MessageReturn> Save(TransactionIten transactionItem)
         {
             try
             {
                 ValidateTransactionIten(transactionItem);
-                var result = _transactionItenRepository.Save(transactionItem);
-                return result;
+                _messageReturn.Data = _transactionItenRepository.Save(transactionItem);
+                return Task.FromResult(_messageReturn);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(GetByIdTransaction)));
                 throw;
             }
+        }
+
+        public Task<MessageReturn> ProcessSaveTransactionItens(string idTransaction, List<TransactionItenDto> transactionItensDto, List<Ticket> listTicket)
+        {
+            try
+            {
+                idTransaction.ValidateIdMongo("Id Transação");
+                transactionItensDto.ForEach(async i =>
+                {
+                    //pra cada compra carimbar o ticket e criar transaction item
+                    for (int amount = 0; amount < i.AmountTicket; amount++)
+                    {
+                        var ticket = listTicket.Find(t => t.IdLot == i.IdLot) ?? throw new RuleException("Ticket não encontrado.");
+                        var transactionItem = new TransactionIten()
+                        {
+                            HalfPrice = i.HalfPrice,
+                            IdTransaction = idTransaction,
+                            IdTicket = ticket.Id,
+                            TicketPrice = ticket.Value,
+                            Details = i.Details
+                        };
+                        //cria transaction iten
+                        await Save(transactionItem);
+                    }
+                });
+                _messageReturn.Data = true;
+                return Task.FromResult(_messageReturn);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(ProcessSaveTransactionItens)));
+                throw;
+            }
+
         }
 
         private void ValidateTransactionIten(TransactionIten transactionIten)

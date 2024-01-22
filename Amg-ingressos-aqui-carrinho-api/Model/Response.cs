@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Amg_ingressos_aqui_carrinho_api.Model
 {
@@ -9,5 +6,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
     {
         public string Data { get; set;}
         public string Message { get; set;} 
+
+        internal T JsonToModel<T>()
+        {
+           return JsonConvert.DeserializeObject<T>(this.Data);
+        }
+        internal T MessageJsonToModel<T>()
+        {
+           return JsonConvert.DeserializeObject<T>(this.Message);
+        }
     }
 }

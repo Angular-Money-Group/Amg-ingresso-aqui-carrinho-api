@@ -8,7 +8,6 @@ using Amg_ingressos_aqui_carrinho_api.Model.Cielo.Callback;
 using Amg_ingressos_aqui_carrinho_api.Model.Querys;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Utils;
-using Newtonsoft.Json;
 
 namespace Amg_ingressos_aqui_carrinho_api.Services
 {
@@ -52,10 +51,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 transactionModel.Status = StatusPaymentEnum.InProgress;
                 transactionModel.Stage = StageTransactionEnum.Confirm;
 
-                var listTickets = ReservTicketsAsync(transactionDto);
+                var listTickets = await _ticketService.ReservTicketsAsync(transactionDto);
                 await _transactionService.SaveAsync(transactionModel);
-                ProcessSaveTransactionItens(transactionModel.Id, transactionDto.TransactionItensDto, listTickets);
-
+                await _transactionItenService.ProcessSaveTransactionItens(transactionModel.Id, transactionDto.TransactionItensDto, listTickets);
 
                 return _messageReturn;
             }
@@ -72,8 +70,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             {
 
                 idTransaction.ValidateIdMongo("idTransaction");
-                var transactionService = await _transactionService.GetByIdAsync(idTransaction);
-                var transactionDb = (GetTransactionEventData)transactionService.Data;
+                var transactionDb = _transactionService.GetByIdAsync(idTransaction).Result.ToObject<GetTransactionEventData>();
 
                 if (transactionDb.Stage != StageTransactionEnum.Confirm)
                     throw new RuleException("Estágio fora do padrão");
@@ -86,7 +83,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     TotalValue = transactionDb.TotalValue
                 };
 
-                _ = _transactionService.UpdateAsync(transaction);
+                _ = await _transactionService.UpdateAsync(transaction);
                 return _messageReturn;
             }
             catch (Exception ex)
@@ -103,8 +100,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 idTransaction.ValidateIdMongo("idTransaction");
                 var transaction = transactionDto.StageTicketDataDtoToTransaction();
                 transaction.Id = idTransaction;
-                var transactionService = await _transactionService.GetByIdAsync(idTransaction);
-                var transactionDb = (GetTransactionEventData)transactionService.Data;
+                var transactionDb = _transactionService.GetByIdAsync(idTransaction).Result.ToObject<GetTransactionEventData>();
 
                 if (transactionDb.Stage != StageTransactionEnum.PersonData)
                     throw new RuleException("Estágio fora do padrão");
@@ -112,7 +108,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 transaction.IdPerson = transactionDb.IdPerson;
                 transaction.TotalValue = transactionDb.TotalValue;
 
-                _ = _transactionService.UpdateAsync(transaction);
+                _ = await _transactionService.UpdateAsync(transaction);
 
                 return _messageReturn;
             }
@@ -130,8 +126,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 idTransaction.ValidateIdMongo("idTransaction");
                 var transaction = transactionDto.StagePaymentDataDtoToTransaction();
                 transaction.Id = idTransaction;
-                var transactionService = await _transactionService.GetByIdAsync(idTransaction);
-                var transactionDb = (GetTransactionEventData)transactionService.Data;
+                var transactionDb = _transactionService.GetByIdAsync(idTransaction).Result.ToObject<GetTransactionEventData>();
 
                 if (transactionDb.Stage != StageTransactionEnum.TicketsData &&
                 transactionDb.Stage != StageTransactionEnum.PaymentData)
@@ -142,13 +137,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 transaction.Discount = transactionDb.Discount;
                 transaction.Tax = transactionDb.Tax;
 
-                _ = _transactionService.UpdateAsync(transaction);
+                _ = await _transactionService.UpdateAsync(transaction);
 
                 return _messageReturn;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(UpdateTransactionTicketsDataAsync)));
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(UpdateTransactionPaymentDataAsync)));
                 throw;
             }
         }
@@ -158,15 +153,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             try
             {
                 idTransaction.ValidateIdMongo("idTransaction");
-                var transactionService = await _transactionService.GetByIdAsync(idTransaction);
-                var transactionDb = (GetTransactionEventData)transactionService.Data;
+                var transactionDb = _transactionService.GetByIdAsync(idTransaction).Result.ToObject<GetTransactionEventData>();
 
                 if (transactionDb.Stage != StageTransactionEnum.PaymentData)
                     throw new RuleException("Estágio fora do padrão");
 
                 var transaction = transactionDb.GeTransactionToTransaction();
 
-                var resultPayment = await Payment(transaction);
+                await Payment(transaction);
                 transaction.Stage = StageTransactionEnum.PaymentTransaction;
                 await _transactionService.UpdateAsync(transaction);
                 _messageReturn.Data = "ok";
@@ -174,7 +168,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(GeneratePixQRcode)));
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentTransactionAsync)));
                 throw;
             }
         }
@@ -183,12 +177,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         {
             try
             {
-                var transactionService = await _transactionService.GetByIdAsync(idTransaction);
-                var transactionDb = (GetTransactionEventData)transactionService.Data;
+                var transactionDb = _transactionService.GetByIdAsync(idTransaction).Result.ToObject<GetTransactionEventData>();
                 var transaction = transactionDb.GeTransactionToTransaction();
 
                 transaction.Id.ValidateIdMongo("Transação");
-                transaction.TransactionItens = await _transactionItenService.GetByIdTransaction<TransactionIten>(transaction.Id);
+                transaction.TransactionItens = _transactionItenService.GetByIdTransaction(transaction.Id).Result.ToListObject<TransactionIten>();
                 transaction.TransactionItens.ForEach(async i =>
                 {
                     var ticketUserDto = await _ticketService.GetTicketByIdDataUserAsync(i.IdTicket);
@@ -206,7 +199,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                         QrCode = Settings.HostImg + nameImagem
                     };
                     await _ticketService.UpdateTicketsAsync(ticket);
-                    await ProcessEmailAsync(ticketUserDto, ticket.QrCode, i.HalfPrice);
+                    var ticketEventDto = await _ticketService.GetTicketByIdDataEventAsync(ticketUserDto.Id);
+                    await _notificationService.ProcessEmailTicketAsync(ticketUserDto, ticketEventDto, ticket.QrCode, i.HalfPrice);
                 });
 
                 transaction.Status = StatusPaymentEnum.Finished;
@@ -226,8 +220,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             try
             {
                 idTransaction.ValidateIdMongo("Transação");
-                var transactionService = await _transactionService.GetByIdAsync(idTransaction);
-                var transactionDb = (GetTransactionEventData)transactionService.Data;
+                var transactionDb = _transactionService.GetByIdAsync(idTransaction).Result.ToObject<GetTransactionEventData>();
                 var transaction = transactionDb.GeTransactionToTransaction();
                 transaction.Status = StatusPaymentEnum.Canceled;
 
@@ -236,7 +229,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(GeneratePixQRcode)));
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(CancelTransactionAsync)));
                 throw;
             }
         }
@@ -245,7 +238,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         {
             try
             {
-                _messageReturn = await _paymentService.PaymentCieloPixAsync(transaction);
+                _messageReturn.Data = string.Empty;
+                await _paymentService.Payment(transaction);
 
                 if (_messageReturn.Message != null && _messageReturn.Message.Any())
                     throw new PaymentTransactionException(_messageReturn.Message);
@@ -264,114 +258,22 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
         }
 
-        public async Task<MessageReturn> RefundPaymentPixAsync(string idTransaction, long? amount)
-        {
-            // try {
-            //     idTransaction.ValidateIdMongo("Id Transação");
-
-            //     var transaction = await _transactionRepository.GetById(idTransaction) as List<GetTransaction>;
-
-            //     _messageReturn.Data = _paymentService.RefundPaymentPixAsync(transaction.FirstOrDefault(), amount);
-            // }
-            // catch (IdMongoException ex)
-            // {
-            //     _messageReturn.Data = string.Empty;
-            //     _messageReturn.Message = ex.Message;
-            // }
-            // catch (Exception ex)
-            // {
-            //     _messageReturn.Data = string.Empty;
-            //     _messageReturn.Message = ex.Message;
-            // }
-
-            return _messageReturn;
-        }
-
         public async Task<MessageReturn> GetStatusPixPaymentAsync(string paymentId)
         {
             try
             {
-                var objJson = await _paymentService.GetStatusPayment(paymentId);
-                var obj = JsonConvert.DeserializeObject<PaymentTransactionGetStatus>(objJson?.Data?.ToString() ?? throw new RuleException("status pagamento não poder ser vazio."));
+                MessageReturn objJson = await _paymentService.GetStatusPayment(paymentId);
 
-                _messageReturn.Data = obj;
+                if (objJson.Data == null || objJson.Data.ToString() == string.Empty)
+                    throw new RuleException("status pagamento não poder ser vazio.");
+
+                _messageReturn.Data = objJson.JsonToModel<PaymentTransactionGetStatus>();
+
                 return _messageReturn;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(GetStatusPixPaymentAsync)));
-                throw;
-            }
-        }
-
-        private void ProcessSaveTransactionItens(string idTransaction, List<TransactionItenDto> transactionItensDto, List<Ticket> listTicket)
-        {
-            try
-            {
-                idTransaction.ValidateIdMongo("Id Transação");
-                transactionItensDto.ForEach(i =>
-                {
-                    //pra cada compra carimbar o ticket e criar transaction item
-                    for (int amount = 0; amount < i.AmountTicket; amount++)
-                    {
-                        var ticket = listTicket.Find(t => t.IdLot == i.IdLot);
-                        var transactionItem = new TransactionIten()
-                        {
-                            HalfPrice = i.HalfPrice,
-                            IdTransaction = idTransaction,
-                            IdTicket = ticket.Id,
-                            TicketPrice = ticket.Value,
-                            Details = i.Details
-                        };
-                        //cria transaction iten
-                        _transactionItenService.Save(transactionItem);
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(ProcessSaveTransactionItens)));
-                throw;
-            }
-        }
-
-        private List<Ticket> ReservTicketsAsync(TransactionDto transactionDto)
-        {
-            try
-            {
-                var listTicket = new List<Ticket>();
-                transactionDto.TransactionItensDto.ForEach(async i =>
-                {
-
-                    //retorna todos tickets para o idLote
-                    var lstTickets = _ticketService.GetTicketsByLotAsync(i.IdLot).Result;
-
-                    if (lstTickets != null && lstTickets.Any())
-                        throw new RuleException("Erro ao buscar Ingressos");
-
-                    if (lstTickets?.Count == 0 || lstTickets?.Count < i.AmountTicket)
-                        throw new SaveException("Número de ingressos inválido");
-
-                    //pra cada compra carimbar o ticket
-                    for (int amount = 0; amount < i.AmountTicket; amount++)
-                    {
-                        var ticket = lstTickets?.Find(i => !i.IsSold) ?? throw new RuleException("ticket não encontrado.");
-
-                        if (ticket?.Value <= 1)
-                            throw new SaveException("Valor do Ingresso inválido.");
-
-                        //atualiza Ticket
-                        ticket.IdUser = transactionDto.IdUser;
-                        ticket.Status = Enum.StatusTicket.RESERVADO;
-                        await _ticketService.UpdateTicketsAsync(ticket);
-                        listTicket.Add(ticket);
-                    }
-                });
-                return listTicket;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(ProcessSaveTransactionItens)));
                 throw;
             }
         }
@@ -382,6 +284,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             {
                 transaction.Id.ValidateIdMongo("Transação");
                 _messageReturn = await _paymentService.Payment(transaction);
+
                 if (_messageReturn.Message != null && _messageReturn.Message.Any())
                     throw new PaymentTransactionException(_messageReturn.Message);
 
@@ -391,7 +294,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(GeneratePixQRcode)));
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(Payment)));
                 throw;
             }
             finally
@@ -399,44 +302,5 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 await _transactionService.UpdateAsync(transaction);
             }
         }
-
-        private async Task ProcessEmailAsync(TicketUserDataDto ticketUserDto, string urlQrCode, bool halfprice)
-        {
-            try
-            {
-                var ticketEventDto = await _ticketService.GetTicketByIdDataEventAsync(ticketUserDto.Id);
-                var notification = new NotificationEmailTicketDto()
-                {
-                    AddressEvent = ticketEventDto.@event.address.addressDescription
-                        + " - "
-                        + ticketEventDto.@event.address.number
-                        + " - "
-                        + ticketEventDto.@event.address.neighborhood
-                        + " - "
-                        + ticketEventDto.@event.address.city
-                        + " - "
-                        + ticketEventDto.@event.address.state,
-                    EndDateEvent = ticketEventDto.@event.endDate.ToString(),
-                    EventName = ticketEventDto.@event.name,
-                    LocalEvent = ticketEventDto.@event.local,
-                    Sender = "suporte@ingressosaqui.com",
-                    StartDateEvent = ticketEventDto.@event.startDate.ToString(),
-                    Subject = "Ingressos",
-                    To = ticketUserDto.User.email,
-                    TypeTicket = halfprice ? "Meia Entrada" : "Inteira",
-                    UrlQrCode = urlQrCode,
-                    UserName = ticketUserDto.User.name,
-                    VariantName = ticketEventDto.variant.name,
-                };
-
-                _ = _notificationService.SaveAsync(notification);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(FinishedTransactionAsync)));
-                throw;
-            }
-        }
-
     }
 }

@@ -11,7 +11,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 {
     public class NotificationService : INotificationService
     {
-        private MessageReturn _messageReturn;
+        private readonly MessageReturn _messageReturn;
         private readonly ILogger<NotificationService> _logger;
 
         public NotificationService(ILogger<NotificationService> logger)
@@ -22,7 +22,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
         public async Task<MessageReturn> SaveAsync(NotificationEmailTicketDto notification)
         {
-            _logger.LogInformation(string.Format("Init - Save: {0}",this.GetType().Name));
+            _logger.LogInformation(string.Format("Init - Save: {0}", this.GetType().Name));
             try
             {
                 var httpClient = new HttpClient();
@@ -33,37 +33,59 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 var url = Settings.EmailServiceApi;
                 var uri = Settings.UriEmailTicket;
 
-                _logger.LogInformation(string.Format("Call PostAsync - Send: {0}",this.GetType().Name));
-                var result = httpClient.PostAsync(url + uri, jsonBody);
-                if(result.Result.IsSuccessStatusCode)
+                _logger.LogInformation(string.Format("Call PostAsync - Send: {0}", this.GetType().Name));
+                var result = await httpClient.PostAsync(url + uri, jsonBody);
+                if (result.IsSuccessStatusCode)
                 {
                     _messageReturn.Message = "Success";
                 }
 
-                _logger.LogInformation(string.Format("Finished - Save: {0}",this.GetType().Name));
+                _logger.LogInformation(string.Format("Finished - Save: {0}", this.GetType().Name));
                 return _messageReturn;
             }
             catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(SaveAsync)));
+                throw;
             }
         }
 
-        public string GenerateBody()
+        public async Task<bool> ProcessEmailTicketAsync(TicketUserDataDto ticketUserDto, TicketEventDataDto ticketEventDto, string urlQrCode, bool halfprice)
         {
             try
             {
-                _logger.LogInformation(string.Format("Init - GenerateBody: {0}",this.GetType().Name));
-                var path  = (Environment.CurrentDirectory + "/Template/index.html");
-                var html = System.IO.File.ReadAllText(path);
-                var body = html;
-                _logger.LogInformation(string.Format("Finished - GenerateBody: {0}",this.GetType().Name));
-                return body;
+                var notification = new NotificationEmailTicketDto()
+                {
+                    AddressEvent = ticketEventDto.@event.address.addressDescription
+                        + " - "
+                        + ticketEventDto.@event.address.number
+                        + " - "
+                        + ticketEventDto.@event.address.neighborhood
+                        + " - "
+                        + ticketEventDto.@event.address.city
+                        + " - "
+                        + ticketEventDto.@event.address.state,
+                    EndDateEvent = ticketEventDto.@event.endDate.ToString(),
+                    EventName = ticketEventDto.@event.name,
+                    LocalEvent = ticketEventDto.@event.local,
+                    Sender = "suporte@ingressosaqui.com",
+                    StartDateEvent = ticketEventDto.@event.startDate.ToString(),
+                    Subject = "Ingressos",
+                    To = ticketUserDto.User.email,
+                    TypeTicket = halfprice ? "Meia Entrada" : "Inteira",
+                    UrlQrCode = urlQrCode,
+                    UserName = ticketUserDto.User.name,
+                    VariantName = ticketEventDto.variant.name,
+                };
+
+                _ = await SaveAsync(notification);
+
+                return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(string.Format("error - GenerateBody: {0},message: {1}",this.GetType().Name,ex.Message),ex);
-                throw ex;
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(ProcessEmailTicketAsync)));
+                throw;
             }
         }
     }

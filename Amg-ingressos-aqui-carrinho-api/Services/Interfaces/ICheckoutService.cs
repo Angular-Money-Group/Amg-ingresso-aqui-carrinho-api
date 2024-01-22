@@ -12,7 +12,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services.Interfaces
         Task<MessageReturn> PaymentTransactionAsync(string idTransaction);
         Task<MessageReturn> FinishedTransactionAsync(string idTransaction);
         Task<MessageReturn> CancelTransactionAsync(string idTransaction);
-        Task<MessageReturn> RefundPaymentPixAsync(string idTransaction, long? amount);
         Task<MessageReturn> GeneratePixQRcode(Transaction transaction);
     }
 }

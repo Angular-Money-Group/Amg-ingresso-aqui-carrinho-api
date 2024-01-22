@@ -1,5 +1,4 @@
 using Amg_ingressos_aqui_carrinho_api.Model;
-using MongoDB.Driver;
 
 namespace Amg_ingressos_aqui_carrinho_api.Infra
 {
@@ -9,5 +8,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
         Task<MessageReturn> PaymentDebitCardAsync(Transaction transaction, User user);
         Task<MessageReturn> PaymentCreditCardAsync(Transaction transaction, User user);
         Task<MessageReturn> PaymentSlipAsync(Transaction transaction, User user);
+        Task<MessageReturn> GetStatusPayment(string paymentId);
     }
 }

@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using Amg_ingressos_aqui_carrinho_api.Consts;
 using Amg_ingressos_aqui_carrinho_api.Model;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -10,7 +7,18 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
 {
     public class OperatorRest
     {
-        public Response SendRequestAsync(Request transactionJson,string urlServer,string Token)
+        private readonly ILogger<OperatorRest> _logger;
+        public OperatorRest(ILogger<OperatorRest> logger)
+        {
+            _logger = logger;
+        }
+        
+        public OperatorRest()
+        {
+
+        }
+
+        public Response SendRequestAsync(Request transactionJson, string urlServer, string Token)
         {
             try
             {
@@ -30,8 +38,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 using var httpResponseMessage = httpCliente.Send(requestMessage);
                 string jsonContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
                 var response = new Response();
-                
-                if (httpResponseMessage.StatusCode == System.Net.HttpStatusCode.OK ||  httpResponseMessage.StatusCode == System.Net.HttpStatusCode.Created)
+
+                if (httpResponseMessage.StatusCode == System.Net.HttpStatusCode.OK || httpResponseMessage.StatusCode == System.Net.HttpStatusCode.Created)
                 {
                     response.Data = jsonContent;
                 }
@@ -43,8 +51,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 return response;
 
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(SendRequestAsync)));
                 throw;
             }
         }

@@ -43,11 +43,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
         }
 
-        public async Task<MessageReturn> SaveAsync(Transaction transactionModel)
+        public async Task<MessageReturn> SaveAsync(Transaction transaction)
         {
             try
             {
-                _messageReturn.Data = await _transactionRepository.Save<object>(transactionModel);
+                _messageReturn.Data = await _transactionRepository.Save<object>(transaction);
                 return _messageReturn;
             }
             catch (Exception ex)
@@ -79,7 +79,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             {
                 idUser.ValidateIdMongo("Usuário");
                 var data = await _transactionRepository.GetByUserEventData<TransactionComplet>(idUser);
-                var listActives = data.Where(x => x.Events.FirstOrDefault().StartDate >= DateTime.Now).Select(t => t);
+                var listActives = data.Where(x => x.Events[0].StartDate >= DateTime.Now).Select(t => t);
                 var list = new TransactionCardDto().ModelListToDtoList(listActives);
                 _messageReturn.Data = list;
                 return _messageReturn;
@@ -97,7 +97,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             {
                 idUser.ValidateIdMongo("Usuário");
                 var data = await _transactionRepository.GetByUserEventData<TransactionComplet>(idUser);
-                var listActives = data.Where(x => x.Events.FirstOrDefault().StartDate < DateTime.Now).Select(t => t);
+                var listActives = data.Where(x => x.Events[0].StartDate < DateTime.Now).Select(t => t);
                 var list = new TransactionCardDto().ModelListToDtoList(listActives);
                 _messageReturn.Data = list;
                 return _messageReturn;
@@ -161,6 +161,5 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 throw;
             }
         }
-
     }
 }
