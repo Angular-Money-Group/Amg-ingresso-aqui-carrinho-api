@@ -33,7 +33,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                     or EditException
                     or PaymentTransactionException
                     or IdMongoException
-                    or CreditCardNotValidExeption
+                    or CreditCardNotValidException
                     or ArgumentException
                     or InvalidOperationException:
                     code = HttpStatusCode.BadRequest;

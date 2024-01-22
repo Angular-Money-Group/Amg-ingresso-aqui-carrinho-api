@@ -2,13 +2,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Enum
 {
     public enum StatusTicket
     {
-        VENDIDO = 0,
-        DISPONIVEL = 1,
-        USADO = 7,
-        CORTESIA = 2,
-        RESERVADO = 3,
-        EXPIRADO = 4,
-        NAO_DISPONIVEL = 5,
-        NAO_VENDIDO = 6
+        Vendido = 0,
+        Disponivel = 1,
+        Usado = 7,
+        Cortesia = 2,
+        Reservado = 3,
+        Expirado = 4,
+        NaoDisponivel = 5,
+        NaoVendido = 6
     }
 }

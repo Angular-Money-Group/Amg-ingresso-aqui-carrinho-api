@@ -76,7 +76,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto.Pagbank
                                 Encrypted =transaction.PaymentMethod.EncryptedCard 
                             },
                             Installments= 1,
-                            Type= transaction.PaymentMethod.TypePayment.Equals(TypePaymentEnum.CreditCard) ? "CREDIT_CARD" : "DEBIT_CARD",
+                            Type= transaction.PaymentMethod.TypePayment.Equals(TypePayment.CreditCard) ? "CREDIT_CARD" : "DEBIT_CARD",
                         },
                         AuthenticationMethod = new AuthenticationMethod(){
                             Id = "3DS_15CB7893-4D23-44FA-97B7-AC1BE516D418",

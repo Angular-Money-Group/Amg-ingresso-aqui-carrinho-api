@@ -85,7 +85,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
                         //atualiza Ticket
                         ticket.IdUser = transactionDto.IdUser;
-                        ticket.Status = Enum.StatusTicket.RESERVADO;
+                        ticket.Status = Enum.StatusTicket.Reservado;
                         await UpdateTicketsAsync(ticket);
                         listTicket.Add(ticket);
                     }

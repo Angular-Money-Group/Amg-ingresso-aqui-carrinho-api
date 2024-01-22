@@ -9,6 +9,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Consts
         public const string CanceledCard = "Cartão Cancelado";
         public const string CreditCardProblems = "Problemas com o Cartão de Crédito";
         public const string SuccessfullyPerformedOperation = "Operação realizada com sucesso";
-        
+
     }
 }

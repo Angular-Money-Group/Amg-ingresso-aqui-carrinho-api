@@ -27,7 +27,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// Tipo de pagamento
         /// </summary>
         [Required]
-        public TypePaymentEnum TypePayment { get; set; }
+        public TypePayment TypePayment { get; set; }
 
         /// <summary>
         /// Numero cartao
@@ -69,5 +69,26 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         public string EncryptedCard { get; set; }
 
         public AuthenticationMethod AuthenticationMethod { get; set; }
+
+        public Transaction ToModelTransaction(){
+            return new Transaction()
+            {
+                PaymentMethod = new PaymentMethod()
+                {
+                    IdPaymentMethod = this.IdPaymentMethod,
+                    Brand = this.Brand,
+                    CardNumber = this.CardNumber,
+                    ExpirationDate = this.ExpirationDate,
+                    Holder = this.Holder,
+                    SaveCard = this.SaveCard,
+                    SecurityCode = this.SecurityCode,
+                    TypePayment = this.TypePayment,
+                    Installments = this.Installments,
+                    EncryptedCard = this.EncryptedCard,
+                    AuthenticationMethod = this.AuthenticationMethod
+                },
+                Stage = StageTransaction.PaymentData
+            };
+        }
     }
 }

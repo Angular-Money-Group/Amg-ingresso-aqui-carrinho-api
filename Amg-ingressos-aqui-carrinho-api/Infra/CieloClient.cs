@@ -106,7 +106,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 var cardIsValid = ValidateCard(transactionToJson.Payment.CreditCard).Result;
 
                 if (!cardIsValid.Valid)
-                    throw new CreditCardNotValidExeption(cardIsValid.ReturnMessage);
+                    throw new CreditCardNotValidException(cardIsValid.ReturnMessage);
 
                 Request request = new Request() { Data = System.Text.Json.JsonSerializer.Serialize(transactionToJson) };
                 Response response = new OperatorRest().SendRequestAsync(request, _url, _config.Value.CieloSettings.MerchantIdHomolog);
@@ -114,7 +114,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 if (string.IsNullOrEmpty(response.Data))
                 {
                     _messageReturn.Message = response.Message;
-                    transaction.Status = StatusPaymentEnum.ErrorPayment;
+                    transaction.Status = StatusPayment.ErrorPayment;
                     transaction.Details = response.Message;
                 }
 
@@ -127,46 +127,46 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                         _messageReturn.Data = Consts
                             .TypeStatusCallbackCielo
                             .SuccessfullyPerformedOperation;
-                        transaction.Status = StatusPaymentEnum.Aproved;
+                        transaction.Status = StatusPayment.Aproved;
                         transaction.Details = Consts
                             .TypeStatusCallbackCielo
                             .SuccessfullyPerformedOperation;
                         break;
                     case StatusCallbackCielo.NotAllowed:
                         _messageReturn.Message = Consts.TypeStatusCallbackCielo.NotAllowed;
-                        transaction.Status = StatusPaymentEnum.ErrorPayment;
+                        transaction.Status = StatusPayment.ErrorPayment;
                         transaction.Details = Consts.TypeStatusCallbackCielo.NotAllowed;
                         break;
                     case StatusCallbackCielo.ExpiredCard:
                         _messageReturn.Message = Consts.TypeStatusCallbackCielo.ExpiredCard;
-                        transaction.Status = StatusPaymentEnum.ErrorPayment;
+                        transaction.Status = StatusPayment.ErrorPayment;
                         transaction.Details = Consts.TypeStatusCallbackCielo.ExpiredCard;
                         break;
                     case StatusCallbackCielo.BlockedCard:
                         _messageReturn.Message = Consts.TypeStatusCallbackCielo.BlockedCard;
-                        transaction.Status = StatusPaymentEnum.ErrorPayment;
+                        transaction.Status = StatusPayment.ErrorPayment;
                         transaction.Details = Consts.TypeStatusCallbackCielo.BlockedCard;
                         break;
                     case StatusCallbackCielo.TimeOut:
                         _messageReturn.Message = Consts.TypeStatusCallbackCielo.TimeOut;
-                        transaction.Status = StatusPaymentEnum.ErrorPayment;
+                        transaction.Status = StatusPayment.ErrorPayment;
                         transaction.Details = Consts.TypeStatusCallbackCielo.TimeOut;
                         break;
                     case StatusCallbackCielo.CanceledCard:
                         _messageReturn.Message = Consts.TypeStatusCallbackCielo.CanceledCard;
-                        transaction.Status = StatusPaymentEnum.ErrorPayment;
+                        transaction.Status = StatusPayment.ErrorPayment;
                         transaction.Details = Consts.TypeStatusCallbackCielo.CanceledCard;
                         break;
                     case StatusCallbackCielo.CreditCardProblems:
                         _messageReturn.Message = Consts.TypeStatusCallbackCielo.CreditCardProblems;
-                        transaction.Status = StatusPaymentEnum.ErrorPayment;
+                        transaction.Status = StatusPayment.ErrorPayment;
                         transaction.Details = Consts.TypeStatusCallbackCielo.CreditCardProblems;
                         break;
                     case StatusCallbackCielo.SuccessfullyPerformedOperation2:
                         _messageReturn.Data = Consts
                             .TypeStatusCallbackCielo
                             .SuccessfullyPerformedOperation;
-                        transaction.Status = StatusPaymentEnum.Aproved;
+                        transaction.Status = StatusPayment.Aproved;
                         transaction.Details = Consts
                             .TypeStatusCallbackCielo
                             .SuccessfullyPerformedOperation;
@@ -214,7 +214,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 if (string.IsNullOrEmpty(response.Data))
                 {
                     _messageReturn.Message = response.Message;
-                    transaction.Status = StatusPaymentEnum.ErrorPayment;
+                    transaction.Status = StatusPayment.ErrorPayment;
                     transaction.Details = response.Message;
                 }
 
@@ -225,41 +225,41 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 {
                     case StatusCallbackCielo.SuccessfullyPerformedOperation:
                         _messageReturn.Data = Consts.TypeStatusCallbackCielo.SuccessfullyPerformedOperation;
-                        transaction.Status = StatusPaymentEnum.Aproved;
+                        transaction.Status = StatusPayment.Aproved;
                         break;
                     case StatusCallbackCielo.NotAllowed:
                         _messageReturn.Message = Consts.TypeStatusCallbackCielo.NotAllowed;
-                        transaction.Status = StatusPaymentEnum.ErrorPayment;
+                        transaction.Status = StatusPayment.ErrorPayment;
                         transaction.Details = Consts.TypeStatusCallbackCielo.NotAllowed;
                         break;
                     case StatusCallbackCielo.ExpiredCard:
                         _messageReturn.Message = Consts.TypeStatusCallbackCielo.ExpiredCard;
-                        transaction.Status = StatusPaymentEnum.ErrorPayment;
+                        transaction.Status = StatusPayment.ErrorPayment;
                         transaction.Details = Consts.TypeStatusCallbackCielo.ExpiredCard;
                         break;
                     case StatusCallbackCielo.BlockedCard:
                         _messageReturn.Message = Consts.TypeStatusCallbackCielo.BlockedCard;
-                        transaction.Status = StatusPaymentEnum.ErrorPayment;
+                        transaction.Status = StatusPayment.ErrorPayment;
                         transaction.Details = Consts.TypeStatusCallbackCielo.BlockedCard;
                         break;
                     case StatusCallbackCielo.TimeOut:
                         _messageReturn.Message = Consts.TypeStatusCallbackCielo.TimeOut;
-                        transaction.Status = StatusPaymentEnum.ErrorPayment;
+                        transaction.Status = StatusPayment.ErrorPayment;
                         transaction.Details = Consts.TypeStatusCallbackCielo.TimeOut;
                         break;
                     case StatusCallbackCielo.CanceledCard:
                         _messageReturn.Message = Consts.TypeStatusCallbackCielo.CanceledCard;
-                        transaction.Status = StatusPaymentEnum.ErrorPayment;
+                        transaction.Status = StatusPayment.ErrorPayment;
                         transaction.Details = Consts.TypeStatusCallbackCielo.CanceledCard;
                         break;
                     case StatusCallbackCielo.CreditCardProblems:
                         _messageReturn.Message = Consts.TypeStatusCallbackCielo.CreditCardProblems;
-                        transaction.Status = StatusPaymentEnum.ErrorPayment;
+                        transaction.Status = StatusPayment.ErrorPayment;
                         transaction.Details = Consts.TypeStatusCallbackCielo.CreditCardProblems;
                         break;
                     case StatusCallbackCielo.SuccessfullyPerformedOperation2:
                         _messageReturn.Data = Consts.TypeStatusCallbackCielo.SuccessfullyPerformedOperation;
-                        transaction.Status = StatusPaymentEnum.Aproved;
+                        transaction.Status = StatusPayment.Aproved;
                         transaction.Details = Consts.TypeStatusCallbackCielo.SuccessfullyPerformedOperation;
                         break;
                 }
@@ -294,7 +294,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 else
                 {
                     _messageReturn.Message = response.Message;
-                    transaction.Status = StatusPaymentEnum.ErrorPayment;
+                    transaction.Status = StatusPayment.ErrorPayment;
                     transaction.Details = response.Message;
                 }
 
@@ -358,7 +358,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 else
                 {
                     _messageReturn.Message = response.Message;
-                    transaction.Status = StatusPaymentEnum.ErrorPayment;
+                    transaction.Status = StatusPayment.ErrorPayment;
                     transaction.Details = response.Message;
                 }
 

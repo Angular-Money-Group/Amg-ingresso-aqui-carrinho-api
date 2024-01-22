@@ -75,12 +75,12 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// <summary>
         /// Status Transacao
         /// </summary>
-        public StatusPaymentEnum Status { get; set; }
+        public StatusPayment Status { get; set; }
 
         /// <summary>
         /// Etapa de transacao
         /// </summary>
-        public StageTransactionEnum Stage { get; set; }
+        public StageTransaction Stage { get; set; }
 
         /// <summary>
         /// Url de Retorno Transacao

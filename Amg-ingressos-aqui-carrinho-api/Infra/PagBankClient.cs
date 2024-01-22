@@ -47,7 +47,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 if (string.IsNullOrEmpty(response.Data))
                 {
                     _messageReturn.Message = response.Message;
-                    transaction.Status = StatusPaymentEnum.ErrorPayment;
+                    transaction.Status = StatusPayment.ErrorPayment;
                     transaction.Details = response.Message;
                 }
 
@@ -81,7 +81,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 if (string.IsNullOrEmpty(response.Data))
                 {
                     _messageReturn.Message = response.Message;
-                    transaction.Status = StatusPaymentEnum.ErrorPayment;
+                    transaction.Status = StatusPayment.ErrorPayment;
                     transaction.Details = response.Message;
                 }
 
@@ -120,7 +120,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 if (string.IsNullOrEmpty(response.Data))
                 {
                     _messageReturn.Message = response.Message;
-                    transaction.Status = StatusPaymentEnum.ErrorPayment;
+                    transaction.Status = StatusPayment.ErrorPayment;
                     transaction.Details = response.Message;
                 }
 
@@ -159,7 +159,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                     });
                     response.Message = messagejson.ToString();
                     _messageReturn.Message = response.Message;
-                    transaction.Status = StatusPaymentEnum.ErrorPayment;
+                    transaction.Status = StatusPayment.ErrorPayment;
                     transaction.Details = response.Message;
                 }
 

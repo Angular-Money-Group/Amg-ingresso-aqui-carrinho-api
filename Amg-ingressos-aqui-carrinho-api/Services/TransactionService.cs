@@ -149,7 +149,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         {
             try
             {
-                transaction.Status = Enum.StatusPaymentEnum.Canceled;
+                transaction.Status = Enum.StatusPayment.Canceled;
                 _messageReturn.Data = await _transactionRepository.Edit(transaction.Id, transaction);
 
                 return _messageReturn;

@@ -28,7 +28,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// <summary>
         /// Status
         /// </summary>
-        public StatusPaymentEnum Status { get; set; }
+        public StatusPayment Status { get; set; }
         /// <summary>
         /// valor total
         /// </summary>
