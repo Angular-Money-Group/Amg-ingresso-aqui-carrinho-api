@@ -20,12 +20,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
         private readonly string _url;
         private readonly ILogger<PagBankClient> _logger;
 
-        public PagBankClient(IOptions<PaymentSettings> transactionDatabaseSettings)
-        {
-            _config = transactionDatabaseSettings;
-            _messageReturn = new MessageReturn();
-            _url = _config.Value.PagBankSettings.UrlApiHomolog + "/orders";
-        }
         public PagBankClient(IOptions<PaymentSettings> transactionDatabaseSettings, ILogger<PagBankClient> logger)
         {
             _config = transactionDatabaseSettings;

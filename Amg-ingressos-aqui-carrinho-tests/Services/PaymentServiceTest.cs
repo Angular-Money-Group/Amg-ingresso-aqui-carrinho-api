@@ -14,11 +14,18 @@ namespace Amg_ingressos_aqui_carrinho_tests.Services
         private readonly Mock<IUserService> _userService = new Mock<IUserService>();
         private readonly Mock<IOptions<PaymentSettings>> _paymentSettings = new Mock<IOptions<PaymentSettings>>();
         private readonly Mock<ILogger<PaymentService>> _loggerMock = new Mock<ILogger<PaymentService>>();
+        private readonly Mock<ILogger<CieloClient>> _loggerCieloMock = new Mock<ILogger<CieloClient>>();
+        private readonly Mock<ILogger<PagBankClient>> _loggerPagBankMock = new Mock<ILogger<PagBankClient>>();
 
         [SetUp]
         public void SetUp()
         {
-            _paymentService = new PaymentService(_paymentSettings.Object, _userService.Object,_loggerMock.Object);
+            _paymentService = new PaymentService(
+                _paymentSettings.Object, 
+                _userService.Object,
+                _loggerMock.Object,
+                _loggerCieloMock.Object,
+                _loggerPagBankMock.Object);
         }
     }
 }

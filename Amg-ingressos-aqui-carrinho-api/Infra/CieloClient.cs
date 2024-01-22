@@ -27,13 +27,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             _logger = logger;
         }
 
-        public CieloClient(IOptions<PaymentSettings> transactionDatabaseSettings)
-        {
-            _config = transactionDatabaseSettings;
-            _messageReturn = new MessageReturn();
-            _url = _config.Value.PagBankSettings.UrlApiHomolog + "/orders";
-        }
-
         public Task<MessageReturn> PaymentCreditCard(Transaction transaction, User user)
         {
             try

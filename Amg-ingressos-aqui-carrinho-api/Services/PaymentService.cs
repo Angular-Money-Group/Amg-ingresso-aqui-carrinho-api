@@ -14,14 +14,20 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         private readonly ITransactionGatewayClient transactionClient;
         private readonly ILogger<PaymentService> _logger;
 
-        public PaymentService(IOptions<PaymentSettings> transactionDatabaseSettings, IUserService userService, ILogger<PaymentService> logger)
+        public PaymentService(
+            IOptions<PaymentSettings> transactionDatabaseSettings,
+            IUserService userService,
+            ILogger<PaymentService> logger,
+            ILogger<CieloClient> loggerCielo,
+            ILogger<PagBankClient> loggerPagBank
+            )
         {
             if (transactionDatabaseSettings.Value.Key.Equals("PAGBANK"))
             {
-                transactionClient = new PagBankClient(transactionDatabaseSettings);
+                transactionClient = new PagBankClient(transactionDatabaseSettings, loggerPagBank);
             }
             else
-                transactionClient = new CieloClient(transactionDatabaseSettings);
+                transactionClient = new CieloClient(transactionDatabaseSettings, loggerCielo);
 
             _userService = userService;
             _messageReturn = new Model.MessageReturn();

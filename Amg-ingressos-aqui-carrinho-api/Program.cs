@@ -26,6 +26,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<ITransactionItenService, TransactionItenService>();
 
 //repository
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();

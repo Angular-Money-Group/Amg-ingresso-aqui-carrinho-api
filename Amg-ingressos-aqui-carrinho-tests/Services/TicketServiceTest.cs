@@ -9,7 +9,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.Services
     public class TicketServiceTest
     {
         private TicketService _ticketService;
-        private Mock<ILogger<TicketService>> _loggerMock = new Mock<ILogger<TicketService>>();
+        private readonly Mock<ILogger<TicketService>> _loggerMock = new Mock<ILogger<TicketService>>();
 
         [SetUp]
         public void SetUp()
