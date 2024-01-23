@@ -64,12 +64,12 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             try
             {
                 var listTicket = new List<Ticket>();
-                transactionDto.TransactionItensDto.ForEach(async i =>
+                transactionDto.TransactionItensDto.ForEach(i =>
                 {
                     //retorna todos tickets para o idLote
-                    var lstTickets = await GetTicketsByLotAsync(i.IdLot);
+                    var lstTickets = GetTicketsByLotAsync(i.IdLot).Result;
 
-                    if (lstTickets != null && lstTickets.Any())
+                    if (lstTickets != null && !lstTickets.Any())
                         throw new RuleException("Erro ao buscar Ingressos");
 
                     if (lstTickets?.Count == 0 || lstTickets?.Count < i.AmountTicket)
@@ -80,13 +80,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     {
                         Ticket ticket = lstTickets?.Find(i => !i.IsSold) ?? throw new RuleException("ticket não encontrado.");
 
-                        if (ticket.Value <= 1)
+                        if (ticket.Value <= 0)
                             throw new SaveException("Valor do Ingresso inválido.");
 
                         //atualiza Ticket
                         ticket.IdUser = transactionDto.IdUser;
                         ticket.Status = Enum.StatusTicket.Reservado;
-                        await UpdateTicketsAsync(ticket);
+                        _ = UpdateTicketsAsync(ticket);
                         listTicket.Add(ticket);
                     }
                 });

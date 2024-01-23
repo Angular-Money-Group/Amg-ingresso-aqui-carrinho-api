@@ -50,6 +50,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 transactionModel.Stage = StageTransaction.Confirm;
 
                 var listTickets = await _ticketService.ReservTicketsAsync(transactionDto);
+                if(!listTickets.Any())
+                    throw new RuleException("Nenhum ingresso disponível");
+
                 await _transactionService.SaveAsync(transactionModel);
                 await _transactionItenService.ProcessSaveTransactionItens(transactionModel.Id, transactionDto.TransactionItensDto, listTickets);
 

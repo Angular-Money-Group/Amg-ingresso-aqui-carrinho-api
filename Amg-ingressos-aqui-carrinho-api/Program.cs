@@ -27,6 +27,9 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<ITransactionItenService, TransactionItenService>();
+builder.Services.AddScoped<ICheckoutService, CheckoutService>();
+builder.Services.AddScoped<IQrCodeService, QrCodeService>();
+
 
 //repository
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
