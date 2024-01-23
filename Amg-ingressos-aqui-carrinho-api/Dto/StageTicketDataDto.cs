@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Amg_ingressos_aqui_carrinho_api.Enum;
+using Amg_ingressos_aqui_carrinho_api.Model;
 
 namespace Amg_ingressos_aqui_carrinho_api.Dto
 {
@@ -10,5 +6,15 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
     {
         public decimal Tax { get; set; }
         public decimal Discount { get; set; }
+
+        public Transaction DtoToModel()
+        {
+            return new Transaction()
+            {
+                Tax = this.Tax,
+                Discount = this.Discount,
+                Stage = Enum.StageTransaction.TicketsData
+            };
+        }
     }
 }

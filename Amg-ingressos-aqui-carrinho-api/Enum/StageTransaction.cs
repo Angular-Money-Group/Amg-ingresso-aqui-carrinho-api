@@ -1,6 +1,6 @@
 namespace Amg_ingressos_aqui_carrinho_api.Enum
 {
-    public enum StageTransactionEnum
+    public enum StageTransaction
     {
         Confirm = 0,
         PersonData = 1,

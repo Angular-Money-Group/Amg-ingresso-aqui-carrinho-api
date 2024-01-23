@@ -1,12 +1,25 @@
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 using Amg_ingressos_aqui_carrinho_api.Enum;
 using Amg_ingressos_aqui_carrinho_api.Model.Pagbank;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Amg_ingressos_aqui_carrinho_api.Model
 {
+    [BsonIgnoreExtraElements]
     public class PaymentMethod
     {
+        public PaymentMethod()
+        {
+            IdPaymentMethod = string.Empty;
+            CardNumber = string.Empty;
+            Holder = string.Empty;
+            ExpirationDate = string.Empty;
+            SecurityCode = string.Empty;
+            Brand = string.Empty;
+            EncryptedCard = string.Empty;
+            AuthenticationMethod = new AuthenticationMethod();
+        }
+
         /// <summary>
         /// Id Metodo Pagamento
         /// </summary>
@@ -16,7 +29,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// Tipo de pagamento
         /// </summary>
         [Required]
-        public TypePaymentEnum TypePayment { get; set; }
+        public TypePayment TypePayment { get; set; }
 
         /// <summary>
         /// Numero cartao
@@ -55,41 +68,29 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// <summary>
         /// cartao criptografado pagbank
         /// </summary>
-        public string EncryptedCard { get; set;}
+        public string EncryptedCard { get; set; }
 
-        public Authentication_method Authentication_Method {get;set;}
-    }
+        public AuthenticationMethod AuthenticationMethod { get; set; }
 
-    public class PaymentMethodPix
-    {
-        [JsonPropertyName("merchantOrderId")]
-        public string MerchantOrderId { get; set; }
-
-        [JsonPropertyName("customer")]
-        public Customer Customer { get; set; }
-
-        [JsonPropertyName("payment")]
-        public Payment Payment { get; set; }
-    }
-
-    public class Customer
-    {
-        [JsonPropertyName("name")]
-        public string Name { get; set; }
-
-        [JsonPropertyName("identity")]
-        public string Identity { get; set; }
-
-        [JsonPropertyName("identityType")]
-        public string IdentityType { get; set; }
-    }
-
-    public class Payment
-    {
-        [JsonPropertyName("type")]
-        public string Type { get; set; }
-
-        [JsonPropertyName("amount")]
-        public float Amount { get; set; }
+        public Transaction ToModelTransaction(){
+            return new Transaction()
+            {
+                PaymentMethod = new PaymentMethod()
+                {
+                    IdPaymentMethod = this.IdPaymentMethod,
+                    Brand = this.Brand,
+                    CardNumber = this.CardNumber,
+                    ExpirationDate = this.ExpirationDate,
+                    Holder = this.Holder,
+                    SaveCard = this.SaveCard,
+                    SecurityCode = this.SecurityCode,
+                    TypePayment = this.TypePayment,
+                    Installments = this.Installments,
+                    EncryptedCard = this.EncryptedCard,
+                    AuthenticationMethod = this.AuthenticationMethod
+                },
+                Stage = StageTransaction.PaymentData
+            };
+        }
     }
 }

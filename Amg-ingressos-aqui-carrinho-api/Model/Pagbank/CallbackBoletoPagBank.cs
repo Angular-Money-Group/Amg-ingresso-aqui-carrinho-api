@@ -1,135 +1,57 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank.Callback.Boleto
 {
     public class CallbackBoletoPagBank
     {
-        public string id { get; set; }
-        public string reference_id { get; set; }
-        public DateTime created_at { get; set; }
-        public Customer customer { get; set; }
-        public List<Item> items { get; set; }
-        public Shipping shipping { get; set; }
-        public List<Charge> charges { get; set; }
-        public List<string> notification_urls { get; set; }
-        public List<Link> links { get; set; }
-    }
-    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
-    public class Address
-    {
-        public string street { get; set; }
-        public string number { get; set; }
-        public string complement { get; set; }
-        public string locality { get; set; }
-        public string city { get; set; }
-        public string region_code { get; set; }
-        public string country { get; set; }
-        public string postal_code { get; set; }
-        public string region { get; set; }
-    }
+        public CallbackBoletoPagBank()
+        {
+            Id = string.Empty;
+            ReferenceId = string.Empty;
+            Customer = new Customer();
+            Items = new List<Item>();
+            Shipping = new Shipping();
+            Charges = new List<Charge>();
+            NotificationUrls = new List<string>();
+            Links = new List<Link>();
+        }
 
-    public class Amount
-    {
-        public int value { get; set; }
-        public string currency { get; set; }
-        public Summary summary { get; set; }
+        [JsonProperty("id")]
+        [JsonPropertyName("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("reference_id")]
+        [JsonPropertyName("reference_id")]
+        public string ReferenceId { get; set; }
+
+        [JsonProperty("created_at")]
+        [JsonPropertyName("created_at")]
+        public DateTime CreatedAt { get; set; }
+
+        [JsonProperty("customer")]
+        [JsonPropertyName("customer")]
+        public Customer Customer { get; set; }
+
+        [JsonProperty("items")]
+        [JsonPropertyName("items")]
+        public List<Item> Items { get; set; }
+
+        [JsonProperty("shipping")]
+        [JsonPropertyName("shipping")]
+        public Shipping Shipping { get; set; }
+
+        [JsonProperty("charges")]
+        [JsonPropertyName("charges")]
+        public List<Charge> Charges { get; set; }
+
+        [JsonProperty("notification_urls")]
+        [JsonPropertyName("notification_urls")]
+        public List<string> NotificationUrls { get; set; }
+
+        [JsonProperty("links")]
+        [JsonPropertyName("links")]
+        public List<Link> Links { get; set; }
+
     }
-
-    public class Boleto
-    {
-        public string id { get; set; }
-        public string barcode { get; set; }
-        public string formatted_barcode { get; set; }
-        public string due_date { get; set; }
-        public InstructionLines instruction_lines { get; set; }
-        public Holder holder { get; set; }
-    }
-
-    public class Charge
-    {
-        public string id { get; set; }
-        public string reference_id { get; set; }
-        public string status { get; set; }
-        public DateTime created_at { get; set; }
-        public string description { get; set; }
-        public Amount amount { get; set; }
-        public PaymentResponse payment_response { get; set; }
-        public PaymentMethod payment_method { get; set; }
-        public List<Link> links { get; set; }
-    }
-
-    public class Customer
-    {
-        public string name { get; set; }
-        public string email { get; set; }
-        public string tax_id { get; set; }
-        public List<Phone> phones { get; set; }
-    }
-
-    public class Holder
-    {
-        public string name { get; set; }
-        public string tax_id { get; set; }
-        public string email { get; set; }
-        public Address address { get; set; }
-    }
-
-    public class InstructionLines
-    {
-        public string line_1 { get; set; }
-        public string line_2 { get; set; }
-    }
-
-    public class Item
-    {
-        public string reference_id { get; set; }
-        public string name { get; set; }
-        public int quantity { get; set; }
-        public int unit_amount { get; set; }
-    }
-
-    public class Link
-    {
-        public string rel { get; set; }
-        public string href { get; set; }
-        public string media { get; set; }
-        public string type { get; set; }
-    }
-
-    public class PaymentMethod
-    {
-        public string type { get; set; }
-        public Boleto boleto { get; set; }
-    }
-
-    public class PaymentResponse
-    {
-        public string code { get; set; }
-        public string message { get; set; }
-    }
-
-    public class Phone
-    {
-        public string type { get; set; }
-        public string country { get; set; }
-        public string area { get; set; }
-        public string number { get; set; }
-    }
-
-    public class Shipping
-    {
-        public Address address { get; set; }
-    }
-
-    public class Summary
-    {
-        public int total { get; set; }
-        public int paid { get; set; }
-        public int refunded { get; set; }
-    }
-
-
 }

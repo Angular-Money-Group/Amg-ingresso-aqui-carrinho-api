@@ -8,83 +8,54 @@ using MongoDB.Driver;
 namespace Amg_ingressos_aqui_carrinho_api.Repository
 {
     [ExcludeFromCodeCoverage]
-    public class TransactionItenRepository<T> : ITransactionItenRepository
+    public class TransactionItenRepository : ITransactionItenRepository
     {
         private readonly IMongoCollection<TransactionIten> _transactionItenCollection;
-        public TransactionItenRepository(IDbConnection<TransactionIten> dbconnectionIten)
+        public TransactionItenRepository(IDbConnection dbconnectionIten)
         {
-            _transactionItenCollection= dbconnectionIten.GetConnection("transactionIten");
+            _transactionItenCollection = dbconnectionIten.GetConnection<TransactionIten>("transactionIten");
         }
 
-        public async Task<object> Save<T>(object transaction)
+        public async Task<TransactionIten> Save(TransactionIten transaction)
         {
-            try
-            {
-                _transactionItenCollection.InsertOneAsync(transaction as TransactionIten);
-                return (transaction as TransactionIten).Id;
-            }
-            catch (SaveTransactionException ex)
-            {
-                throw ex;
-            }
-            catch (System.Exception ex)
-            {
-                throw ex;
-            }
-        }
-        public async Task<object> GetByIdTransaction(string idTransaction)
-        {
-            try
-            {
-                var builder = Builders<TransactionIten>.Filter;
-                var filter = builder.Empty;
+            await _transactionItenCollection.InsertOneAsync(transaction);
+            return transaction;
 
-                if (!string.IsNullOrWhiteSpace(idTransaction))
-                {
-                    var firstNameFilter = builder.Eq(x => x.IdTransaction, idTransaction);
-                    filter &= firstNameFilter;
-                }
-
-                var result = await _transactionItenCollection.Find(filter).ToListAsync();
-                
-                
-                if (result == null)
-                    throw new GetException("Transacao itens nao encontrados");
-
-                return result;
-            }
-            catch (GetException ex)
-            {
-                throw ex;
-            }
-            catch (System.Exception ex)
-            {
-                throw ex;
-            }
         }
 
-        public async Task<object> DeleteByIdTransaction(string idTransaction){
-            try
-            {
-                // find a person using an equality filter on its id
-                var filter = Builders<TransactionIten>.Filter.Eq(transaction => transaction.IdTransaction, idTransaction);
+        public async Task<List<T>> GetByIdTransaction<T>(string idTransaction)
+        {
+            var builder = Builders<TransactionIten>.Filter;
+            var filter = builder.Empty;
 
-                // delete the person
-                var transactionDeleteResult = await _transactionItenCollection.DeleteOneAsync(filter);
-                if (transactionDeleteResult.DeletedCount >= 1)
-                    return "transação iten deletado com sucesso";
-                else
-                    return "erro ao deletar transação";
+            if (string.IsNullOrWhiteSpace(idTransaction))
+                throw new GetException("idTransactin é necessário.");
 
-            }
-            catch (SaveTransactionException ex)
-            {
-                throw ex;
-            }
-            catch (System.Exception ex)
-            {
-                throw ex;
-            }
+            var firstNameFilter = builder.Eq(x => x.IdTransaction, idTransaction);
+                filter &= firstNameFilter;
+
+            var result = await _transactionItenCollection.Find(filter)
+            .As<T>()
+            .ToListAsync();
+
+
+            if (result == null)
+                throw new GetException("Itens da transação não encontrados");
+
+            return result;
+        }
+
+        public async Task<bool> DeleteByIdTransaction(string idTransaction)
+        {
+            // find a person using an equality filter on its id
+            var filter = Builders<TransactionIten>.Filter.Eq(transaction => transaction.IdTransaction, idTransaction);
+
+            // delete the person
+            var transactionDeleteResult = await _transactionItenCollection.DeleteOneAsync(filter);
+            if (transactionDeleteResult.DeletedCount < 1)
+                return false;
+
+            return true;
         }
     }
 }

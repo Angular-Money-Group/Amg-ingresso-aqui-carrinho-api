@@ -49,10 +49,10 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
         {
 
             var listEvents = listTransaction.Select(e => e.Events.FirstOrDefault())
-            .GroupBy(t => t?._Id).Select(c => new TransactionCardDto()
+            .GroupBy(t => t?.Id).Select(c => new TransactionCardDto()
             {
                 Name = c?.FirstOrDefault()?.Name ?? string.Empty,
-                Id = c?.FirstOrDefault()?._Id ?? string.Empty,
+                Id = c?.FirstOrDefault()?.Id ?? string.Empty,
                 Day = c?.FirstOrDefault()?.StartDate.Day.ToString() ?? string.Empty,
                 Month = c?.FirstOrDefault()?.StartDate.Month.ToString() ?? string.Empty,
                 Year = c?.FirstOrDefault()?.StartDate.Year.ToString() ?? string.Empty,

@@ -1,5 +1,5 @@
 ﻿namespace Amg_ingressos_aqui_carrinho_api.Enum {
-    public enum TypeUserEnum 
+    public enum TypeUser 
     {
         Admin = 0, 
         Customer = 1,

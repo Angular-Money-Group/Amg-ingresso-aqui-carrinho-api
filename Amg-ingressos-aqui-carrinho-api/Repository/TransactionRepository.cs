@@ -4,10 +4,7 @@ using Amg_ingressos_aqui_carrinho_api.Model;
 using System.Diagnostics.CodeAnalysis;
 using Amg_ingressos_aqui_carrinho_api.Infra;
 using MongoDB.Driver;
-using Amg_ingressos_aqui_carrinho_api.Repository.Querys;
 using MongoDB.Bson;
-using Amg_ingressos_aqui_carrinho_api.Model.Querys;
-using Amg_ingressos_aqui_carrinho_api.Enum;
 
 namespace Amg_ingressos_aqui_carrinho_api.Repository
 {
@@ -16,208 +13,134 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
     {
         private readonly IMongoCollection<Transaction> _transactionCollection;
 
-        public TransactionRepository(IDbConnection<Transaction> dbconnection)
+        public TransactionRepository(IDbConnection dbconnection)
         {
-            _transactionCollection = dbconnection.GetConnection("transaction");
+            _transactionCollection = dbconnection.GetConnection<Transaction>("transaction");
         }
 
-        public async Task<object> GetById(string idTransaction)
+        public async Task<T> GetById<T>(string id)
         {
-            try
-            {
-                var json = QuerysMongo.GetTransactionQuery;
+            BsonDocument documentFilter = new BsonDocument { { "_id", ObjectId.Parse(id) } };
 
-                BsonDocument documentFilter = BsonDocument.Parse(
-                    @"{$addFields:{'_id': { '$toString': '$_id' }}}"
-                );
-                BsonDocument documentFilter1 = BsonDocument.Parse(
-                    @"{ $match: { '$and': [{ '_id': '" + idTransaction.ToString() + "' }] }}"
-                );
-                BsonDocument document = BsonDocument.Parse(json);
-                BsonDocument[] pipeline = new BsonDocument[]
-                {
-                    documentFilter,
-                    documentFilter1,
-                    document
-                };
+            var transactionsData = await _transactionCollection.Aggregate()
+                .Match(documentFilter)
+                .Lookup("transactionIten", "_id", "IdTransaction", "TransactionItens")
+                .As<T>()
+                .ToListAsync();
 
-                List<GetTransactionEventData> pResults = _transactionCollection
-                    .Aggregate<GetTransactionEventData>(pipeline)
-                    .ToList();
+            if (transactionsData == null || !transactionsData.Any())
+                throw new GetException("Transação não encontrada");
 
-                //var result = await _eventCollection.FindAsync<Event>(x => x._Id == id as string)
-                //    .Result.FirstOrDefaultAsync();
-
-
-                if (pResults == null)
-                    throw new GetException("Evento não encontrado");
-
-                return pResults;
-            }
-            catch (GetException ex)
-            {
-                throw ex;
-            }
-            catch (System.Exception ex)
-            {
-                throw ex;
-            }
+            return transactionsData[0];
         }
 
         public async Task<List<T>> GetByUser<T>(string idUser)
         {
-            try
-            {
-                var transactions = await _transactionCollection
-                    .Find(new BsonDocument { { "IdPerson", ObjectId.Parse(idUser) } })
-                    .As<T>()
-                    .ToListAsync();
-                return transactions;
-            }
-            catch (System.Exception ex)
-            {
-                throw ex;
-            }
+
+            var transactions = await _transactionCollection
+                .Find(new BsonDocument { { "IdPerson", ObjectId.Parse(idUser) } })
+                .As<T>()
+                .ToListAsync();
+
+            if (transactions == null)
+                throw new GetException("Transações não encontradas");
+
+            return transactions;
         }
 
         public async Task<List<T>> GetByUserEventData<T>(string idUser)
         {
-            try
-            {
-                var transactions = await _transactionCollection.Aggregate()
-                    .Match(new BsonDocument { { "IdPerson", ObjectId.Parse(idUser) } })
-                    .Lookup("events", "IdEvent", "_id", "Events")
-                    .As<T>()
-                    .ToListAsync();
-                return transactions;
-            }
-            catch (System.Exception ex)
-            {
-                throw ex;
-            }
+            var transactions = await _transactionCollection.Aggregate()
+                .Match(new BsonDocument { { "IdPerson", ObjectId.Parse(idUser) } })
+                .Lookup("events", "IdEvent", "_id", "Events")
+                .As<T>()
+                .ToListAsync();
+
+            if (transactions == null)
+                throw new GetException("Transações não encontradas");
+
+            return transactions;
         }
 
-        public async Task<List<T>> GetByUserTicketData<T>(string idPerson, string idEvent)
+        public async Task<List<T>> GetByUserTicketData<T>(string idUser, string idEvent)
         {
-            try
-            {
-                var filters = new List<FilterDefinition<Transaction>>
+            var filters = new List<FilterDefinition<Transaction>>
                 {
-                    Builders<Transaction>.Filter.Eq("IdPerson", idPerson),
+                    Builders<Transaction>.Filter.Eq("IdPerson", idUser),
                     Builders<Transaction>.Filter.Eq("IdEvent", idEvent)
                 };
-                FilterDefinition<Transaction> filter = Builders<Transaction>.Filter.And(filters);
+            FilterDefinition<Transaction> filter = Builders<Transaction>.Filter.And(filters);
 
-                var transactions = await _transactionCollection.Aggregate()
-                    .Match(filter)
-                    .Lookup("events", "IdEvent", "_id", "Events")
-                    .Lookup("transactionIten", "_id", "IdTransaction", "TransactionItens")
-                    .Lookup("tickets", "TransactionItens.IdTicket", "_id", "Tickets")
-                    .As<T>()
-                    .ToListAsync();
+            var transactions = await _transactionCollection.Aggregate()
+                .Match(filter)
+                .Lookup("events", "IdEvent", "_id", "Events")
+                .Lookup("transactionIten", "_id", "IdTransaction", "TransactionItens")
+                .Lookup("tickets", "TransactionItens.IdTicket", "_id", "Tickets")
+                .As<T>()
+                .ToListAsync();
 
-                return transactions;
-            }
-            catch (GetException ex)
-            {
-                throw ex;
-            }
-            catch (System.Exception ex)
-            {
-                throw ex;
-            }
+            if (transactions == null)
+                throw new GetException("Transações não encontradas");
+
+            return transactions;
         }
 
-        public async Task<object> Save<T>(object transaction)
+        public async Task<Transaction> Save(Transaction transaction)
         {
-            try
-            {
-                await _transactionCollection.InsertOneAsync(transaction as Transaction);
-                return transaction as Transaction;
-            }
-            catch (SaveTransactionException ex)
-            {
-                throw ex;
-            }
-            catch (System.Exception ex)
-            {
-                throw ex;
-            }
+            await _transactionCollection.InsertOneAsync(transaction);
+            return transaction;
         }
 
-        public async Task<object> Update<T1>(object transaction)
+        public async Task<bool> Edit(string id, Transaction transaction)
         {
-            try
-            {
-                var transactionModel = (transaction as Transaction);
-                var update = Builders<Transaction>.Update
-                    .Set(transactionMongo => transactionMongo.Status, transactionModel.Status)
-                    .Set(
-                        transactionMongo => transactionMongo.PaymentMethod,
-                        transactionModel.PaymentMethod
-                    )
-                    .Set(
-                        transactionMongo => transactionMongo.PaymentMethodPix,
-                        transactionModel.PaymentMethodPix
-                    )
-                    .Set(
-                        transactionMongo => transactionMongo.PaymentPix,
-                        transactionModel.PaymentPix
-                    )
-                    .Set(transactionMongo => transactionMongo.IdPerson, transactionModel.IdPerson)
-                    .Set(transactionMongo => transactionMongo.Stage, transactionModel.Stage)
-                    .Set(transactionMongo => transactionMongo.Tax, transactionModel.Tax)
-                    .Set(transactionMongo => transactionMongo.Discount, transactionModel.Discount)
-                    .Set(
-                        transactionMongo => transactionMongo.PaymentIdService,
-                        transactionModel.PaymentIdService
-                    )
-                    .Set(transactionMongo => transactionMongo.Details, transactionModel.Details)
-                    .Set(
-                        transactionMongo => transactionMongo.TotalValue,
-                        transactionModel.TotalValue
-                    );
-
-                var filter = Builders<Transaction>.Filter.Eq(
-                    transactionMongo => transactionMongo.Id,
-                    transactionModel.Id
+            var update = Builders<Transaction>.Update
+                .Set(transactionMongo => transactionMongo.Status, transaction.Status)
+                .Set(
+                    transactionMongo => transactionMongo.PaymentMethod,
+                    transaction.PaymentMethod
+                )
+                .Set(
+                    transactionMongo => transactionMongo.PaymentMethodPix,
+                    transaction.PaymentMethodPix
+                )
+                .Set(
+                    transactionMongo => transactionMongo.PaymentPix,
+                    transaction.PaymentPix
+                )
+                .Set(transactionMongo => transactionMongo.IdPerson, transaction.IdPerson)
+                .Set(transactionMongo => transactionMongo.Stage, transaction.Stage)
+                .Set(transactionMongo => transactionMongo.Tax, transaction.Tax)
+                .Set(transactionMongo => transactionMongo.Discount, transaction.Discount)
+                .Set(
+                    transactionMongo => transactionMongo.PaymentIdService,
+                    transaction.PaymentIdService
+                )
+                .Set(transactionMongo => transactionMongo.Details, transaction.Details)
+                .Set(
+                    transactionMongo => transactionMongo.TotalValue,
+                    transaction.TotalValue
                 );
 
-                await _transactionCollection.UpdateOneAsync(filter, update);
-                return "Atualizado";
-            }
-            catch (SaveTransactionException ex)
-            {
-                throw ex;
-            }
-            catch (System.Exception ex)
-            {
-                throw ex;
-            }
+            var filter = Builders<Transaction>.Filter.Eq(transactionMongo => transactionMongo.Id, id);
+
+            var result = await _transactionCollection.UpdateOneAsync(filter, update);
+            if (result.ModifiedCount <= 0)
+                throw new EditException("erro ao editar registro");
+
+            return true;
         }
 
-        public async Task<object> Delete(string id)
+        public async Task<bool> Delete(string id)
         {
-            try
-            {
-                // find a person using an equality filter on its id
-                var filter = Builders<Transaction>.Filter.Eq(transaction => transaction.Id, id);
+            // find a person using an equality filter on its id
+            var filter = Builders<Transaction>.Filter.Eq(transaction => transaction.Id, id);
 
-                // delete the person
-                var transactionDeleteResult = await _transactionCollection.DeleteOneAsync(filter);
-                if (transactionDeleteResult.DeletedCount == 1)
-                    return "transação deletada com sucesso";
-                else
-                    return "erro ao deletar transação";
-            }
-            catch (SaveTransactionException ex)
-            {
-                throw ex;
-            }
-            catch (System.Exception ex)
-            {
-                throw ex;
-            }
+            // delete the person
+            var transactionDeleteResult = await _transactionCollection.DeleteOneAsync(filter);
+            if (transactionDeleteResult.DeletedCount <= 1)
+                throw new EditException("erro ao deletar transação");
+
+            return true;
         }
     }
 }

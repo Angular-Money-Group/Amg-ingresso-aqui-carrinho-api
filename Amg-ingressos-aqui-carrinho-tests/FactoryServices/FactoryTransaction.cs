@@ -1,6 +1,5 @@
 using Amg_ingressos_aqui_carrinho_api.Dto;
 using Amg_ingressos_aqui_carrinho_api.Model;
-using Amg_ingressos_aqui_carrinho_api.Model.Querys;
 
 namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
 {
@@ -20,12 +19,11 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                     SecurityCode = "SecurityCode",
                     Holder = "Teste Holder",
                     SaveCard = false,
-                    TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePaymentEnum.CreditCard
+                    TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePayment.CreditCard
                 },
                 IdPerson = "6442dcb6523d52533aeb1ae4",
-                Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
+                Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPayment.Aproved,
                 Tax = new decimal(10.0),
-                TransactionItens = SimpleTransactionIten()
             };
         }
         internal static List<TransactionComplet> SimpleListTransactionQueryStagePaymentTransaction(){
@@ -42,11 +40,11 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                         SecurityCode = "SecurityCode",
                         Holder = "Teste Holder",
                         SaveCard = false,
-                        TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePaymentEnum.CreditCard
+                        TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePayment.CreditCard
                     },
                     IdPerson = "6442dcb6523d52533aeb1ae4",
-                    Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
-                    Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.PaymentTransaction,
+                    Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPayment.Aproved,
+                    Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransaction.PaymentTransaction,
                     Tax = new decimal(10.0),
                     TransactionItens = new List<TransactionIten>(){
                         new TransactionIten(){
@@ -82,11 +80,11 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                         SecurityCode = "SecurityCode",
                         Holder = "Teste Holder",
                         SaveCard = false,
-                        TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePaymentEnum.CreditCard
+                        TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePayment.CreditCard
                     },
                     IdPerson = "6442dcb6523d52533aeb1ae4",
-                    Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
-                    Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.PaymentData,
+                    Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPayment.Aproved,
+                    Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransaction.PaymentData,
                     Tax = new decimal(10.0),
                     TransactionItens = new List<TransactionIten>(){
                         new TransactionIten(){
@@ -122,11 +120,11 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                         SecurityCode = "SecurityCode",
                         Holder = "Teste Holder",
                         SaveCard = false,
-                        TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePaymentEnum.CreditCard
+                        TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePayment.CreditCard
                     },
                     IdPerson = "6442dcb6523d52533aeb1ae4",
-                    Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
-                    Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.Confirm,
+                    Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPayment.Aproved,
+                    Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransaction.Confirm,
                     Tax = new decimal(10.0),
                     TransactionItens = new List<TransactionIten>(){
                         new TransactionIten(){
@@ -162,11 +160,11 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                         SecurityCode = "SecurityCode",
                         Holder = "Teste Holder",
                         SaveCard = false,
-                        TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePaymentEnum.CreditCard
+                        TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePayment.CreditCard
                     },
                     IdPerson = "6442dcb6523d52533aeb1ae4",
-                    Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
-                    Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.PersonData,
+                    Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPayment.Aproved,
+                    Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransaction.PersonData,
                     Tax = new decimal(10.0),
                     TransactionItens = new List<TransactionIten>(){
                         new TransactionIten(){
@@ -202,11 +200,11 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                         SecurityCode = "SecurityCode",
                         Holder = "Teste Holder",
                         SaveCard = false,
-                        TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePaymentEnum.CreditCard
+                        TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePayment.CreditCard
                     },
                     IdPerson = "6442dcb6523d52533aeb1ae4",
-                    Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.Aproved,
-                    Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.TicketsData,
+                    Status = Amg_ingressos_aqui_carrinho_api.Enum.StatusPayment.Aproved,
+                    Stage   = Amg_ingressos_aqui_carrinho_api.Enum.StageTransaction.TicketsData,
                     Tax = new decimal(10.0),
                     TransactionItens = new List<TransactionIten>(){
                         new TransactionIten(){
@@ -233,7 +231,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
             return new Transaction()
             {
                 Id = "6442dcb6523d52533aeb1ae4",
-                Stage = Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.PersonData
+                Stage = Amg_ingressos_aqui_carrinho_api.Enum.StageTransaction.PersonData
             };
         }
         internal static List<TransactionIten> SimpleTransactionIten()
@@ -300,7 +298,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                 SecurityCode = "SecurityCode",
                 Holder = "Teste Holder",
                 SaveCard = false,
-                TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePaymentEnum.CreditCard,
+                TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePayment.CreditCard,
                 Installments = 1
             };
         }
@@ -316,7 +314,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                 SecurityCode = "SecurityCode",
                 Holder = "Teste Holder",
                 SaveCard = false,
-                TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePaymentEnum.DebitCard,
+                TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePayment.DebitCard,
                 Installments = 1
             };
         }
@@ -334,14 +332,14 @@ namespace Amg_ingressos_aqui_carrinho_tests.FactoryServices
                     SecurityCode = "123",
                     Holder = "Teste Holder",
                     SaveCard = false,
-                    TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePaymentEnum.CreditCard,
+                    TypePayment = Amg_ingressos_aqui_carrinho_api.Enum.TypePayment.CreditCard,
                     Installments = 1
                 },
                 Discount = 0,
                 IdPerson = "6442dcb6523d52533aeb1ae4",
                 ReturnUrl="",
-                Stage= Amg_ingressos_aqui_carrinho_api.Enum.StageTransactionEnum.PaymentTransaction,
-                Status= Amg_ingressos_aqui_carrinho_api.Enum.StatusPaymentEnum.InProgress,
+                Stage= Amg_ingressos_aqui_carrinho_api.Enum.StageTransaction.PaymentTransaction,
+                Status= Amg_ingressos_aqui_carrinho_api.Enum.StatusPayment.InProgress,
                 Tax = 30
             };
         }

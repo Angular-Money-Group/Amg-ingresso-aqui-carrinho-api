@@ -1,12 +1,5 @@
-using Amg_ingressos_aqui_carrinho_api.Consts;
-using Amg_ingressos_aqui_carrinho_api.Dto;
-using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
-using Amg_ingressos_aqui_carrinho_api.Mappers;
 using Microsoft.AspNetCore.Mvc;
-using Amg_ingressos_aqui_carrinho_api.Model.Querys;
-using Amg_ingressos_aqui_carrinho_api.Enum;
-using Amg_ingressos_aqui_carrinho_api.Utils;
 
 namespace Amg_ingressos_aqui_carrinho_api.Controllers
 {
@@ -36,22 +29,15 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         [Route("{id}")]
         public async Task<IActionResult> GetByIdTransactionAsync(string id)
         {
-            try
-            {
-                var result = await _transactionService.GetByIdAsync(id);
-                if (result.Message != null && result.Message.Any())
-                {
-                    _logger.LogInformation(result.Message);
-                    return NotFound(result.Message);
-                }
 
-                return Ok(result.Data);
-            }
-            catch (Exception ex)
+            var result = await _transactionService.GetByIdAsync(id);
+            if (result.Message != null && result.Message.Any())
             {
-                _logger.LogError(MessageLogErrors.getByIdTransactionMessage, ex);
-                return StatusCode(500, MessageLogErrors.getByIdTransactionMessage);
+                _logger.LogInformation(result.Message);
+                return NotFound(result.Message);
             }
+
+            return Ok(result.Data);
         }
 
         /// <summary>
@@ -65,22 +51,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         [Route("user/{idUser}/card/active")]
         public async Task<IActionResult> GetByUserActivesAsync([FromRoute] string idUser)
         {
-            try
+            var result = await _transactionService.GetByUserActivesAsync(idUser);
+            if (result.Message != null && result.Message.Any())
             {
-                var result = await _transactionService.GetByUserActivesAsync(idUser);
-                if (result.Message != null && result.Message.Any())
-                {
-                    _logger.LogInformation(result.Message);
-                    return NotFound(result.Message);
-                }
+                _logger.LogInformation(result.Message);
+                return NotFound(result.Message);
+            }
 
-                return Ok(result.Data);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(MessageLogErrors.getByPersonTransactionMessage, ex);
-                return StatusCode(500, MessageLogErrors.getByPersonTransactionMessage);
-            }
+            return Ok(result.Data);
         }
 
         /// <summary>
@@ -94,22 +72,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         [Route("user/{idUser}/card/history")]
         public async Task<IActionResult> GetByUserHistoryAsync([FromRoute] string idUser)
         {
-            try
+            var result = await _transactionService.GetByUserHistoryAsync(idUser);
+            if (result.Message != null && result.Message.Any())
             {
-                var result = await _transactionService.GetByUserHistoryAsync(idUser);
-                if (result.Message != null && result.Message.Any())
-                {
-                    _logger.LogInformation(result.Message);
-                    return NotFound(result.Message);
-                }
+                _logger.LogInformation(result.Message);
+                return NotFound(result.Message);
+            }
 
-                return Ok(result.Data);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(MessageLogErrors.getByPersonTransactionMessage, ex);
-                return StatusCode(500, MessageLogErrors.getByPersonTransactionMessage);
-            }
+            return Ok(result.Data);
         }
 
         /// <summary>
@@ -122,293 +92,16 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// <returns>404 Erro tratado</returns>
         [HttpGet]
         [Route("person/{idUser}/event/{idEvent}")]
-        public async Task<IActionResult> GetByUserDataTicketEventAsync([FromRoute] string idUser,string idEvent)
+        public async Task<IActionResult> GetByUserDataTicketEventAsync([FromRoute] string idUser, string idEvent)
         {
-            try
+            var result = await _transactionService.GetByUserTicketEventDataAsync(idUser, idEvent);
+            if (result.Message != null && result.Message.Any())
             {
-                var result = await _transactionService.GetByUserTicketEventDataAsync(idUser,idEvent);
-                if (result.Message != null && result.Message.Any())
-                {
-                    _logger.LogInformation(result.Message);
-                    return NotFound(result.Message);
-                }
-
-                return Ok(result.Data);
+                _logger.LogInformation(result.Message);
+                return NotFound(result.Message);
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(MessageLogErrors.getByPersonTransactionMessage, ex);
-                return StatusCode(500, MessageLogErrors.getByPersonTransactionMessage);
-            }
-        }
 
-        /// <summary>
-        /// Grava Transação
-        /// </summary>
-        /// <param name="transaction">Dados para criar Transacao</param>
-        /// <returns>200 Transação criado</returns>
-        /// <returns>500 Erro inesperado</returns>
-        /// <returns>404 Erro tratado</returns>
-        [HttpPost]
-        [Route("confirm")]
-        public async Task<IActionResult> SaveTransactionAsync([FromBody] TransactionDto transaction)
-        {
-            try
-            {
-                var result = await _transactionService.ProcessSaveAsync(transaction);
-                if (result.Message != null && result.Message.Any())
-                {
-                    _logger.LogInformation(result.Message);
-                    return NotFound(result.Message);
-                }
-
-                return Ok(result.Data);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(MessageLogErrors.saveTransactionMessage, ex);
-                return StatusCode(500, MessageLogErrors.saveTransactionMessage);
-            }
-        }
-
-        /// <summary>
-        /// Grava Transação
-        /// </summary>
-        /// <param name="transactionDto">Dados para atualizar transacao no stage de person DAta</param>
-        /// <returns>200 Transação atualizada</returns>
-        /// <returns>500 Erro inesperado</returns>
-        /// <returns>404 Erro tratado</returns>
-        [HttpPut]
-        [Route("confirmPersonData/{idTransaction}")]
-        public async Task<IActionResult> UpdateTransactionPersonDataAsync([FromRoute] string idTransaction)
-        {
-            try
-            {
-
-                if (idTransaction == string.Empty)
-                    return NotFound("Id Transação é Obrigatório");
-                var transactionDb = (_transactionService
-                    .GetByIdAsync(idTransaction).Result.Data as List<GetTransactionEventData>)
-                    .FirstOrDefault();
-                var transaction = new Transaction()
-                {
-                    Id = idTransaction,
-                    IdPerson = transactionDb.IdPerson,
-                    Stage = Enum.StageTransactionEnum.PersonData,
-                    TotalValue = transactionDb.TotalValue
-                };
-
-                if (transactionDb.Stage != StageTransactionEnum.Confirm)
-                    return NotFound("Estágio fora do padrão");
-
-                var result = await _transactionService.UpdateAsync(transaction);
-                if (result.Message != null && result.Message.Any())
-                {
-                    _logger.LogInformation(result.Message);
-                    return NotFound(result.Message);
-                }
-
-                return Ok(result.Data);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(MessageLogErrors.updateTransactionMessage, ex);
-                return StatusCode(500, MessageLogErrors.updateTransactionMessage);
-            }
-        }
-
-        /// <summary>
-        /// Grava Transação
-        /// </summary>
-        /// <param name="transactionDto">Dados para atualizar transacao no stage de person DAta</param>
-        /// <returns>200 Transação atualizada</returns>
-        /// <returns>500 Erro inesperado</returns>
-        /// <returns>404 Erro tratado</returns>
-        [HttpPut]
-        [Route("confirmTicketsData/{idTransaction}")]
-        public async Task<IActionResult> UpdateTransactionTicketsDataAsync([FromRoute] string idTransaction, [FromBody] StageTicketDataDto transactionDto)
-        {
-            try
-            {
-                if (idTransaction == string.Empty)
-                    return NotFound("Id Transação é Obrigatório");
-                var transaction = transactionDto.StageTicketDataDtoToTransaction();
-                transaction.Id = idTransaction;
-                var transactionDb = (_transactionService
-                    .GetByIdAsync(transaction.Id).Result.Data as List<GetTransactionEventData>).FirstOrDefault();
-
-                if (transactionDb.Stage != StageTransactionEnum.PersonData)
-                    return NotFound("Estágio fora do padrão");
-
-                transaction.IdPerson = transactionDb.IdPerson;
-                transaction.TotalValue = transactionDb.TotalValue;
-                
-                var result = await _transactionService.UpdateAsync(transaction);
-                if (result.Message != null && result.Message.Any())
-                {
-                    _logger.LogInformation(result.Message);
-                    return NotFound(result.Message);
-                }
-
-                return Ok(result.Data);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(MessageLogErrors.updateTransactionMessage, ex);
-                return StatusCode(500, MessageLogErrors.updateTransactionMessage);
-            }
-        }
-
-        /// <summary>
-        /// Grava Transação
-        /// </summary>
-        /// <param name="transactionDto">Dados para atualizar transacao no stage de person DAta</param>
-        /// <returns>200 Transação atualizada</returns>
-        /// <returns>500 Erro inesperado</returns>
-        /// <returns>404 Erro tratado</returns>
-        [HttpPut]
-        [Route("confirmPaymentData/{idTransaction}")]
-        public async Task<IActionResult> UpdateTransactionPaymentDataAsync([FromRoute] string idTransaction, [FromBody] PaymentMethod transactionDto)
-        {
-            try
-            {
-                if (idTransaction == string.Empty)
-                    return NotFound("Id Transação é Obrigatório");
-                var transaction = transactionDto.StagePaymentDataDtoToTransaction();
-                transaction.Id = idTransaction;
-                var transactionDb = (_transactionService
-                    .GetByIdAsync(transaction.Id).Result.Data as List<GetTransactionEventData>)
-                    .FirstOrDefault();
-
-                if (transactionDb.Stage != StageTransactionEnum.TicketsData && 
-                transactionDb.Stage != StageTransactionEnum.PaymentData)
-                    return NotFound("Estágio fora do padrão");
-
-                transaction.IdPerson = transactionDb.IdPerson;
-                transaction.TotalValue = transactionDb.TotalValue;
-                transaction.Discount = transactionDb.Discount;
-                transaction.Tax = transactionDb.Tax;
-
-                var result = await _transactionService.UpdateAsync(transaction);
-                if (result.Message != null && result.Message.Any())
-                {
-                    _logger.LogInformation(result.Message);
-                    return NotFound(result.Message);
-                }
-
-                return Ok(result.Data);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(MessageLogErrors.updateTransactionMessage, ex);
-                return StatusCode(500, MessageLogErrors.updateTransactionMessage);
-            }
-        }
-        
-        /// <summary>
-        /// Grava Transação
-        /// </summary>
-        /// <param name="transactionDto">Corpo Transação a ser Gravado</param>
-        /// <returns>200 Transação criado</returns>
-        /// <returns>500 Erro inesperado</returns>
-        [HttpPut]
-        [Route("paymentTransaction/{idTransaction}")]
-        public async Task<IActionResult> PaymentTransactionAsync([FromRoute] string idTransaction)
-        {
-            try
-            {
-                if (idTransaction == string.Empty)
-                    return NotFound("Id Transação é Obrigatório");
-                var transactionDb = (_transactionService
-                    .GetByIdAsync(idTransaction).Result.Data as List<GetTransactionEventData>)
-                    .FirstOrDefault();
-
-                if (transactionDb.Stage != StageTransactionEnum.PaymentData)
-                    return NotFound("Estágio fora do padrão");
-
-                var transaction = transactionDb.GeTransactionToTransaction();
-
-                var resultPayment = await _transactionService.Payment(transaction);
-                
-                transaction.Stage = StageTransactionEnum.PaymentTransaction;
-
-                if (resultPayment.Message != null && resultPayment.Message.Any())
-                {
-                    _logger.LogInformation(resultPayment.Message);
-                    return NotFound(resultPayment.Message);
-                }
-
-                return Ok(resultPayment.Data);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(MessageLogErrors.paymentTransactionMessage, ex);
-                return StatusCode(500, ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Grava Transação
-        /// </summary>
-        /// <param name="transaction">Corpo Transação a ser Gravado</param>
-        /// <returns>200 Transação criado</returns>
-        /// <returns>500 Erro inesperado</returns>
-        [HttpPut]
-        [Route("finishedTransaction/{idTransaction}")]
-        public async Task<IActionResult> FinishedTransactionAsync([FromRoute] string idTransaction)
-        {
-            try
-            {
-                var transactionDb = (_transactionService
-                    .GetByIdAsync(idTransaction).Result.Data as List<GetTransactionEventData>)
-                    .FirstOrDefault();
-                var transaction = transactionDb.GeTransactionToTransaction();
-                var resultQrcode = await _transactionService.FinishedTransactionAsync(transaction);
-                if (resultQrcode.Message != null && resultQrcode.Message.Any())
-                {
-                    _logger.LogInformation(resultQrcode.Message);
-                    return NotFound(resultQrcode.Message);
-                }
-
-                return Ok(resultQrcode.Data);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(MessageLogErrors.saveTransactionMessage, ex);
-                return StatusCode(500, MessageLogErrors.saveTransactionMessage);
-            }
-        }
-        /// <summary>
-        /// Grava Transação
-        /// </summary>
-        /// <param name="transaction">Corpo Transação a ser Gravado</param>
-        /// <returns>200 Transação criado</returns>
-        /// <returns>500 Erro inesperado</returns>
-        [HttpPut]
-        [Route("cancel/{idTransaction}")]
-        public async Task<IActionResult> CancelTransactionAsync([FromRoute] string idTransaction)
-        {
-            try
-            {
-                idTransaction.ValidateIdMongo("Transação");
-                var transactionDb = (_transactionService
-                    .GetByIdAsync(idTransaction).Result.Data as List<GetTransactionEventData>)
-                    .FirstOrDefault();
-                var transaction = transactionDb.GeTransactionToTransaction();
-                var resultQrcode = await _transactionService.CancelTransaction(transaction);
-                if (resultQrcode.Message != null && resultQrcode.Message.Any())
-                {
-                    _logger.LogInformation(resultQrcode.Message);
-                    return NotFound(resultQrcode.Message);
-                }
-
-                return Ok(resultQrcode.Data);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(MessageLogErrors.saveTransactionMessage, ex);
-                return StatusCode(500, MessageLogErrors.saveTransactionMessage);
-            }
+            return Ok(result.Data);
         }
     }
 }

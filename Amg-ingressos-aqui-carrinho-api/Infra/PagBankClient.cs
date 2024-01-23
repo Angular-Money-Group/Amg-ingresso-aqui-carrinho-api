@@ -2,282 +2,186 @@ using System.Text;
 using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Enum;
 using Newtonsoft.Json;
-using static System.Net.Mime.MediaTypeNames;
 using Microsoft.Extensions.Options;
-using Microsoft.Net.Http.Headers;
 using Amg_ingressos_aqui_carrinho_api.Dto.Pagbank;
 using Amg_ingressos_aqui_carrinho_api.Model.Pagbank;
 using Amg_ingressos_aqui_carrinho_api.Model.Pagbank.Callback;
 using Amg_ingressos_aqui_carrinho_api.Dto;
 using Amg_ingressos_aqui_carrinho_api.Model.Pagbank.Pix;
 using Amg_ingressos_aqui_carrinho_api.Model.Pagbank.Callback.Boleto;
+using Amg_ingressos_aqui_carrinho_api.Consts;
 
 namespace Amg_ingressos_aqui_carrinho_api.Infra
 {
     public class PagBankClient : ITransactionGatewayClient
     {
-        private IOptions<PaymentSettings> _config;
-        private MessageReturn _messageReturn;
-        private HttpClient _httpClient = new HttpClient();
-        private string _url;
-        public PagBankClient(IOptions<PaymentSettings> transactionDatabaseSettings)
+        private readonly IOptions<PaymentSettings> _config;
+        private readonly MessageReturn _messageReturn;
+        private readonly string _url;
+        private readonly ILogger<PagBankClient> _logger;
+
+        public PagBankClient(IOptions<PaymentSettings> transactionDatabaseSettings, ILogger<PagBankClient> logger)
         {
             _config = transactionDatabaseSettings;
             _messageReturn = new MessageReturn();
             _url = _config.Value.PagBankSettings.UrlApiHomolog + "/orders";
-
+            _logger = logger;
         }
 
-        public async Task<MessageReturn> PaymentSlipAsync(Transaction transaction, User user)
+        public Task<MessageReturn> PaymentSlip(Transaction transaction, User user)
         {
 
             try
             {
                 //cria pedido e paga
                 Request request = new RequestPagBankBoletoDto().TransactionToRequest(transaction, user);
-                Response response = new OperatorRest().SendRequestAsync(request,_url,_config.Value.PagBankSettings.TokenHomolog);
+                Response response = new OperatorRest().SendRequestAsync(request, _url, _config.Value.PagBankSettings.TokenHomolog);
 
-                if (!string.IsNullOrEmpty(response.Data))
+                if (string.IsNullOrEmpty(response.Data))
                 {
-                    var obj = JsonConvert.DeserializeObject<CallbackBoletoPagBank>(response.Data);
-                    transaction.PaymentIdService = obj.id;
+                    _messageReturn.Message = response.Message;
+                    transaction.Status = StatusPayment.ErrorPayment;
+                    transaction.Details = response.Message;
+                }
+
+                var obj = JsonConvert.DeserializeObject<CallbackBoletoPagBank>(response.Data) ?? new CallbackBoletoPagBank();
+                transaction.PaymentIdService = obj.Id;
+                _messageReturn.Data = "ok";
+                return Task.FromResult(_messageReturn);
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentSlip)));
+                throw;
+            }
+        }
+
+        public Task<MessageReturn> PaymentCreditCard(Transaction transaction, User user)
+        {
+            try
+            {
+                //valida cartao
+
+                //cria pedido e paga
+                Request request = new RequestPagBankCardDto().TransactionToRequest(transaction, user);
+                Response response = new OperatorRest().SendRequestAsync(request, _url, _config.Value.PagBankSettings.TokenHomolog);
+
+                if (string.IsNullOrEmpty(response.Data))
+                {
+                    _messageReturn.Message = response.Message;
+                    transaction.Status = StatusPayment.ErrorPayment;
+                    transaction.Details = response.Message;
+                }
+
+                var obj = JsonConvert.DeserializeObject<CallbackCreditCardPagBank>(response.Data) ?? new CallbackCreditCardPagBank();
+                if (obj.Charges[0].Status.ToUpper() == "DECLINED")
+                    _messageReturn.Message = obj.Charges[0].PaymentResponse.Message;
+                else
+                {
+                    transaction.PaymentIdService = obj.Id;
                     _messageReturn.Data = "ok";
                 }
-                else
-                {
-                    _messageReturn.Message = response.Message;
-                    transaction.Status = StatusPaymentEnum.ErrorPayment;
-                    transaction.Details = response.Message;
-                }
+
+                return Task.FromResult(_messageReturn);
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentCreditCard)));
                 throw;
             }
-
-            return _messageReturn;
         }
 
-        public async Task<MessageReturn> PaymentCreditCardAsync(Transaction transaction, User user)
+        public Task<MessageReturn> PaymentDebitCard(Transaction transaction, User user)
         {
             try
             {
                 //valida cartao
-                //var cardIsValid = ValidateCard(transaction).Result;
-
-                //if (!cardIsValid)
-                //throw new CreditCardNotValidExeption("cartao expirado");
 
                 //cria pedido e paga
                 Request request = new RequestPagBankCardDto().TransactionToRequest(transaction, user);
-                Response response = new OperatorRest().SendRequestAsync(request,_url,_config.Value.PagBankSettings.TokenHomolog);
+                Response response = new OperatorRest().SendRequestAsync(request, _url, _config.Value.PagBankSettings.TokenHomolog);
 
-                if (!string.IsNullOrEmpty(response.Data))
-                {
-                    var obj = JsonConvert.DeserializeObject<CallbackCreditCardPagBank>(response.Data);
-                    if(obj.charges.FirstOrDefault().status.ToUpper()=="DECLINED"){
-                        _messageReturn.Message = obj.charges.FirstOrDefault().payment_response.message;
-                    }
-                    else{
-                        transaction.PaymentIdService = obj.id;
-                        _messageReturn.Data = "ok";
-                    }
-                }
-                else
+                if (string.IsNullOrEmpty(response.Data))
                 {
                     _messageReturn.Message = response.Message;
-                    transaction.Status = StatusPaymentEnum.ErrorPayment;
+                    transaction.Status = StatusPayment.ErrorPayment;
                     transaction.Details = response.Message;
                 }
-            }
-            catch (System.Exception ex)
-            {
-                throw ex;
-            }
 
-            return _messageReturn;
-        }
-
-        public async Task<MessageReturn> PaymentDebitCardAsync(Transaction transaction, User user)
-        {
-            try
-            {
-                //valida cartao
-                //var cardIsValid = ValidateCard(transaction).Result;
-
-                //if (!cardIsValid)
-                //throw new CreditCardNotValidExeption("cartao expirado");
-
-                //cria pedido e paga
-                Request request = new RequestPagBankCardDto().TransactionToRequest(transaction, user);
-                Response response = new OperatorRest().SendRequestAsync(request,_url,_config.Value.PagBankSettings.TokenHomolog);
-
-                if (!string.IsNullOrEmpty(response.Data))
-                {
-                    var obj = JsonConvert.DeserializeObject<CallbackCreditCardPagBank>(response.Data);
-                    if(obj.charges.FirstOrDefault().status.ToUpper()=="DECLINED"){
-                        _messageReturn.Message = obj.charges.FirstOrDefault().payment_response.message;
-                    }
-                    else{
-                        transaction.PaymentIdService = obj.id;
-                        _messageReturn.Data = "Ok";
-                    }
-                }
+                var obj = JsonConvert.DeserializeObject<CallbackCreditCardPagBank>(response.Data) ?? new CallbackCreditCardPagBank();
+                if (obj.Charges[0].Status.ToUpper() == "DECLINED")
+                    _messageReturn.Message = obj.Charges[0].PaymentResponse.Message;
                 else
                 {
-                    _messageReturn.Message = response.Message;
-                    transaction.Status = StatusPaymentEnum.ErrorPayment;
-                    transaction.Details = response.Message;
+                    transaction.PaymentIdService = obj.Id;
+                    _messageReturn.Data = "Ok";
                 }
+
+                return Task.FromResult(_messageReturn);
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentDebitCard)));
                 throw;
             }
-
-            return _messageReturn;
         }
 
-        public async Task<MessageReturn> PaymentPixAsync(Transaction transaction, User user)
+        public Task<MessageReturn> PaymentPix(Transaction transaction, User user)
         {
             try
             {
                 //cria pedido e paga
                 Request request = new RequestPagBankPixDto().TransactionToRequest(transaction, user);
-                Response response = new OperatorRest().SendRequestAsync(request,_url,_config.Value.PagBankSettings.TokenHomolog);
+                Response response = new OperatorRest().SendRequestAsync(request, _url, _config.Value.PagBankSettings.TokenHomolog);
 
                 if (!string.IsNullOrEmpty(response.Data))
                 {
-                    var obj = JsonConvert.DeserializeObject<CallbackPixPagBank>(response.Data);
-                    transaction.PaymentIdService = obj.id;
-                    _messageReturn.Data = obj.qr_codes.FirstOrDefault()
-                                             .links.FirstOrDefault(i=> i.rel.Equals("QRCODE.PNG"))
-                                             .href;
-                }
-                else
-                {
                     StringBuilder messagejson = new StringBuilder();
-                    JsonConvert.DeserializeObject<CallbackErrorMessagePagBank>(response.Message).Error_messages.ForEach(x =>
+                    var messageError = JsonConvert.DeserializeObject<CallbackErrorMessagePagBank>(response.Message) ?? new CallbackErrorMessagePagBank();
+                    
+                    messageError.ErrorMessages.ForEach(x =>
                     {
-                        messagejson.Append(x.code + " = " + x.parameter_name + " -- Error:" + x.description + " : " + x.parameter_name);
+                        messagejson.Append(x.Code + " = " + x.ParameterName + " -- Error:" + x.Description + " : " + x.ParameterName);
                     });
                     response.Message = messagejson.ToString();
                     _messageReturn.Message = response.Message;
-                    transaction.Status = StatusPaymentEnum.ErrorPayment;
+                    transaction.Status = StatusPayment.ErrorPayment;
                     transaction.Details = response.Message;
                 }
+
+                var obj = JsonConvert.DeserializeObject<CallbackPixPagBank>(response.Data) ?? new CallbackPixPagBank();
+                transaction.PaymentIdService = obj.id;
+                _messageReturn.Data = obj.QrCodes[0]
+                                         .links.First(i => i.Rel.Equals("QRCODE.PNG"))
+                                         .Href;
+                return Task.FromResult(_messageReturn);
             }
-            catch (System.Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentDebitCard)));
                 throw;
             }
-
-            return _messageReturn;
         }
 
-        private string? TrataErroRetorno(HttpResponseMessage response)
+        public Task<MessageReturn> GetStatusPayment(string paymentId)
         {
-            string jsonContent = response.Content.ReadAsStringAsync().Result;
-            var obj = JsonConvert.DeserializeObject<CallbackErrorMessagePagBank>(response.ToString());
-            _messageReturn.Message = Consts.StatusCallbackCielo.NotAllowed;
-
-            return obj.ToString();
-            //valida retorno
-            /*switch (StatusCallbackCielo.SuccessfullyPerformedOperation)//obj.reference_id)
-            {
-                case StatusCallbackCielo.SuccessfullyPerformedOperation:
-                    _messageReturn.Data = Consts.StatusCallbackCielo.SuccessfullyPerformedOperation;
-                    transaction.Status = StatusPaymentEnum.Aproved;
-                    transaction.Details = Consts.StatusCallbackCielo.SuccessfullyPerformedOperation;
-                    break;
-                case StatusCallbackCielo.NotAllowed:
-                    _messageReturn.Message = Consts.StatusCallbackCielo.NotAllowed;
-                    transaction.Status = StatusPaymentEnum.ErrorPayment;
-                    transaction.Details = Consts.StatusCallbackCielo.NotAllowed;
-                    break;
-                case StatusCallbackCielo.ExpiredCard:
-                    _messageReturn.Message = Consts.StatusCallbackCielo.ExpiredCard;
-                    transaction.Status = StatusPaymentEnum.ErrorPayment;
-                    transaction.Details = Consts.StatusCallbackCielo.ExpiredCard;
-                    break;
-                case StatusCallbackCielo.BlockedCard:
-                    _messageReturn.Message = Consts.StatusCallbackCielo.BlockedCard;
-                    transaction.Status = StatusPaymentEnum.ErrorPayment;
-                    transaction.Details = Consts.StatusCallbackCielo.BlockedCard;
-                    break;
-                case StatusCallbackCielo.TimeOut:
-                    _messageReturn.Message = Consts.StatusCallbackCielo.TimeOut;
-                    transaction.Status = StatusPaymentEnum.ErrorPayment;
-                    transaction.Details = Consts.StatusCallbackCielo.TimeOut;
-                    break;
-                case StatusCallbackCielo.CanceledCard:
-                    _messageReturn.Message = Consts.StatusCallbackCielo.CanceledCard;
-                    transaction.Status = StatusPaymentEnum.ErrorPayment;
-                    transaction.Details = Consts.StatusCallbackCielo.CanceledCard;
-                    break;
-                case StatusCallbackCielo.CreditCardProblems:
-                    _messageReturn.Message = Consts.StatusCallbackCielo.CreditCardProblems;
-                    transaction.Status = StatusPaymentEnum.ErrorPayment;
-                    transaction.Details = Consts.StatusCallbackCielo.CreditCardProblems;
-                    break;
-                case StatusCallbackCielo.SuccessfullyPerformedOperation2:
-                    _messageReturn.Data = Consts.StatusCallbackCielo.SuccessfullyPerformedOperation;
-                    transaction.Status = StatusPaymentEnum.Aproved;
-                    transaction.Details = Consts.StatusCallbackCielo.SuccessfullyPerformedOperation;
-                    break;
-            }*/
-        }     
-
-        private async Task<bool> ValidateCard(Transaction transactionJson)
-        {
-            Request requestCartao = new Request
-            {
-                Data = System.Text.Json.JsonSerializer.Serialize(
-                     new PaymentCard()
-                     {
-                         number = "5590800827578129",
-                         exp_month = "04",
-                         exp_year = "2024",
-                         security_code = "123",
-                         holder = new Model.Holder()
-                         {
-                             name = "Jose da Silva"
-                         }
-                     })
-            };
-
             try
             {
-                var requestMessage = new HttpRequestMessage(
-                    HttpMethod.Post,
-                    "https://sandbox.api.pagseguro.com/tokens/cards"
-                );
-                requestMessage.Headers.Add("Accept", "*/*");
-                requestMessage.Headers.Add("Accept-Encoding", "gzip, deflate, br");
-                requestMessage.Headers.Add("Connection", "keep-alive");
-                requestMessage.Headers.Add("Authorization", _config.Value.PagBankSettings.TokenHomolog);
-                var requestJson = new StringContent(requestCartao.Data,
-                    Encoding.UTF8,
-                    Application.Json
-                );
-                requestMessage.Content = requestJson;
+                Request request = new Request() { Data = paymentId };
+                var url = Settings.PagbankStatusPayment + paymentId;
+                Response response = new OperatorRest().SendRequestAsync(request, url, _config.Value.PagBankSettings.TokenHomolog);
 
-                using var httpResponseMessage = _httpClient.Send(requestMessage);
+                if (string.IsNullOrEmpty(response.Data))
+                    _messageReturn.Message = response.Message;
+                _messageReturn.Data = response.Data;
 
-                string jsonContent = httpResponseMessage.Content.ReadAsStringAsync().Result;
-
-                var result = httpResponseMessage.EnsureSuccessStatusCode();
-
-                var response = new Response();
-                if (httpResponseMessage.StatusCode == System.Net.HttpStatusCode.OK)
-                    return true;
-                else
-                    return false;
-
+                return Task.FromResult(_messageReturn);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                throw ex;
+                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentDebitCard)));
+                throw;
             }
         }
     }

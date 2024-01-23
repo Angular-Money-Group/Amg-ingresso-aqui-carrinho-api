@@ -1,15 +1,32 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
 {
     public class Phone
     {
-        public string country { get; set; }
-        public string area { get; set; }
-        public string number { get; set; }
-        public string type { get; set; }
+        public Phone()
+        {
+            Country = string.Empty;
+            Area = string.Empty;
+            Number = string.Empty;
+            Type = string.Empty;
+        }
+
+        [JsonProperty("country")]
+        [JsonPropertyName("country")]
+        public string Country { get; set; }
+
+        [JsonProperty("area")]
+        [JsonPropertyName("area")]
+        public string Area { get; set; }
+
+        [JsonProperty("number")]
+        [JsonPropertyName("number")]
+        public string Number { get; set; }
+
+        [JsonProperty("type")]
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
     }
 }

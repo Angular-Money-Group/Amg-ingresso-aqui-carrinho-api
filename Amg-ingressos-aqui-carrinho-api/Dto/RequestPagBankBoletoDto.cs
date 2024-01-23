@@ -1,80 +1,110 @@
+using System.Text.Json.Serialization;
 using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Model.Pagbank;
+using Newtonsoft.Json;
 using Customer = Amg_ingressos_aqui_carrinho_api.Model.Pagbank.Customer;
 
 namespace Amg_ingressos_aqui_carrinho_api.Dto.Pagbank
 {
     public class RequestPagBankBoletoDto
     {
-        public string reference_id { get; set; }
-        public Customer customer { get; set; }
-        public List<Item> items { get; set; }
-        public Shipping shipping { get; set; }
-        public List<string> notification_urls { get; set; }
-        public List<Charge> charges { get; set; }
+
+        public RequestPagBankBoletoDto()
+        {
+            ReferenceId = string.Empty;
+            Customer = new Customer();
+            Items = new List<Item>();
+            Shipping = new Shipping();
+            NotificationUrls = new List<string>();
+            Charges = new List<Charge>();
+        }
+
+        [JsonProperty("reference_id")]
+        [JsonPropertyName("reference_id")]
+        public string ReferenceId { get; set; }
+
+        [JsonProperty("customer")]
+        [JsonPropertyName("customer")]
+        public Customer Customer { get; set; }
+
+        [JsonProperty("items")]
+        [JsonPropertyName("items")]
+        public List<Item> Items { get; set; }
+
+        [JsonProperty("shipping")]
+        [JsonPropertyName("shipping")]
+        public Shipping Shipping { get; set; }
+
+        [JsonProperty("notification_urls")]
+        [JsonPropertyName("notification_urls")]
+        public List<string> NotificationUrls { get; set; }
+
+        [JsonProperty("charges")]
+        [JsonPropertyName("charges")]
+        public List<Charge> Charges { get; set; }
 
         public Request TransactionToRequest(Transaction transaction, User user)
         {
             RequestPagBankBoletoDto request = new RequestPagBankBoletoDto()
             {
-                customer = new Customer()
+                Customer = new Customer()
                 {
-                    email = user.Contact.Email,
-                    name = user.Name,
-                    phones = new List<Phone>(){
+                    Email = user.Contact.Email ?? string.Empty,
+                    Name = user.Name,
+                    Phones = new List<Phone>(){
                         new Phone(){
-                            area=user.Contact.PhoneNumber.Substring(0,2),
-                            country="55",
-                            number=user.Contact.PhoneNumber.Substring(2,(user.Contact.PhoneNumber.Length-2)),
-                            type="MOBILE"
+                            Area = user.Contact?.PhoneNumber?.Substring(0,2) ?? string.Empty,
+                            Country ="55",
+                            Number = user.Contact?.PhoneNumber?.Substring(2,(user.Contact.PhoneNumber.Length-2)) ??string.Empty,
+                            Type = "MOBILE"
                         }
                     },
-                    tax_id = user.DocumentId
+                    TaxId = user.DocumentId
                 },
-                items = new List<Item>(){
+                Items = new List<Item>(){
                     new Item(){
-                        name = "Ingresso",
-                        quantity = 1,
-                        reference_id = transaction.Id,
-                        unit_amount = (int)transaction.TotalValue
+                        Name = "Ingresso",
+                        Quantity = 1,
+                        ReferenceId = transaction.Id,
+                        UnitAmount = (int)transaction.TotalValue
                     }
                 },
-                reference_id = transaction.Id,
-                charges = new List<Charge>(){
+                ReferenceId = transaction.Id,
+                Charges = new List<Charge>(){
                     new Charge(){
-                        amount = new Amount(){
-                            value= (int)transaction.TotalValue,
-                            currency = "BRL"
+                        Amount = new Amount(){
+                            Value= (int)transaction.TotalValue,
+                            Currency = "BRL"
                         },
-                        reference_id = transaction.Id,
-                        description="Ingressos",
-                        notification_urls=new List<string>(),
-                        payment_method= new Model.Pagbank.PaymentMethod(){
-                            capture=true,
-                            boleto = new Boleto(){
+                        ReferenceId = transaction.Id,
+                        Description="Ingressos",
+                        NotificationUrls=new List<string>(),
+                        PaymentMethod= new Model.Pagbank.PaymentMethod(){
+                            Capture=true,
+                            Boleto = new Boleto(){
                                 due_date = DateTime.Now.ToString("yyyy-MM-dd"),
-                                instruction_lines = new InstructionLines(){
-                                    line_1 = "Pagamento processado para DESC Fatura",
-                                    line_2 = "via Pagseguro"
+                                InstructionLines = new InstructionLines(){
+                                    Line1 = "Pagamento processado para DESC Fatura",
+                                    Line2 = "via Pagseguro"
                                 },
-                                holder = new Model.Pagbank.Holder(){
-                                    address = new Model.Pagbank.Address(){
-                                        country= "Brasil",
-                                        region= user.Address.State,
-                                        region_code= user.Address.State,
-                                        city= user.Address.City,
-                                        postal_code= user.Address.Cep,
-                                        street= user.Address.AddressDescription,
-                                        number= user.Address.Number,
-                                        locality= user.Address.Neighborhood
+                                Holder = new Model.Pagbank.Holder(){
+                                    Address = new Model.Pagbank.Address(){
+                                        Country= "Brasil",
+                                        Region= user.Address.State ?? string.Empty,
+                                        RegionCode= user.Address.State ?? string.Empty,
+                                        City= user.Address.City ?? string.Empty,
+                                        PostalCode= user.Address.Cep ?? string.Empty,
+                                        Street= user.Address.AddressDescription ?? string.Empty,
+                                        Number= user.Address.Number ?? string.Empty,
+                                        Locality= user.Address.Neighborhood ?? string.Empty
                                     },
-                                    email=user.Contact.Email,
-                                    name=user.Name,
-                                    tax_id= user.DocumentId
+                                    Email=user.Contact?.Email ?? string.Empty,
+                                    Name=user.Name,
+                                    TaxId= user.DocumentId
                                 }
                             },
-                            installments= 1,
-                            type="BOLETO"
+                            Installments= 1,
+                            Type="BOLETO"
                         }
                     }
                 }
