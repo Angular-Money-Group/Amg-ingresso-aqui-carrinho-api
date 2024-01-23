@@ -56,6 +56,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 await _transactionService.SaveAsync(transactionModel);
                 await _transactionItenService.ProcessSaveTransactionItens(transactionModel.Id, transactionDto.TransactionItensDto, listTickets);
 
+                _messageReturn.Data = transactionModel;
                 return _messageReturn;
             }
             catch (Exception ex)
