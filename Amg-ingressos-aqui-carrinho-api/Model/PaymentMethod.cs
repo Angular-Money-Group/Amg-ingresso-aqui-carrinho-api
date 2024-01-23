@@ -1,9 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using Amg_ingressos_aqui_carrinho_api.Enum;
 using Amg_ingressos_aqui_carrinho_api.Model.Pagbank;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Amg_ingressos_aqui_carrinho_api.Model
 {
+    [BsonIgnoreExtraElements]
     public class PaymentMethod
     {
         public PaymentMethod()
