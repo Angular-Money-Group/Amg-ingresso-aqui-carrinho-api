@@ -3,6 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Amg_ingressos_aqui_carrinho_api.Model
 {
+    [BsonIgnoreExtraElements]
     public class TransactionIten
     {
         public TransactionIten()
