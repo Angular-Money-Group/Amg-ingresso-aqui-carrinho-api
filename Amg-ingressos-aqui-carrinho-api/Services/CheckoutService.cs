@@ -193,7 +193,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                         Id = ticketUserDto.Id,
                         IdLot = ticketUserDto.IdLot,
                         IdUser = string.IsNullOrEmpty(ticketUserDto.User.Id)? null: ticketUserDto.User.Id,
-                        IsSold = ticketUserDto.isSold,
+                        IsSold = true,
                         Position = ticketUserDto.Position,
                         Value = ticketUserDto.Value,
                         Status = (int)StatusTicket.Vendido,

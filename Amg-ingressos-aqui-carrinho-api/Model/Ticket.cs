@@ -77,6 +77,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// <summary>
         /// Indica se o ticket é cortesia
         /// </summary>
-        public bool ticketCortesia { get; set; }
+        public bool TicketCortesia { get; set; }
     }
 }
