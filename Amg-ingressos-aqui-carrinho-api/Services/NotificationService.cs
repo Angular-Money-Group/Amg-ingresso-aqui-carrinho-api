@@ -6,7 +6,6 @@ using static System.Net.Mime.MediaTypeNames;
 using Microsoft.Net.Http.Headers;
 using Amg_ingressos_aqui_carrinho_api.Dto;
 using Amg_ingressos_aqui_carrinho_api.Consts;
-using Amg_ingressos_aqui_carrinho_api.Exceptions;
 
 namespace Amg_ingressos_aqui_carrinho_api.Services
 {
@@ -46,7 +45,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(SaveAsync)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(SaveAsync)), ex);
                 throw;
             }
         }
@@ -57,26 +56,26 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             {
                 var notification = new NotificationEmailTicketDto()
                 {
-                    AddressEvent = ticketEventDto.Event.Address.AddressDescription
+                    AddressEvent = ticketEventDto?.Event?.Address?.AddressDescription
                         + " - "
-                        + ticketEventDto.Event.Address.Number
+                        + ticketEventDto?.Event?.Address?.Number
                         + " - "
-                        + ticketEventDto.Event.Address.Neighborhood
+                        + ticketEventDto?.Event?.Address?.Neighborhood
                         + " - "
-                        + ticketEventDto.Event.Address.City
+                        + ticketEventDto?.Event?.Address?.City
                         + " - "
-                        + ticketEventDto.Event.Address.State,
-                    EndDateEvent = ticketEventDto.Event.EndDate.ToString(),
-                    EventName = ticketEventDto.Event.Name,
-                    LocalEvent = ticketEventDto.Event.Local,
+                        + ticketEventDto?.Event?.Address?.State,
+                    EndDateEvent = ticketEventDto?.Event?.EndDate.ToString() ?? string.Empty,
+                    EventName = ticketEventDto?.Event?.Name ?? string.Empty,
+                    LocalEvent = ticketEventDto?.Event?.Local ?? string.Empty,
                     Sender = "suporte@ingressosaqui.com",
-                    StartDateEvent = ticketEventDto.Event.StartDate.ToString(),
+                    StartDateEvent = ticketEventDto?.Event?.StartDate.ToString() ?? string.Empty,
                     Subject = "Ingressos",
                     To = ticketUserDto.User.Email,
                     TypeTicket = halfprice ? "Meia Entrada" : "Inteira",
                     UrlQrCode = urlQrCode,
                     UserName = ticketUserDto.User.Name,
-                    VariantName = ticketEventDto.Variant.Name,
+                    VariantName = ticketEventDto?.Variant?.Name ?? string.Empty,
                 };
 
                 _ = await SaveAsync(notification);
@@ -85,7 +84,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(ProcessEmailTicketAsync)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(ProcessEmailTicketAsync)), ex);
                 throw;
             }
         }

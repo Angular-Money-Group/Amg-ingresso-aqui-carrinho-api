@@ -32,7 +32,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(DeleteByIdTransaction)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(DeleteByIdTransaction)), ex);
                 throw;
             }
         }
@@ -47,7 +47,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(GetByIdTransaction)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(GetByIdTransaction)), ex);
                 throw;
             }
         }
@@ -62,7 +62,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(GetByIdTransaction)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(GetByIdTransaction)), ex);
                 throw;
             }
         }
@@ -95,7 +95,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(ProcessSaveTransactionItens)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(ProcessSaveTransactionItens)), ex);
                 throw;
             }
 

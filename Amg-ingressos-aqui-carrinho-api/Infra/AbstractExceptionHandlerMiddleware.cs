@@ -4,12 +4,10 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
 {
     public abstract class AbstractExceptionHandlerMiddleware
     {
-        private readonly ILogger _logger;
         private readonly RequestDelegate _next;
 
-        protected AbstractExceptionHandlerMiddleware(ILogger logger, RequestDelegate next)
+        protected AbstractExceptionHandlerMiddleware(RequestDelegate next)
         {
-            _logger = logger;
             _next = next;
         }
 
@@ -36,7 +34,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             catch (Exception exception)
             {
                 // log the error
-                _logger.LogError(exception, "error during executing {Context}", context.Request.Path.Value);
                 var response = context.Response;
                 response.ContentType = "application/json";
 

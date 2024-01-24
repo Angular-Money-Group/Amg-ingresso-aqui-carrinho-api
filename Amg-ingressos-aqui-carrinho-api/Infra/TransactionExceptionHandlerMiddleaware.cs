@@ -7,9 +7,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
 {
     public class TransactionExceptionHandlerMiddleaware : AbstractExceptionHandlerMiddleware
     {
-        public TransactionExceptionHandlerMiddleaware(
-            ILogger<TransactionExceptionHandlerMiddleaware> logger,
-            RequestDelegate next) : base(logger, next)
+        public TransactionExceptionHandlerMiddleaware(RequestDelegate next) : base(next)
         {
 
         }

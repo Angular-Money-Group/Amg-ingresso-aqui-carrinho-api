@@ -30,7 +30,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 transactionClient = new CieloClient(transactionDatabaseSettings, loggerCielo);
 
             _userService = userService;
-            _messageReturn = new Model.MessageReturn();
+            _messageReturn = new MessageReturn();
             _logger = logger;
         }
 
@@ -58,7 +58,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(Payment)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(Payment)), ex);
                 throw;
             }
         }
@@ -72,7 +72,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(GetStatusPayment)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(GetStatusPayment)), ex);
                 throw;
             }
         }

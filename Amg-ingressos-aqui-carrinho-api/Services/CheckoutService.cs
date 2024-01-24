@@ -50,9 +50,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 transactionModel.Stage = StageTransaction.Confirm;
 
                 var listTickets = await _ticketService.ReservTicketsAsync(transactionDto);
-                if(!listTickets.Any())
-                    throw new RuleException("Nenhum ingresso disponível");
-
                 await _transactionService.SaveAsync(transactionModel);
                 await _transactionItenService.ProcessSaveTransactionItens(transactionModel.Id, transactionDto.TransactionItensDto, listTickets);
 
@@ -61,7 +58,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(ProcessSaveAsync)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(ProcessSaveAsync)),ex);
                 throw;
             }
         }
@@ -90,7 +87,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(UpdateTransactionPersonDataAsync)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(UpdateTransactionPersonDataAsync)), ex);
                 throw;
             }
         }
@@ -116,7 +113,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(UpdateTransactionTicketsDataAsync)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(UpdateTransactionTicketsDataAsync)), ex);
                 throw;
             }
         }
@@ -145,7 +142,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(UpdateTransactionPaymentDataAsync)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(UpdateTransactionPaymentDataAsync)), ex);
                 throw;
             }
         }
@@ -170,7 +167,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentTransactionAsync)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentTransactionAsync)), ex);
                 throw;
             }
         }
@@ -212,7 +209,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(FinishedTransactionAsync)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(FinishedTransactionAsync)), ex);
                 throw;
             }
         }
@@ -231,7 +228,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(CancelTransactionAsync)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(CancelTransactionAsync)), ex);
                 throw;
             }
         }
@@ -255,7 +252,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(GeneratePixQRcode)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(GeneratePixQRcode)), ex);
                 throw;
             }
         }
@@ -275,7 +272,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(GetStatusPixPaymentAsync)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(GetStatusPixPaymentAsync)), ex);
                 throw;
             }
         }
@@ -296,7 +293,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(Payment)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(Payment)), ex);
                 throw;
             }
             finally
