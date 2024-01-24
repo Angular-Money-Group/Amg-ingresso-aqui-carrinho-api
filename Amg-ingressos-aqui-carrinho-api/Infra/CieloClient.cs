@@ -115,7 +115,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentCreditCard)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentCreditCard)), ex);
                 throw;
             }
         }
@@ -207,7 +207,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(ValidateCard)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(ValidateCard)), ex);
                 throw;
             }
         }
@@ -239,7 +239,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentPix)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentPix)), ex);
                 throw;
             }
         }
@@ -303,7 +303,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentSlip)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentSlip)), ex);
                 throw;
             }
         }
@@ -323,7 +323,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(ValidateCard)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(ValidateCard)), ex);
                 throw;
             }
         }
@@ -344,7 +344,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentDebitCard)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentDebitCard)), ex);
                 throw;
             }
         }

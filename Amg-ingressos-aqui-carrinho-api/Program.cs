@@ -71,7 +71,6 @@ app.UseCors(x => x
                 .AllowCredentials());
 
 app.UseAuthorization();
-
 app.MapControllers();
-
+app.UseMiddleware<TransactionExceptionHandlerMiddleaware>();
 app.Run();

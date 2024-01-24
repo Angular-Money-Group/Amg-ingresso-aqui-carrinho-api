@@ -69,16 +69,16 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     //retorna todos tickets para o idLote
                     var lstTickets = GetTicketsByLotAsync(i.IdLot).Result;
 
-                    if (lstTickets != null && !lstTickets.Any())
+                    if (lstTickets == null)
                         throw new RuleException("Erro ao buscar Ingressos");
 
-                    if (lstTickets?.Count == 0 || lstTickets?.Count < i.AmountTicket)
+                    if (!lstTickets.Any() && lstTickets.Count < i.AmountTicket)
                         throw new SaveException("Número de ingressos inválido");
 
                     //pra cada compra carimbar o ticket
                     for (int amount = 0; amount < i.AmountTicket; amount++)
                     {
-                        Ticket ticket = lstTickets?.Find(i => !i.IsSold) ?? throw new RuleException("ticket não encontrado.");
+                        Ticket ticket = lstTickets.Find(i => !i.IsSold) ?? throw new RuleException("ticket não encontrado.");
 
                         if (ticket.Value <= 0)
                             throw new SaveException("Valor do Ingresso inválido.");
@@ -86,7 +86,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                         //atualiza Ticket
                         ticket.IdUser = transactionDto.IdUser;
                         ticket.Status = Enum.StatusTicket.Reservado;
-                        _ = UpdateTicketsAsync(ticket);
+                        if (!UpdateTicketsAsync(ticket).Result)
+                            throw new RuleException("Erro ao atualizar ticket");
+
                         listTicket.Add(ticket);
                     }
                 });
@@ -95,7 +97,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(ReservTicketsAsync)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(ReservTicketsAsync)), ex);
                 throw;
             }
         }

@@ -26,7 +26,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(GenerateQrCode)));
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(GenerateQrCode)), ex);
                 throw;
             }
         }
