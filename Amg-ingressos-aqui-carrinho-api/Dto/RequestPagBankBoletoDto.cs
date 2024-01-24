@@ -82,7 +82,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto.Pagbank
                         PaymentMethod= new Model.Pagbank.PaymentMethod(){
                             Capture=true,
                             Boleto = new Boleto(){
-                                due_date = DateTime.Now.ToString("yyyy-MM-dd"),
+                                DueDate = DateTime.Now.ToString("yyyy-MM-dd"),
                                 InstructionLines = new InstructionLines(){
                                     Line1 = "Pagamento processado para DESC Fatura",
                                     Line2 = "via Pagseguro"

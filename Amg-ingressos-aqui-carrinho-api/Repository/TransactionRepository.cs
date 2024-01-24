@@ -99,14 +99,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
                     transactionMongo => transactionMongo.PaymentMethod,
                     transaction.PaymentMethod
                 )
-                .Set(
-                    transactionMongo => transactionMongo.PaymentMethodPix,
-                    transaction.PaymentMethodPix
-                )
-                .Set(
-                    transactionMongo => transactionMongo.PaymentPix,
-                    transaction.PaymentPix
-                )
                 .Set(transactionMongo => transactionMongo.IdPerson, transaction.IdPerson)
                 .Set(transactionMongo => transactionMongo.Stage, transaction.Stage)
                 .Set(transactionMongo => transactionMongo.Tax, transaction.Tax)

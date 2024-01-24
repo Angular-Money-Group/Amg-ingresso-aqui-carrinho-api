@@ -217,7 +217,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             try
             {
 
-                var transactionToJson = transaction.PaymentMethodPix;
+                var transactionToJson ="";
 
                 Request request = new Request() { Data = System.Text.Json.JsonSerializer.Serialize(transactionToJson) };
                 Response response = new OperatorRest().SendRequestAsync(request, _url, _config.Value.CieloSettings.MerchantIdHomolog);

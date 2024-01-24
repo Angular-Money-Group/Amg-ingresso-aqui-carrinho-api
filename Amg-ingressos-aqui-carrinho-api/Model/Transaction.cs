@@ -17,8 +17,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
             ReturnUrl = string.Empty;
             PaymentIdService = string.Empty;
             Details = string.Empty;
-            PaymentPix = new CallbackPix();
-            PaymentMethodPix = new PaymentMethodPix();
         }
 
         /// <summary>
@@ -45,18 +43,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// </summary>
 
         public PaymentMethod PaymentMethod { get; set; }
-
-        /// <summary>
-        /// Meio de pagamento
-        /// </summary>
-
-        public PaymentMethodPix PaymentMethodPix { get; set; }
-
-        /// <summary>
-        /// Meio de pagamento
-        /// </summary>
-
-        public CallbackPix PaymentPix { get; set; }
 
         /// <summary>
         /// Taxa de Compra

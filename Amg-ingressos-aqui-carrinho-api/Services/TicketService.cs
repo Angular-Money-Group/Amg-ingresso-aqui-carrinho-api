@@ -4,6 +4,7 @@ using Amg_ingressos_aqui_carrinho_api.Dto;
 using Amg_ingressos_aqui_carrinho_api.Exceptions;
 using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
+using MongoDB.Bson;
 using Newtonsoft.Json;
 using static System.Net.Mime.MediaTypeNames;
 using JsonSerializer = System.Text.Json.JsonSerializer;
@@ -49,14 +50,17 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             return JsonConvert.DeserializeObject<TicketEventDataDto>(jsonContent) ?? throw new RuleException("erro ao buscar tickets.");
         }
 
-        public async Task<bool> UpdateTicketsAsync(Ticket ticket)
+        public async Task<bool> EditTicketsAsync(Ticket ticket)
         {
             var ticketJson = new StringContent(JsonSerializer.Serialize(ticket), Encoding.UTF8, Application.Json);
             var url = Settings.TicketServiceApi;
             var uri = string.Format(Settings.UriUpdateTicket, ticket.Id);
 
-            await _httpClient.PutAsync(url + uri, ticketJson);
-            return true;
+            var result = await _httpClient.PutAsync(url + uri, ticketJson);
+            if (result.IsSuccessStatusCode)
+                return true;
+            else
+                return false;
         }
 
         public Task<List<Ticket>> ReservTicketsAsync(TransactionDto transactionDto)
@@ -86,7 +90,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                         //atualiza Ticket
                         ticket.IdUser = transactionDto.IdUser;
                         ticket.Status = Enum.StatusTicket.Reservado;
-                        if (!UpdateTicketsAsync(ticket).Result)
+                        if (!EditTicketsAsync(ticket).Result)
                             throw new RuleException("Erro ao atualizar ticket");
 
                         listTicket.Add(ticket);

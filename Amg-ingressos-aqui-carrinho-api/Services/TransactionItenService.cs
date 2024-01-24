@@ -37,13 +37,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
         }
 
-        public Task<MessageReturn> GetByIdTransaction(string idTransaction)
+        public async Task<MessageReturn> GetByIdTransaction(string idTransaction)
         {
             try
             {
                 idTransaction.ValidateIdMongo("idTransaction");
-                _messageReturn.Data = _transactionItenRepository.GetByIdTransaction<TransactionIten>(idTransaction);
-                return Task.FromResult(_messageReturn);
+                _messageReturn.Data = await _transactionItenRepository.GetByIdTransaction<TransactionIten>(idTransaction);
+                return _messageReturn;
             }
             catch (Exception ex)
             {
