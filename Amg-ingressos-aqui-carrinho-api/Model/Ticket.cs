@@ -12,7 +12,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         {
             Id = string.Empty;
             IdLot = string.Empty;
-            IdUser = string.Empty;
+            IdUser = null;
             QrCode = string.Empty;
             Position = string.Empty;
             IdColab = string.Empty;
@@ -36,7 +36,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// Id mongo Usuário
         /// </summary>
         [BsonRepresentation(BsonType.ObjectId)]
-        public string IdUser { get; set; }
+        public string? IdUser { get; set; }
 
         /// <summary>
         /// Posicao

@@ -7,7 +7,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
     {
         public Boleto()
         {
-            due_date = string.Empty;
+            DueDate = string.Empty;
             InstructionLines = new InstructionLines();
             Holder = new Holder();
             Id = string.Empty;
@@ -15,9 +15,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
             FormattedBarcode = string.Empty;
         }
 
-        [JsonProperty("id")]
-        [JsonPropertyName("id")]
-        public string due_date { get; set; }
+        [JsonProperty("due_date")]
+        [JsonPropertyName("due_date")]
+        public string DueDate { get; set; }
 
         [JsonProperty("instruction_lines")]
         [JsonPropertyName("instruction_lines")]

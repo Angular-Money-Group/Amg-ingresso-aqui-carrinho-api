@@ -40,7 +40,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// Flag Posicoes
         /// </summary>
         [Required]
-        [JsonProperty("Positions")]
+        [JsonProperty("HasPositions")]
         public bool HasPositions { get; set; }
         /// <summary>
         /// status variante

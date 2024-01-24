@@ -58,7 +58,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(ProcessSaveAsync)),ex);
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(ProcessSaveAsync)), ex);
                 throw;
             }
         }
@@ -161,6 +161,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
 
                 await Payment(transaction);
                 transaction.Stage = StageTransaction.PaymentTransaction;
+                transaction.Status = StatusPayment.Aproved;
                 await _transactionService.EditAsync(transaction);
                 _messageReturn.Data = "ok";
                 return _messageReturn;
@@ -176,12 +177,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         {
             try
             {
+                idTransaction.ValidateIdMongo("Transação");
                 var transactionDb = _transactionService.GetByIdAsync(idTransaction).Result.ToObject<TransactionComplet>();
                 var transaction = new TransactionCompletDto().ModelToDto(transactionDb);
 
-                transaction.Id.ValidateIdMongo("Transação");
+
                 transaction.TransactionItens = _transactionItenService.GetByIdTransaction(transaction.Id).Result.ToListObject<TransactionIten>();
-                transaction.TransactionItens.ForEach(async i =>
+                foreach (var i in transaction.TransactionItens)
                 {
                     var ticketUserDto = await _ticketService.GetTicketByIdDataUserAsync(i.IdTicket);
                     var nameImagem = await _qrCodeService.GenerateQrCode(i.IdTicket);
@@ -190,17 +192,19 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     {
                         Id = ticketUserDto.Id,
                         IdLot = ticketUserDto.IdLot,
-                        IdUser = ticketUserDto.User.Id,
+                        IdUser = string.IsNullOrEmpty(ticketUserDto.User.Id)? null: ticketUserDto.User.Id,
                         IsSold = ticketUserDto.isSold,
                         Position = ticketUserDto.Position,
                         Value = ticketUserDto.Value,
                         Status = (int)StatusTicket.Vendido,
                         QrCode = Settings.HostImg + nameImagem
                     };
-                    await _ticketService.UpdateTicketsAsync(ticket);
+                    if(!await _ticketService.EditTicketsAsync(ticket))
+                        throw new RuleException("Erro ao editar ticket");
+
                     var ticketEventDto = await _ticketService.GetTicketByIdDataEventAsync(ticketUserDto.Id);
                     await _notificationService.ProcessEmailTicketAsync(ticketUserDto, ticketEventDto, ticket.QrCode, i.HalfPrice);
-                });
+                }
 
                 transaction.Status = StatusPayment.Finished;
                 transaction.Stage = StageTransaction.Finished;
@@ -244,7 +248,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     throw new PaymentTransactionException(_messageReturn.Message);
 
                 transaction.Stage = StageTransaction.PaymentTransaction;
-                transaction.PaymentPix = _messageReturn.ToObject<CallbackPix>();
                 transaction.Status = StatusPayment.Pending;
 
                 await _transactionService.EditAsync(transaction);
@@ -287,18 +290,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 if (_messageReturn.Message != null && _messageReturn.Message.Any())
                     throw new PaymentTransactionException(_messageReturn.Message);
 
-                transaction.Stage = StageTransaction.PaymentTransaction;
-                transaction.Status = StatusPayment.Aproved;
+
                 return _messageReturn;
             }
             catch (Exception ex)
             {
                 _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(Payment)), ex);
                 throw;
-            }
-            finally
-            {
-                await _transactionService.EditAsync(transaction);
             }
         }
     }

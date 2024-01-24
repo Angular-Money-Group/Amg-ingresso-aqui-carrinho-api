@@ -28,8 +28,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
                 IdPerson = transactionData.IdPerson,
                 PaymentIdService = transactionData.PaymentIdService,
                 PaymentMethod = transactionData.PaymentMethod,
-                PaymentMethodPix = transactionData.PaymentMethodPix,
-                PaymentPix = transactionData.PaymentPix,
                 ReturnUrl = transactionData.ReturnUrl,
                 Stage = transactionData.Stage,
                 Status = transactionData.Status,

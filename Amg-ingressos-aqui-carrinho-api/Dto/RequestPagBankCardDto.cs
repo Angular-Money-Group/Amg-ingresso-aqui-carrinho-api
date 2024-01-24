@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using Amg_ingressos_aqui_carrinho_api.Enum;
 using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Model.Pagbank;
+using MongoDB.Bson;
 using Newtonsoft.Json;
 using Customer = Amg_ingressos_aqui_carrinho_api.Model.Pagbank.Customer;
 using Holder = Amg_ingressos_aqui_carrinho_api.Model.Pagbank.Holder;
@@ -27,31 +28,31 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto.Pagbank
         [JsonPropertyName("reference_id")]
         public string ReferenceId { get; set; }
 
-        [JsonProperty("reference_id")]
-        [JsonPropertyName("reference_id")]
+        [JsonProperty("customer")]
+        [JsonPropertyName("customer")]
         public Customer Customer { get; set; }
 
-        [JsonProperty("reference_id")]
-        [JsonPropertyName("reference_id")]
+        [JsonProperty("items")]
+        [JsonPropertyName("items")]
         public List<Item> Items { get; set; }
 
-        [JsonProperty("reference_id")]
-        [JsonPropertyName("reference_id")]
+        [JsonProperty("qr_codes")]
+        [JsonPropertyName("qr_codes")]
         [System.Text.Json.Serialization.JsonIgnore]
         public List<QrCode> QrCodes { get; set; }
 
         [System.Text.Json.Serialization.JsonIgnore]
-        [JsonProperty("reference_id")]
-        [JsonPropertyName("reference_id")]
+        [JsonProperty("shipping")]
+        [JsonPropertyName("shipping")]
         public Shipping Shipping { get; set; }
 
         [System.Text.Json.Serialization.JsonIgnore]
-        [JsonProperty("reference_id")]
-        [JsonPropertyName("reference_id")]
+        [JsonProperty("notification_urls")]
+        [JsonPropertyName("notification_urls")]
         public List<string> NotificationUrls { get; set; }
 
-        [JsonProperty("reference_id")]
-        [JsonPropertyName("reference_id")]
+        [JsonProperty("charges")]
+        [JsonPropertyName("charges")]
         public List<Charge> Charges { get; set; }
 
 
