@@ -92,8 +92,10 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                         ticket.Status = Enum.StatusTicket.Reservado;
                         if (!EditTicketsAsync(ticket).Result)
                             throw new RuleException("Erro ao atualizar ticket");
-
+                        
                         listTicket.Add(ticket);
+                        //remove ticket da lista para proximo processamento
+                        lstTickets.Remove(ticket);
                     }
                 });
 
