@@ -6,10 +6,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
     public class DbConnection : IDbConnection
     {
         private readonly IOptions<TransactionDatabaseSettings> _config;
-        private MongoClient _mongoClient;
         public DbConnection(IOptions<TransactionDatabaseSettings> eventDatabaseSettings)
         {
-            _mongoClient = new MongoClient();
             _config = eventDatabaseSettings;
         }
 
@@ -17,23 +15,18 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
         {
 
             var mongoUrl = new MongoUrl(_config.Value.ConnectionString);
-            _mongoClient = new MongoClient(mongoUrl);
-            var mongoDatabase = _mongoClient.GetDatabase(_config.Value.DatabaseName);
+            var mongoClient = new MongoClient(mongoUrl);
+            var mongoDatabase = mongoClient.GetDatabase(_config.Value.DatabaseName);
 
             return mongoDatabase.GetCollection<T>(colletionName);
-        }
-        
-        public MongoClient GetClient()
-        {
-            return _mongoClient;
         }
 
         public IMongoCollection<T> GetConnection<T>()
         {
             var colletionName = GetCollectionName<T>();
             var mongoUrl = new MongoUrl(_config.Value.ConnectionString);
-            _mongoClient = new MongoClient(mongoUrl);
-            var mongoDatabase = _mongoClient.GetDatabase(_config.Value.DatabaseName);
+            var mongoClient = new MongoClient(mongoUrl);
+            var mongoDatabase = mongoClient.GetDatabase(_config.Value.DatabaseName);
 
             return mongoDatabase.GetCollection<T>(colletionName);
         }

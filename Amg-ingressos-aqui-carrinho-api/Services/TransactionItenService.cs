@@ -85,9 +85,10 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                             IdTicket = ticket.Id,
                             TicketPrice = ticket.Value,
                             Details = i.Details
-                        };
+                        };                        
                         //cria transaction iten
                         await Save(transactionItem);
+                        listTicket.Remove(ticket); //remove ticket da lista de tickets disponiveis para compra
                     }
                 });
                 _messageReturn.Data = true;
