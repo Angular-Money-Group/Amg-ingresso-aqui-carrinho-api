@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Amg_ingressos_aqui_carrinho_api.Model
 {
+    [BsonIgnoreExtraElements]
     public class User
     {
         public User()
@@ -94,15 +95,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// <summary>
         /// Senha de acesso
         /// </summary>
-        [BsonElement("updatedAt")]
-        [JsonPropertyName("updatedAt")]
-        public DateTime updatedAt { get; set; }
-
-        /// <summary>
-        /// Senha de acesso
-        /// </summary>
-        [BsonElement("UpdateAt")]
-        [JsonPropertyName("UpdateAt")]
+        [BsonElement("updateAt")]
+        [JsonPropertyName("updateAt")]
         public DateTime? UpdateAt { get; set; }
         /// <summary>
         /// Sexo
