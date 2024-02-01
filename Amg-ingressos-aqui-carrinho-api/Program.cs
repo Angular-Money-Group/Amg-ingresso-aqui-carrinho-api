@@ -18,6 +18,12 @@ builder.Services.Configure<TransactionDatabaseSettings>(
     builder.Configuration.GetSection("CarrinhoDatabase"));
 builder.Services.Configure<PaymentSettings>(
     builder.Configuration.GetSection("PaymentSettings"));
+/*builder.Configuration.AddJsonFile("appsettings.Production.json",
+        optional: true,
+        reloadOnChange: true);
+builder.Configuration.AddJsonFile("appsettings.Homolog.json",
+        optional: true,
+        reloadOnChange: true);*/
 
 // injecao de dependencia
 //services
