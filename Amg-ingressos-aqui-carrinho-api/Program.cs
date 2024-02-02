@@ -14,8 +14,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
 // Add services to the container.
-builder.Services.Configure<TransactionDatabaseSettings>(
-    builder.Configuration.GetSection("CarrinhoDatabase"));
+//builder.Services.Configure<TransactionDatabaseSettings>(
+    //builder.Configuration.GetSection("CarrinhoDatabase"));
 builder.Services.Configure<PaymentSettings>(
     builder.Configuration.GetSection("PaymentSettings"));
 /*builder.Configuration.AddJsonFile("appsettings.Production.json",

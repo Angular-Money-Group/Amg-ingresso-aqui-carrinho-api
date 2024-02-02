@@ -20,7 +20,9 @@
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
             },
             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "DatabaseName": "ingressosAquiHomolog",
+                "DbMongoConcectionString": "mongodb+srv://angularmoneygroup:5139bpOk9VR1GeI7@ingressosaqui.t49bdes.mongodb.net/ingressosAqui?retryWrites=true&w=majority"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
