@@ -8,12 +8,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:7.0 as runtime
 WORKDIR /app
 COPY --from=build /app/published-app /app
 ##config 
-RUN apt-get update
-RUN apt-get install -y locales
-RUN sed -i -e 's/# pt_BR.UTF-8 UTF-8/pt_BR.UTF-8 UTF-8/' /etc/locale.gen && \
-    locale-gen
-ENV LC_ALL pt_BR.UTF-8 
-ENV LANG pt_BR.UTF-8  
-ENV LANGUAGE pt_BR:pt
+ENV TZ=America/Sao_Paulo
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 ENTRYPOINT [ "dotnet", "/app/Amg-ingressos-aqui-carrinho-api.dll" ]
