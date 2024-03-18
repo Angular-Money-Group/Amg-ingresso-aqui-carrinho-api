@@ -16,6 +16,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
         public decimal Total { get; set; }
         public List<TicketDto> ListTickets { get; set; }
         public string CultureInfoTeste { get; set; }
+        public string Date { get; set; }
+        public string Horas { get; set; }
 
         public TransactionTicketDto()
         {
@@ -39,8 +41,10 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
                 NameUser = transaction.IdPerson,
                 NameEvent = transaction?.Events?.Find(e => e.Id == transaction.IdEvent)?.Name ?? string.Empty,
                 PaymentMethod = transaction?.PaymentMethod?.TypePayment.ToString() ?? string.Empty,
-                PurchaseDate = transaction?.DateRegister.ToLocalTime().ToString("dd-MM-yyyy") ?? string.Empty, 
-                PurchaseTime = transaction?.DateRegister.ToLocalTime().ToString("hh:mm:ss")?? string.Empty,
+                PurchaseDate = transaction.DateRegister.ToLocalTime().ToString("dd-MM-yyyy") ?? string.Empty, 
+                PurchaseTime = transaction.DateRegister.ToLocalTime().ToString("hh:mm:ss")?? string.Empty,
+                Date = transaction.DateRegister.ToLocalTime().ToString(),
+                Horas = transaction.DateRegister.ToLocalTime().TimeOfDay.ToString(),
                 SubTotal = transaction?.TotalValue ?? new decimal(0),
                 Tax = transaction?.Tax ?? new decimal(0),
                 Total = transaction?.TotalValue ?? 0 + transaction?.Tax ?? 0 - transaction?.Discount ?? 0,
