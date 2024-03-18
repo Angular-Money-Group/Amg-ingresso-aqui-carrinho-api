@@ -1,8 +1,10 @@
+using System.Globalization;
 using Amg_ingressos_aqui_carrinho_api.Infra;
 using Amg_ingressos_aqui_carrinho_api.Repository;
 using Amg_ingressos_aqui_carrinho_api.Repository.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Services;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
+using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,7 @@ builder.Services.Configure<TransactionDatabaseSettings>(
     builder.Configuration.GetSection("CarrinhoDatabase"));
 builder.Services.Configure<PaymentSettings>(
     builder.Configuration.GetSection("PaymentSettings"));
+
 
 // injecao de dependencia
 //services
@@ -51,9 +54,29 @@ builder.Services.AddCors(options =>
     });
 });
 
+var defaultDateCulture = "pt-BR";
+var ci = new CultureInfo(defaultDateCulture);
+ci.NumberFormat.NumberDecimalSeparator = ",";
+ci.NumberFormat.CurrencyDecimalSeparator = ",";
+
+
+
 var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
+// Configure the Localization middleware
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture(ci),
+    SupportedCultures = new List<CultureInfo>
+    {
+        ci,
+    },
+    SupportedUICultures = new List<CultureInfo>
+    {
+        ci,
+    }
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
