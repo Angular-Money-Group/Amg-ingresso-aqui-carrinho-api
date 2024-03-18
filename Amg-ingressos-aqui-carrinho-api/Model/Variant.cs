@@ -68,13 +68,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// </summary>
         [BsonIgnore]
         [JsonProperty("SellTicketsInAnotherBatch")]
-        public bool SellTicketsInAnotherBatch { get; set; }
+        public bool? SellTicketsInAnotherBatch { get; set; }
         /// <summary>
         /// Vender lote antes de iniciar outro 
         /// </summary>
         [BsonIgnore]
         [JsonProperty("SellTicketsBeforeStartAnother")]
-        public bool SellTicketsBeforeStartAnother { get; set; }
+        public bool? SellTicketsBeforeStartAnother { get; set; }
         /// <summary>
         /// Vender lote antes de iniciar outro 
         /// </summary>
