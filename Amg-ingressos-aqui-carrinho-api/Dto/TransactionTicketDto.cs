@@ -1,3 +1,4 @@
+using System.Globalization;
 using Amg_ingressos_aqui_carrinho_api.Model;
 
 namespace Amg_ingressos_aqui_carrinho_api.Dto
@@ -14,6 +15,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
         public decimal SubTotal { get; set; }
         public decimal Total { get; set; }
         public List<TicketDto> ListTickets { get; set; }
+        public string CultureInfoTeste { get; set; }
 
         public TransactionTicketDto()
         {
@@ -49,6 +51,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
                         QrCodeLink = transaction.Tickets?.Find(t => t.Id == x.IdTicket)?.QrCode ?? string.Empty
                     }
                 ).ToList() ?? new List<TicketDto>()
+                ,CultureInfoTeste = string.Format("CurrentCulture is {0}.", CultureInfo.CurrentCulture.Name)
             };
         }
     }
