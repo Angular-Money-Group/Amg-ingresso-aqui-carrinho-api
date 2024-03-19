@@ -154,8 +154,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 idTransaction.ValidateIdMongo("idTransaction");
                 var transactionDb = _transactionService.GetByIdAsync(idTransaction).Result.ToObject<TransactionComplet>();
 
-                if (transactionDb.Stage != StageTransaction.PaymentData)
-                    throw new RuleException("Estágio fora do padrão");
+                //if (transactionDb.Stage != StageTransaction.PaymentData)
+                //    throw new RuleException("Estágio fora do padrão");
 
                 var transaction = new TransactionCompletDto().ModelToDto(transactionDb);
 
