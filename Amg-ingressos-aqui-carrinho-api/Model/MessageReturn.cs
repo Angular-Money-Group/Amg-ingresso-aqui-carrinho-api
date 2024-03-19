@@ -14,11 +14,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Model
         /// <summary>
         /// Mensagem de retorno
         /// </summary>
+        [JsonProperty("message")]
         public string Message { get; set; }
 
         /// <summary>
         /// Objeto de dados retornado
         /// </summary>
+        [JsonProperty("data")]
         public object Data { get; set; }
 
         internal T ToObject<T>()
