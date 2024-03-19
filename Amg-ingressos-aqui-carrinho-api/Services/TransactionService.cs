@@ -78,7 +78,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             {
                 idUser.ValidateIdMongo("Usuário");
                 var data = await _transactionRepository.GetByUserEventData<TransactionComplet>(idUser);
-                var listActives = data.Where(x => x.Events.Count() > 0 && x.Events[0].Status == Enum.StatusEvent.Active).Select(t => t);
+                var listActives = data.Where(x => 
+                    x.Status == Enum.StatusPayment.Aproved &&
+                    x.Events.Any() && 
+                    x.Events[0].Status == Enum.StatusEvent.Active
+                ).Select(t => t);
                 var list = new TransactionCardDto().ModelListToDtoList(listActives);
                 _messageReturn.Data = list;
                 return _messageReturn;
@@ -119,7 +123,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                                                                 idUser,
                                                                 idEvent
                                                             );
-                _messageReturn.Data = new TransactionTicketDto().ListModelToListDto(result);
+                var listTransaction = result.Where(t=> t.Status == Enum.StatusPayment.Aproved).ToList();
+                _messageReturn.Data = new TransactionTicketDto().ListModelToListDto(listTransaction);
                 return _messageReturn;
             }
             catch (Exception ex)
