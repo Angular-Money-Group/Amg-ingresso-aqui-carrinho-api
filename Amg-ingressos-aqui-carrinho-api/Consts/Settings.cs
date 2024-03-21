@@ -25,6 +25,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Consts
 
         //Pagbank
         public readonly static string PagbankStatusPayment = "https://apiquerysandbox.cieloecommerce.cielo.com.br/1/sales/";
+        public readonly static string PagBankCreateSessionUrl = "https://sandbox.sdk.pagseguro.com/checkout-sdk/sessions";
         
         
         

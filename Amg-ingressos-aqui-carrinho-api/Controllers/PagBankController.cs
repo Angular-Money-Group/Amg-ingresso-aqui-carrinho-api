@@ -25,6 +25,26 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
         /// <returns>500 Erro inesperado</returns>
         /// <returns>404 Erro tratado</returns>
         [HttpGet]
+        [Route("publicKey")]
+        public async Task<IActionResult> GeneratePublicKey()
+        {
+            var result = await _pagbankService.GeneratePublicKey();
+            if (result.Message != null && result.Message.Any())
+            {
+                _logger.LogInformation(result.Message);
+                return NotFound(result.Message);
+            }
+
+            return Ok(result.Data);
+        }
+        /// <summary>
+        /// Busca Transação por id
+        /// </summary>
+        /// <returns>200 Transação</returns>
+        /// <returns>500 Erro inesperado</returns>
+        /// <returns>404 Erro tratado</returns>
+        [HttpGet]
+        [Route("session3ds")]
         public async Task<IActionResult> GenerateSession()
         {
             var result = await _pagbankService.GenerateSession();

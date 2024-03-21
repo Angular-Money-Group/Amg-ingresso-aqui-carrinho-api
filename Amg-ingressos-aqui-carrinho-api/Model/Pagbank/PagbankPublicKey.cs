@@ -3,9 +3,9 @@ using Newtonsoft.Json;
 
 namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
 {
-    public class SessionPagbank
+    public class PagbankPublicKey
     {
-        public SessionPagbank()
+        public PagbankPublicKey()
         {
             Public_key = string.Empty;
             Created_at = string.Empty;

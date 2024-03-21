@@ -20,14 +20,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             _messageReturn = new MessageReturn();
             _logger = logger;
         }
-        public async Task<MessageReturn> GenerateSession()
+        public async Task<MessageReturn> GeneratePublicKey()
         {
             try
             {
                 var type = new { type = "card" };
                 //cria pedido e paga
                 Request request = new Request() { Data = System.Text.Json.JsonSerializer.Serialize(type) };
-                var url = _config.Value.PagBankSettings.UrlApiHomolog + "/public-keys";
+                var url = _config.Value.PagBankSettings.UrlApiHomolog+"/public-keys";
                 Response response = await Task.Run(() => new OperatorRest().SendRequestAsync(request, url, _config.Value.PagBankSettings.TokenHomolog));
 
                 if (string.IsNullOrEmpty(response.Data))
@@ -42,12 +42,44 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     _messageReturn.Message = response.Message;
                 }
 
-                _messageReturn.Data = response.JsonToModel<SessionPagbank>();
+                _messageReturn.Data = response.JsonToModel<PagbankPublicKey>();
                 return _messageReturn;
             }
             catch (Exception ex)
             {
-                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(GenerateSession)), ex);
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(GeneratePublicKey)), ex);
+                throw;
+            }
+        }
+
+        public async Task<MessageReturn> GenerateSession()
+        {
+            try
+            {
+                var type = new { };
+                //cria pedido e paga
+                Request request = new Request() { Data = System.Text.Json.JsonSerializer.Serialize(type) };
+                var url = Settings.PagBankCreateSessionUrl;
+                Response response = await Task.Run(() => new OperatorRest().SendRequestAsync(request, url, _config.Value.PagBankSettings.TokenHomolog));
+
+                if (string.IsNullOrEmpty(response.Data))
+                {
+                    StringBuilder messagejson = new StringBuilder();
+                    response.MessageJsonToModel<CallbackErrorMessagePagBank>().ErrorMessages
+                    .ForEach(x =>
+                    {
+                        messagejson.Append(x.Code + " = " + x.ParameterName + " -- Error:" + x.Description + " : " + x.ParameterName);
+                    });
+                    response.Message = messagejson.ToString();
+                    _messageReturn.Message = response.Message;
+                }
+
+                _messageReturn.Data = response.JsonToModel<PagbankSession>();
+                return _messageReturn;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(GeneratePublicKey)), ex);
                 throw;
             }
         }
