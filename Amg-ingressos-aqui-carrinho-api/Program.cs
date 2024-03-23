@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text.Json.Serialization;
 using Amg_ingressos_aqui_carrinho_api.Infra;
 using Amg_ingressos_aqui_carrinho_api.Repository;
 using Amg_ingressos_aqui_carrinho_api.Repository.Interfaces;
@@ -15,6 +16,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
+builder.Services.AddMvc()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    });
 // Add services to the container.
 builder.Services.Configure<TransactionDatabaseSettings>(
     builder.Configuration.GetSection("CarrinhoDatabase"));

@@ -1,11 +1,13 @@
 using Amg_ingressos_aqui_carrinho_api.Consts;
 using Amg_ingressos_aqui_carrinho_api.Dto;
+using Amg_ingressos_aqui_carrinho_api.Dto.Pagbank;
 using Amg_ingressos_aqui_carrinho_api.Enum;
 using Amg_ingressos_aqui_carrinho_api.Exceptions;
 using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Model.Cielo.Callback;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Utils;
+using Newtonsoft.Json;
 
 namespace Amg_ingressos_aqui_carrinho_api.Services
 {
@@ -14,6 +16,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         private readonly ITransactionService _transactionService;
         private readonly ITransactionItenService _transactionItenService;
         private MessageReturn _messageReturn;
+        private readonly IUserService _userService;
         private readonly ITicketService _ticketService;
         private readonly IPaymentService _paymentService;
         private readonly INotificationService _notificationService;
@@ -24,6 +27,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             ITransactionService transactionService,
             ITransactionItenService transactionItenService,
             ITicketService ticketService,
+            IUserService userService,
             IPaymentService paymentService,
             INotificationService notificationService,
             ILogger<TransactionService> logger,
@@ -38,6 +42,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             _notificationService = notificationService;
             _logger = logger;
             _qrCodeService = qrCodeService;
+            _userService = userService;
         }
 
         public async Task<MessageReturn> ProcessSaveAsync(TransactionDto transactionDto)
@@ -192,14 +197,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     {
                         Id = ticketUserDto.Id,
                         IdLot = ticketUserDto.IdLot,
-                        IdUser = string.IsNullOrEmpty(ticketUserDto.User.Id)? null: ticketUserDto.User.Id,
+                        IdUser = string.IsNullOrEmpty(ticketUserDto.User.Id) ? null : ticketUserDto.User.Id,
                         IsSold = true,
                         Position = ticketUserDto.Position,
                         Value = ticketUserDto.Value,
                         Status = (int)StatusTicket.Vendido,
                         QrCode = Settings.HostImg + nameImagem
                     };
-                    if(!await _ticketService.EditTicketsAsync(ticket))
+                    if (!await _ticketService.EditTicketsAsync(ticket))
                         throw new RuleException("Erro ao editar ticket");
 
                     var ticketEventDto = await _ticketService.GetTicketByIdDataEventAsync(ticketUserDto.Id);
@@ -296,6 +301,28 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
             catch (Exception ex)
             {
                 _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(Payment)), ex);
+                throw;
+            }
+        }
+
+        public Task<MessageReturn> GetDataPagbank(string idTransaction)
+        {
+            try
+            {
+                idTransaction.ValidateIdMongo("Transação");
+                var transaction = _transactionService.GetByIdAsync(idTransaction).Result.ToObject<TransactionComplet>();
+
+                var userResult = _userService.FindByIdAsync(transaction.IdPerson).Result.ToObject<User>();
+
+                RequestDto request = new RequestDto().TransactionToRequest(transaction, userResult);
+
+                _messageReturn.Data = request;
+
+                return Task.FromResult(_messageReturn);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, string.Format(MessageLogErrors.Get, this.GetType().Name, nameof(GetDataPagbank)), idTransaction);
                 throw;
             }
         }

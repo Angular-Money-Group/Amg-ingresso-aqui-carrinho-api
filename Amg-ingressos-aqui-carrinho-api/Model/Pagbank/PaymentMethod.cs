@@ -9,8 +9,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
         {
             Type = string.Empty;
             Card = new Card();
-            Boleto = new Boleto();
-            SoftDescriptor = string.Empty;
+            Boleto = null;
+            SoftDescriptor = null;
         }
 
         [JsonProperty("type")]
@@ -23,20 +23,18 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
 
         [JsonProperty("capture")]
         [JsonPropertyName("capture")]
-        public bool Capture { get; set; }
+        public bool? Capture { get; set; }
 
         [JsonProperty("card")]
         [JsonPropertyName("card")]
         public Card Card { get; set; }
 
-
         [JsonProperty("boleto")]
         [JsonPropertyName("boleto")]
-        [Newtonsoft.Json.JsonIgnore]
-        public Boleto Boleto { get; set; }
+        public Boleto? Boleto { get; set; }
 
         [JsonProperty("soft_descriptor")]
         [JsonPropertyName("soft_descriptor")]
-        public string SoftDescriptor { get; set; }
+        public string? SoftDescriptor { get; set; }
     }
 }

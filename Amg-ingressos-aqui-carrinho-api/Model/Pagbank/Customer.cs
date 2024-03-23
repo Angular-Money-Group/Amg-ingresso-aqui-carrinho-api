@@ -9,7 +9,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
         {
             Name = string.Empty;
             Email = string.Empty;
-            TaxId = string.Empty;
+            TaxId = null;
             Phones = new List<Phone>();
         }
 
@@ -23,7 +23,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
 
         [JsonProperty("tax_id")]
         [JsonPropertyName("tax_id")]
-        public string TaxId { get; set; }
+        public string? TaxId { get; set; }
 
         [JsonProperty("phones")]
         [JsonPropertyName("phones")]

@@ -13,5 +13,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Services.Interfaces
         Task<MessageReturn> FinishedTransactionAsync(string idTransaction);
         Task<MessageReturn> CancelTransactionAsync(string idTransaction);
         Task<MessageReturn> GeneratePixQRcode(Transaction transaction);
+        Task<MessageReturn> GetDataPagbank(string idTransaction);
     }
 }

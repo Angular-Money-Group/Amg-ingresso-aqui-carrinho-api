@@ -165,5 +165,25 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
 
             return Ok(result.Data);
         }
+
+        /// <summary>
+        /// cancela a transacao passando status pra cancelada
+        /// </summary>
+        /// <param name="idTransaction">idTransacao a ser cancelada</param>
+        /// <returns>200 Transação cancelada</returns>
+        /// <returns>500 Erro inesperado</returns>
+        [HttpGet]
+        [Route("GetRequestPagbank/{idTransaction}")]
+        public async Task<IActionResult> GetDataPagbank([FromRoute] string idTransaction)
+        {
+            var result = await _checkoutService.GetDataPagbank(idTransaction);
+            if (result.Message != null && result.Message.Any())
+            {
+                _logger.LogInformation(result.Message);
+                return NotFound(result.Message);
+            }
+
+            return Ok(result.Data);
+        }
     }
 }

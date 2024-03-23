@@ -8,7 +8,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
         public Amount()
         {
             Currency = string.Empty;
-            Summary = new Summary();
+            Summary = null;
         }
 
         [JsonProperty("value")]
@@ -21,6 +21,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
 
         [JsonProperty("summary")]
         [JsonPropertyName("summary")]
-        public Summary Summary { get; set; }
+        public Summary? Summary { get; set; }
     }
 }
