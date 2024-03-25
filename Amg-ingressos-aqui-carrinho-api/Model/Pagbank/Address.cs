@@ -28,7 +28,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
 
         [JsonProperty("complement")]
         [JsonPropertyName("complement")]
-        public string Complement { get; set; }
+        public string? Complement { get; set; }
 
         [JsonProperty("locality")]
         [JsonPropertyName("locality")]
