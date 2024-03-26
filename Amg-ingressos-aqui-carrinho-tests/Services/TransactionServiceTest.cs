@@ -4,311 +4,169 @@ using NUnit.Framework;
 using Moq;
 using Amg_ingressos_aqui_carrinho_api.Repository.Interfaces;
 using Amg_ingressos_aqui_carrinho_api.Model;
-using Amg_ingressos_aqui_carrinho_api.Enum;
+using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
+using Amg_ingressos_aqui_carrinho_api.Exceptions;
+using Microsoft.Extensions.Logging;
 
 namespace Prime.UnitTests.Services
 {
     public class TransactionServiceTest
     {
         private TransactionService _transactionService;
-        private Mock<ITransactionRepository> _transactionServiceMock = new Mock<ITransactionRepository>();
+        private readonly Mock<ITransactionRepository> _transactionRepositoryMock = new Mock<ITransactionRepository>();
+        private readonly Mock<ITransactionItenService> _transactionItenServiceMock = new Mock<ITransactionItenService>();
+        private readonly Mock<ILogger<TransactionService>> _logger = new Mock<ILogger<TransactionService>>();
 
         [SetUp]
         public void SetUp()
         {
-            _transactionServiceMock = new Mock<ITransactionRepository>();
-            _transactionService = new TransactionService(_transactionServiceMock.Object);
+
+            _transactionService = new TransactionService(
+                _transactionRepositoryMock.Object,
+                _logger.Object,
+                _transactionItenServiceMock.Object
+                );
         }
 
         [Test]
-        public void Given_IdPerson_and_IdEvent_When_save_Then_return_Id_Transaction()
+        public void Given_transaction_When_UpdateTransaction_Then_return_Ok()
         {
             //Arrange
-            Transaction transaction = new Transaction()
-            {
-                IdEvent = "6442dcb6523d52533aeb1ae4",
-                IdPerson = "6442dcb6523d52533aeb1ae4"
-            };
-            var messageReturn = "6442dcb6523d52533aeb1ae4";
-            _transactionServiceMock.Setup(x => x.Save<object>(transaction)).Returns(Task.FromResult(messageReturn as object));
+            var transaction = FactoryTransaction.SimpleTransactionPersonData();
+            
+                       var messageReturn = "Transação alterada";
+            _transactionRepositoryMock.Setup(x => x.Edit(It.IsAny<string>(),It.IsAny<Transaction>()))
+                .Returns(Task.FromResult(true));
 
             //Act
-            var resultMethod = _transactionService.SaveAsync(transaction);
+            var result = _transactionService.EditAsync(transaction);
 
             //Assert
-            Assert.AreEqual(messageReturn, resultMethod.Result.Data);
+            Assert.AreEqual(messageReturn, result.Result.Data);
         }
 
         [Test]
-        public void Given_transaction_without_IdPerson_When_save_Then_return_message_miss_Person()
+        public void Given_transaction_without_idTransaction_When_UpdateTransaction_Then_return_Miss_TransactionId()
         {
             //Arrange
-            Transaction transaction = new Transaction()
-            {
-                IdEvent = "6442dcb6523d52533aeb1ae4",
-                IdPerson = ""
-            };
-            var messageReturn = "Usuário é obrigatório";
-            _transactionServiceMock.Setup(x => x.Save<object>(transaction)).Returns(Task.FromResult(messageReturn as object));
+            var transaction = FactoryTransaction.SimpleTransactionPersonData();
+            transaction.Id= string.Empty;
+            var messageReturn = "Transação é obrigatório";
+            _transactionRepositoryMock.Setup(x => x.Edit(It.IsAny<string>(),It.IsAny<Transaction>()))
+                .Returns(Task.FromResult(true));
 
             //Act
-            var resultMethod = _transactionService.SaveAsync(transaction);
+            var result = _transactionService.EditAsync(transaction);
 
             //Assert
-            Assert.AreEqual(messageReturn, resultMethod.Result.Message);
+            Assert.AreEqual(messageReturn, result.Result.Message);
         }
 
         [Test]
-        public void Given_transaction_without_IdEvent_When_save_Then_return_message_miss_Event()
+        public void Given_transaction_When_UpdateTransaction_Then_return_Miss_TransactionId_in_Db()
         {
             //Arrange
-            Transaction transaction = new Transaction()
-            {
-                IdEvent = "",
-                IdPerson = "6442dcb6523d52533aeb1ae4"
-            };
-            var messageReturn = "Evento é obrigatório";
-            _transactionServiceMock.Setup(x => x.Save<object>(transaction)).Returns(Task.FromResult(messageReturn as object));
+            var transaction = FactoryTransaction.SimpleTransactionPersonData();
+            var messageReturn = "Transação não encontrada";
+            _transactionRepositoryMock.Setup(x => x.Edit(It.IsAny<string>(),It.IsAny<Transaction>()))
+                .Throws(new UpdateTransactionException(messageReturn));
 
             //Act
-            var resultMethod = _transactionService.SaveAsync(transaction);
+            var result = _transactionService.EditAsync(transaction);
 
             //Assert
-            Assert.AreEqual(messageReturn, resultMethod.Result.Message);
+            Assert.AreEqual(messageReturn, result.Result.Message);
         }
 
         [Test]
-        public void Given_transaction_and_IdPerson_lenth_20_When_save_Then_return_message_miss_Person()
+        public void Given_transaction_When_UpdateTransaction_Then_return_internal_error()
         {
             //Arrange
-            Transaction transaction = new Transaction()
-            {
-                IdEvent = "6442dcb6523d52533aeb1ae4",
-                IdPerson = "6442dcb6523d52533aeb"
-            };
-            var messageReturn = "Usuário é obrigatório e está menor que 24 digitos";
-            _transactionServiceMock.Setup(x => x.Save<object>(transaction)).Returns(Task.FromResult(messageReturn as object));
+            var transaction = FactoryTransaction.SimpleTransactionPersonData();
+            _transactionRepositoryMock.Setup(x => x.Edit(It.IsAny<string>(),It.IsAny<Transaction>()))
+                .Throws(new Exception("erro ao conectar na base de dados"));
 
             //Act
-            var resultMethod = _transactionService.SaveAsync(transaction);
+            var result = _transactionService.EditAsync(transaction);
 
             //Assert
-            Assert.AreEqual(messageReturn, resultMethod.Result.Message);
+            Assert.IsNotEmpty(result?.Exception?.Message);
         }
 
         [Test]
-        public void Given_transaction_and_IdEvent_lenth_20_When_save_Then_return_message_miss_Event()
+        public void Given_idtransaction_When_GetByIdTransaction_Then_return_Ok()
         {
             //Arrange
-            Transaction transaction = new Transaction()
-            {
-                IdEvent = "6442dcb6523d52533aeb",
-                IdPerson = "6442dcb6523d52533aeb1ae4"
-            };
-            var messageReturn = "Evento é obrigatório e está menor que 24 digitos";
-            _transactionServiceMock.Setup(x => x.Save<object>(transaction)).Returns(Task.FromResult(messageReturn as object));
+            var idTransaction = "6442dcb6523d52533aeb1ae4";
+            _transactionRepositoryMock.Setup(x => x.GetById<TransactionComplet>(idTransaction))
+                .Returns(Task.FromResult(new TransactionComplet()));
 
             //Act
-            var resultMethod = _transactionService.SaveAsync(transaction);
+            var result = _transactionService.GetByIdAsync(idTransaction);
 
             //Assert
-            Assert.AreEqual(messageReturn, resultMethod.Result.Message);
+            Assert.IsNotNull(result.Result.Data);
         }
 
         [Test]
-        public void Given_IdPerson_and_IdEvent_When_save_Then_return_message_internal_error()
+        public void Given_idTransaction_When_GetById_Then_return_Miss_TransactionId()
         {
             //Arrange
-            Transaction transaction = new Transaction()
-            {
-                IdEvent = "6442dcb6523d52533aeb1ae4",
-                IdPerson = "6442dcb6523d52533aeb1ae4"
-            };
-
-            var messageReturn = "erro ao conectar com base de dados";
-            _transactionServiceMock.Setup(x => x.Save<object>(transaction))
-                .Throws(new Exception(messageReturn));
+            var idTransaction = string.Empty;
+            var messageReturn = "Transação é obrigatório";
+            _transactionRepositoryMock.Setup(x => x.GetById<TransactionComplet>(idTransaction))
+                .Returns(Task.FromResult(new TransactionComplet()));
 
             //Act
-            var ex = Assert.ThrowsAsync<Exception>(() => _transactionService.SaveAsync(transaction));
+            var result = _transactionService.GetByIdAsync(idTransaction);
 
             //Assert
-            Assert.That(ex?.Message, Is.EqualTo(messageReturn));
+            Assert.AreEqual(messageReturn, result.Result.Message);
         }
 
         [Test]
-        public void Given_transaction_with_tickets_to_insert_When_SaveTransactionIten_Then_return_message_OK()
+        public void Given_idTransaction_When_GetById_Then_return_Miss_TransactionId_in_Db()
         {
             //Arrange
-            Transaction transaction = new Transaction()
-            {
-                Id = "6442dcb6523d52533aeb1ae4",
-                TransactionItens = new List<TransactionIten>(){
-                    new TransactionIten(){
-                        AmoutTicket = 2,
-                        HalfPrice = false,
-                        IdLote = "6442dcb6523d52533aeb1ae4",
-                        IdVariante= "6442dcb6523d52533aeb1ae4",
-                        Tax= new decimal(60),
-                        TicketPrice = new decimal(360)
-                    }
-                }
-            };
-
-            var messageReturn = "Tikets Criados";
-            _transactionServiceMock.Setup(x => x.SaveTransactionIten<object>(transaction)).Returns(Task.FromResult(messageReturn as object));
+            var idTransaction = "6442dcb6523d52533aeb1ae4";
+            var messageReturn = "Transação não encontrada";
+            _transactionRepositoryMock.Setup(x => x.GetById<TransactionComplet>(idTransaction))
+                .Returns(Task.FromResult(new TransactionComplet()));
 
             //Act
-            var resultMethod = _transactionService.SaveTransactionItenAsync(transaction);
-
+            var result = _transactionService.GetByIdAsync(idTransaction);
             //Assert
-            Assert.AreEqual(messageReturn, resultMethod.Result.Data);
+            Assert.AreEqual(messageReturn, result.Result.Message);
         }
 
         [Test]
-        public void Given_transaction_with_tickets_without_amount_to_insert_When_SaveTransactionIten_Then_return_message_miss_amount()
+        public void Given_idtransaction_When_GetById_Then_return_internal_error()
         {
             //Arrange
-            Transaction transaction = new Transaction()
-            {
-                Id = "6442dcb6523d52533aeb1ae4",
-                TransactionItens = new List<TransactionIten>(){
-                    new TransactionIten(){
-                        AmoutTicket = 0,
-                        HalfPrice = false,
-                        IdLote = "6442dcb6523d52533aeb1ae4",
-                        IdVariante= "6442dcb6523d52533aeb1ae4",
-                        Tax= new decimal(60),
-                        TicketPrice = new decimal(360)
-                    }
-                }
-            };
-
-            var messageReturn = "Quantidade de Ingresso é obrigatório";
-            _transactionServiceMock.Setup(x => x.SaveTransactionIten<object>(transaction)).Returns(Task.FromResult(messageReturn as object));
+            var idTransaction = "6442dcb6523d52533aeb1ae4";
+            _transactionRepositoryMock.Setup(x => x.GetById<TransactionComplet>(idTransaction))
+                .Returns(Task.FromResult(new TransactionComplet()));
 
             //Act
-            var resultMethod = _transactionService.SaveTransactionItenAsync(transaction);
+            var result = _transactionService.GetByIdAsync(idTransaction);
 
             //Assert
-            Assert.AreEqual(messageReturn, resultMethod.Result.Message);
+            Assert.IsNotEmpty(result?.Exception?.Message);
         }
 
         [Test]
-        public void Given_transaction_with_tickets_without_ticketPrice_to_insert_When_SaveTransactionIten_Then_return_message_miss_valueTicket()
+        public void Given_idPerson_When_GetByPerson_Then_return_internal_error()
         {
             //Arrange
-            Transaction transaction = new Transaction()
-            {
-                Id = "6442dcb6523d52533aeb1ae4",
-                TransactionItens = new List<TransactionIten>(){
-                    new TransactionIten(){
-                        AmoutTicket = 5,
-                        HalfPrice = false,
-                        IdLote = "6442dcb6523d52533aeb1ae4",
-                        IdVariante= "6442dcb6523d52533aeb1ae4",
-                        Tax= new decimal(60),
-                        TicketPrice = new decimal(0)
-                    }
-                }
-            };
-
-            var messageReturn = "Valor do Ingresso é obrigatório";
-            _transactionServiceMock.Setup(x => x.SaveTransactionIten<object>(transaction)).Returns(Task.FromResult(messageReturn as object));
+            var idTransaction = "6442dcb6523d52533aeb1ae4";
+             _transactionRepositoryMock.Setup(x => x.GetById<TransactionComplet>(idTransaction))
+                .Throws(new Exception("erro ao conectar na base de dados"));
 
             //Act
-            var resultMethod = _transactionService.SaveTransactionItenAsync(transaction);
+            var result = _transactionService.GetByIdAsync(idTransaction);
 
             //Assert
-            Assert.AreEqual(messageReturn, resultMethod.Result.Message);
-        }
-
-        [Test]
-        public void Given_transaction_with_tickets_without_idVariant_to_insert_When_SaveTransactionIten_Then_return_message_miss_IdVariante()
-        {
-            //Arrange
-            Transaction transaction = new Transaction()
-            {
-                Id = "6442dcb6523d52533aeb1ae4",
-                TransactionItens = new List<TransactionIten>(){
-                    new TransactionIten(){
-                        AmoutTicket = 5,
-                        HalfPrice = false,
-                        IdLote = "6442dcb6523d52533aeb1ae4",
-                        IdVariante= string.Empty,
-                        Tax= new decimal(60),
-                        TicketPrice = new decimal(0)
-                    }
-                }
-            };
-
-            var messageReturn = "Variante é obrigatório";
-            _transactionServiceMock.Setup(x => x.SaveTransactionIten<object>(transaction)).Returns(Task.FromResult(messageReturn as object));
-
-            //Act
-            var resultMethod = _transactionService.SaveTransactionItenAsync(transaction);
-
-            //Assert
-            Assert.AreEqual(messageReturn, resultMethod.Result.Message);
-        }
-
-        [Test]
-        public void Given_transaction_with_tickets_without_idLote_to_insert_When_SaveTransactionIten_Then_return_message_miss_IdLote()
-        {
-            //Arrange
-            Transaction transaction = new Transaction()
-            {
-                Id = "6442dcb6523d52533aeb1ae4",
-                TransactionItens = new List<TransactionIten>(){
-                    new TransactionIten(){
-                        AmoutTicket = 5,
-                        HalfPrice = false,
-                        IdLote = string.Empty,
-                        IdVariante= "6442dcb6523d52533aeb1ae4",
-                        Tax= new decimal(60),
-                        TicketPrice = new decimal(0)
-                    }
-                }
-            };
-
-            var messageReturn = "Lote é obrigatório";
-            _transactionServiceMock.Setup(x => x.SaveTransactionIten<object>(transaction)).Returns(Task.FromResult(messageReturn as object));
-
-            //Act
-            var resultMethod = _transactionService.SaveTransactionItenAsync(transaction);
-
-            //Assert
-            Assert.AreEqual(messageReturn, resultMethod.Result.Message);
-        }
-
-        [Test]
-        public void Given_transaction_When_SaveTransactionIten_Then_return_message_internal_error()
-        {
-            //Arrange
-            Transaction transaction = new Transaction()
-            {
-                Id = "6442dcb6523d52533aeb1ae4",
-                TransactionItens = new List<TransactionIten>(){
-                    new TransactionIten(){
-                        AmoutTicket = 2,
-                        HalfPrice = false,
-                        IdLote = "6442dcb6523d52533aeb1ae4",
-                        IdVariante= "6442dcb6523d52533aeb1ae4",
-                        Tax= new decimal(60),
-                        TicketPrice = new decimal(360)
-                    }
-                }
-            };
-
-            var messageReturn = "erro ao conectar com base de dados";
-            _transactionServiceMock.Setup(x => x.SaveTransactionIten<object>(transaction.TransactionItens.FirstOrDefault()))
-                .Throws(new Exception(messageReturn));
-
-            //Act
-            var ex = Assert.ThrowsAsync<Exception>(() => _transactionService.SaveTransactionItenAsync(transaction));
-
-            //Assert
-            Assert.That(ex?.Message, Is.EqualTo(messageReturn));
+            Assert.IsNotEmpty(result?.Exception?.Message);
         }
     }
 }

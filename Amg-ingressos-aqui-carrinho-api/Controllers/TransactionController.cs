@@ -1,88 +1,107 @@
-using Amg_ingressos_aqui_carrinho_api.Consts;
-using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Amg_ingressos_aqui_carrinho_api.Controllers
 {
-    [Route("v1/transactionos")]
+    [Route("v1/transaction")]
+    [Produces("application/json")]
     public class TransactionController : ControllerBase
     {
         private readonly ILogger<TransactionController> _logger;
         private readonly ITransactionService _transactionService;
-        private readonly ITransactionPaymentService _transactionPaymentService;
 
         public TransactionController(
             ILogger<TransactionController> logger,
-            ITransactionService transactionService,
-            ITransactionPaymentService transactionPaymentService)
+            ITransactionService transactionService)
         {
             _logger = logger;
             _transactionService = transactionService;
-            _transactionPaymentService = transactionPaymentService;
         }
 
         /// <summary>
-        /// Grava Transação
+        /// Busca Transação por id
         /// </summary>
-        /// <param name="transaction">Corpo Transação a ser Gravado</param>
-        /// <returns>200 Transação criado</returns>
+        /// <param name="idTransaction">id da transacao</param>
+        /// <returns>200 Transação</returns>
         /// <returns>500 Erro inesperado</returns>
-        [HttpPost]
-        [Route("createTransaction")]
-        public async Task<IActionResult> SaveTransactionAsync(Transaction transaction)
+        /// <returns>404 Erro tratado</returns>
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> GetByIdTransactionAsync(string id)
         {
-            try
-            {
-                var result = await _transactionService.SaveAsync(transaction);
-                if (result.Message!= null && result.Message.Any())
-                {
-                    _logger.LogInformation(result.Message);
-                    return NoContent();
-                }
 
-                return Ok(result.Data);
-            }
-            catch (Exception ex)
+            var result = await _transactionService.GetByIdAsync(id);
+            if (result.Message != null && result.Message.Any())
             {
-                _logger.LogError(MessageLogErrors.saveTransactionMessage, ex);
-                return StatusCode(500, MessageLogErrors.saveTransactionMessage);
+                _logger.LogInformation(result.Message);
+                return NotFound(result.Message);
             }
+
+            return Ok(result.Data);
         }
 
         /// <summary>
-        /// Grava Transação
+        /// Busca Transação por id
         /// </summary>
-        /// <param name="payment">Corpo Transação a ser Gravado</param>
-        /// <returns>200 Transação criado</returns>
+        /// <param name="idUser">id do usuário</param>
+        /// <returns>200 Transação</returns>
         /// <returns>500 Erro inesperado</returns>
-        [HttpPost]
-        [Route("PayTransaction")]
-        public async Task<IActionResult> PayTransactionAsync(TransactionPayment payment)
+        /// <returns>404 Erro tratado</returns>
+        [HttpGet]
+        [Route("user/{idUser}/card/active")]
+        public async Task<IActionResult> GetByUserActivesAsync([FromRoute] string idUser)
         {
-            try
+            var result = await _transactionService.GetByUserActivesAsync(idUser);
+            if (result.Message != null && result.Message.Any())
             {
-                var resultSave = await _transactionPaymentService.SaveAsync(payment);
-                if (resultSave.Message.Any())
-                {
-                    _logger.LogInformation(resultSave.Message);
-                    return NoContent();
-                }
-
-                var resultPayment = await _transactionPaymentService.Payment(payment);
-                if (resultPayment.Message.Any())
-                {
-                    _logger.LogInformation(resultPayment.Message);
-                    return NoContent();
-                }
-
-                return Ok("Transação Efetivada");
+                _logger.LogInformation(result.Message);
+                return NotFound(result.Message);
             }
-            catch (Exception ex)
+
+            return Ok(result.Data);
+        }
+
+        /// <summary>
+        /// Busca Transação por id
+        /// </summary>
+        /// <param name="idUser">id do usuário</param>
+        /// <returns>200 Transação</returns>
+        /// <returns>500 Erro inesperado</returns>
+        /// <returns>404 Erro tratado</returns>
+        [HttpGet]
+        [Route("user/{idUser}/card/history")]
+        public async Task<IActionResult> GetByUserHistoryAsync([FromRoute] string idUser)
+        {
+            var result = await _transactionService.GetByUserHistoryAsync(idUser);
+            if (result.Message != null && result.Message.Any())
             {
-                _logger.LogError(MessageLogErrors.saveTransactionMessage, ex);
-                return StatusCode(500, MessageLogErrors.saveTransactionMessage);
+                _logger.LogInformation(result.Message);
+                return NotFound(result.Message);
             }
+
+            return Ok(result.Data);
+        }
+
+        /// <summary>
+        /// Busca Transação por id
+        /// </summary>
+        /// <param name="idUser">id do usuário</param>
+        /// <param name="idEvent">id do evento</param>
+        /// <returns>200 Transação</returns>
+        /// <returns>500 Erro inesperado</returns>
+        /// <returns>404 Erro tratado</returns>
+        [HttpGet]
+        [Route("person/{idUser}/event/{idEvent}")]
+        public async Task<IActionResult> GetByUserDataTicketEventAsync([FromRoute] string idUser, string idEvent)
+        {
+            var result = await _transactionService.GetByUserTicketEventDataAsync(idUser, idEvent);
+            if (result.Message != null && result.Message.Any())
+            {
+                _logger.LogInformation(result.Message);
+                return NotFound(result.Message);
+            }
+
+            return Ok(result.Data);
         }
     }
 }

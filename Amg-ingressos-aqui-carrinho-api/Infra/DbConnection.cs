@@ -1,4 +1,3 @@
-using Amg_ingressos_aqui_carrinho_api.Model;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
@@ -6,27 +5,35 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
 {
     public class DbConnection : IDbConnection
     {
-        private IOptions<TransactionDatabaseSettings> _config;
-        public DbConnection(IOptions<TransactionDatabaseSettings> transactionDatabaseSettings)
+        private readonly IOptions<TransactionDatabaseSettings> _config;
+        public DbConnection(IOptions<TransactionDatabaseSettings> eventDatabaseSettings)
         {
-            _config = transactionDatabaseSettings;
+            _config = eventDatabaseSettings;
         }
 
-        public IMongoCollection<Transaction> GetConnection(){
+        public IMongoCollection<T> GetConnection<T>(string colletionName)
+        {
 
             var mongoUrl = new MongoUrl(_config.Value.ConnectionString);
-            var _mongoClient = new MongoClient(mongoUrl);
-            var mongoDatabase = _mongoClient.GetDatabase(_config.Value.DatabaseName);
+            var mongoClient = new MongoClient(mongoUrl);
+            var mongoDatabase = mongoClient.GetDatabase(_config.Value.DatabaseName);
 
-            return mongoDatabase.GetCollection<Transaction>(_config.Value.TransactionCollectionName);
+            return mongoDatabase.GetCollection<T>(colletionName);
         }
-        public IMongoCollection<TransactionPayment> GetConnectionPayment(){
 
+        public IMongoCollection<T> GetConnection<T>()
+        {
+            var colletionName = GetCollectionName<T>();
             var mongoUrl = new MongoUrl(_config.Value.ConnectionString);
-            var _mongoClient = new MongoClient(mongoUrl);
-            var mongoDatabase = _mongoClient.GetDatabase(_config.Value.DatabaseName);
+            var mongoClient = new MongoClient(mongoUrl);
+            var mongoDatabase = mongoClient.GetDatabase(_config.Value.DatabaseName);
 
-            return mongoDatabase.GetCollection<TransactionPayment>(_config.Value.TransactionCollectionName);
+            return mongoDatabase.GetCollection<T>(colletionName);
+        }
+        private static string GetCollectionName<T>()
+        {
+
+            return typeof(T).Name.ToLower() ?? string.Empty;
         }
     }
 }
