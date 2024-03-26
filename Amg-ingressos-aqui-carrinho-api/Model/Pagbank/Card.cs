@@ -22,12 +22,12 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
         [JsonPropertyName("number")]
         public string? Number { get; set; }
 
-        [JsonProperty("exp_month")]
-        [JsonPropertyName("exp_month")]
+        [JsonProperty("expMonth")]
+        [JsonPropertyName("expMonth")]
         public string? ExpMonth { get; set; }
 
-        [JsonProperty("exp_year")]
-        [JsonPropertyName("exp_year")]
+        [JsonProperty("expYear")]
+        [JsonPropertyName("expYear")]
         public string? ExpYear { get; set; }
 
         [JsonProperty("security_code")]
