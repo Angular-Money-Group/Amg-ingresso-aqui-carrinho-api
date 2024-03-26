@@ -12,9 +12,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
             Complement = null;
             Locality = null;
             City = string.Empty;
-            RegionCode = string.Empty;
+            Region_Code = null;
             Country = string.Empty;
-            PostalCode = string.Empty;
+            Postal_Code = null;
             Region = null;
         }
 
@@ -40,7 +40,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
 
         [JsonProperty("region_code")]
         [JsonPropertyName("region_code")]
-        public string RegionCode { get; set; }
+        public string? Region_Code { get; set; }
+
+        [JsonProperty("regionCode")]
+        [JsonPropertyName("regionCode")]
+        public string? Regioncode { get; set; }
 
         [JsonProperty("country")]
         [JsonPropertyName("country")]
@@ -48,7 +52,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
 
         [JsonProperty("postal_code")]
         [JsonPropertyName("postal_code")]
-        public string PostalCode { get; set; }
+        public string? Postal_Code { get; set; }
+
+        [JsonProperty("postalCode")]
+        [JsonPropertyName("postalCode")]
+        public string? Postalcode { get; set; }
 
         [JsonProperty("region")]
         [JsonPropertyName("region")]

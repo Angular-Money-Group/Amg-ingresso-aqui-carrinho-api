@@ -80,9 +80,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
                     {
                         Country = "BRA",
                         Region = user.Address.State ?? "",
-                        RegionCode = user.Address.State ?? "",
+                        Region_Code = user.Address.State ?? "",
                         City = user.Address.City ?? "",
-                        PostalCode = user.Address.Cep ?? "",
+                        Postal_Code = user.Address.Cep ?? "",
                         Street = user.Address.AddressDescription ?? user.Address.Neighborhood ?? "N/a",
                         Number = user.Address.Number ?? "",
                         Locality = user.Address.Neighborhood ?? ""

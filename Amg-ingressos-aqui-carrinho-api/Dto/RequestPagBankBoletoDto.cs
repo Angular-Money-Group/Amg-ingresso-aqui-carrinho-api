@@ -91,9 +91,9 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto.Pagbank
                                     Address = new Model.Pagbank.Address(){
                                         Country= "Brasil",
                                         Region= user.Address.State ?? string.Empty,
-                                        RegionCode= user.Address.State ?? string.Empty,
+                                        Region_Code= user.Address.State ?? string.Empty,
                                         City= user.Address.City ?? string.Empty,
-                                        PostalCode= user.Address.Cep ?? string.Empty,
+                                        Postal_Code= user.Address.Cep ?? string.Empty,
                                         Street= user.Address.AddressDescription ?? string.Empty,
                                         Number= user.Address.Number ?? string.Empty,
                                         Locality= user.Address.Neighborhood ?? string.Empty

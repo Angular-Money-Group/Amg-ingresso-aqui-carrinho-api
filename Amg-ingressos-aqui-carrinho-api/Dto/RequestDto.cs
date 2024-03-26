@@ -83,20 +83,20 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto
                     Street = user.Address.AddressDescription ?? string.Empty,
                     Number = user.Address.AddressDescription ?? string.Empty,
                     Complement = user.Address.Complement == string.Empty ? null : user.Address.Complement,
-                    RegionCode = user.Address.Neighborhood ?? string.Empty,
+                    Regioncode = user.Address.Neighborhood ?? string.Empty,
                     Country = "BRA",
                     City = user.Address.City ?? string.Empty,
-                    PostalCode = user.Address.Cep ?? string.Empty,
+                    Postalcode = user.Address.Cep ?? string.Empty,
                 },
                 ShippingAddress = new Address()
                 {
                     Street = user.Address.AddressDescription?? string.Empty,
                     Number = user.Address.Number ?? string.Empty,
                     Complement = user.Address.Complement == string.Empty ? null : user.Address.Complement,
-                    RegionCode = user.Address.State ?? string.Empty,
+                    Regioncode = user.Address.State ?? string.Empty,
                     Country = "BRA",
                     City = user.Address.City ?? string.Empty,
-                    PostalCode = user.Address.Cep ?? string.Empty,
+                    Postalcode = user.Address.Cep ?? string.Empty,
                 },
                 DataOnly = false
             };
