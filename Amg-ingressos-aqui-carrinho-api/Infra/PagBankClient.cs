@@ -52,7 +52,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             }
             catch (Exception ex)
             {
-                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentSlip)),ex);
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentSlip)), ex);
                 throw;
             }
         }
@@ -73,21 +73,23 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                     transaction.Status = StatusPayment.ErrorPayment;
                     transaction.Details = response.Message;
                 }
-
-                var obj = JsonConvert.DeserializeObject<CallbackCreditCardPagBank>(response.Data) ?? new CallbackCreditCardPagBank();
-                if (obj.Charges[0].Status.ToUpper() == "DECLINED")
-                    _messageReturn.Message = obj.Charges[0].PaymentResponse.Message;
                 else
                 {
-                    transaction.PaymentIdService = obj.Id;
-                    _messageReturn.Data = "ok";
+                    var obj = JsonConvert.DeserializeObject<CallbackCreditCardPagBank>(response.Data) ?? new CallbackCreditCardPagBank();
+                    if (obj.Charges[0].Status.ToUpper() == "DECLINED")
+                        _messageReturn.Message = obj.Charges[0].PaymentResponse.Message;
+                    else
+                    {
+                        transaction.PaymentIdService = obj.Id;
+                        _messageReturn.Data = "ok";
+                    }
                 }
 
                 return Task.FromResult(_messageReturn);
             }
             catch (Exception ex)
             {
-                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentCreditCard)),ex);
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentCreditCard)), ex);
                 throw;
             }
         }
@@ -108,21 +110,23 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                     transaction.Status = StatusPayment.ErrorPayment;
                     transaction.Details = response.Message;
                 }
-
-                var obj = JsonConvert.DeserializeObject<CallbackCreditCardPagBank>(response.Data) ?? new CallbackCreditCardPagBank();
-                if (obj.Charges[0].Status.ToUpper() == "DECLINED")
-                    _messageReturn.Message = obj.Charges[0].PaymentResponse.Message;
                 else
                 {
-                    transaction.PaymentIdService = obj.Id;
-                    _messageReturn.Data = "Ok";
+                    var obj = JsonConvert.DeserializeObject<CallbackCreditCardPagBank>(response.Data) ?? new CallbackCreditCardPagBank();
+                    if (obj.Charges[0].Status.ToUpper() == "DECLINED")
+                        _messageReturn.Message = obj.Charges[0].PaymentResponse.Message;
+                    else
+                    {
+                        transaction.PaymentIdService = obj.Id;
+                        _messageReturn.Data = "Ok";
+                    }
                 }
 
                 return Task.FromResult(_messageReturn);
             }
             catch (Exception ex)
             {
-                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentDebitCard)),ex);
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentDebitCard)), ex);
                 throw;
             }
         }
@@ -139,7 +143,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 {
                     StringBuilder messagejson = new StringBuilder();
                     var messageError = JsonConvert.DeserializeObject<CallbackErrorMessagePagBank>(response.Message) ?? new CallbackErrorMessagePagBank();
-                    
+
                     messageError.ErrorMessages.ForEach(x =>
                     {
                         messagejson.Append(x.Code + " = " + x.ParameterName + " -- Error:" + x.Description + " : " + x.ParameterName);
@@ -159,7 +163,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             }
             catch (Exception ex)
             {
-                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentDebitCard)),ex);
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentDebitCard)), ex);
                 throw;
             }
         }
@@ -180,7 +184,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             }
             catch (Exception ex)
             {
-                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentDebitCard)),ex);
+                _logger.LogError(string.Format(MessageLogErrors.Process, this.GetType().Name, nameof(PaymentDebitCard)), ex);
                 throw;
             }
         }

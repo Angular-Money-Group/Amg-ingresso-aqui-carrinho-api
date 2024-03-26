@@ -117,7 +117,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Repository
 
             var result = await _transactionCollection.UpdateOneAsync(filter, update);
             if (result.ModifiedCount <= 0)
-                throw new EditException("erro ao editar registro");
+                throw new EditException("Registro não editado.");
 
             return true;
         }

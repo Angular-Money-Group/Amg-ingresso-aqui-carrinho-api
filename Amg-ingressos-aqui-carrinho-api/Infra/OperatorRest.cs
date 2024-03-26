@@ -1,5 +1,6 @@
 using System.Text;
 using Amg_ingressos_aqui_carrinho_api.Model;
+using Newtonsoft.Json;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Amg_ingressos_aqui_carrinho_api.Infra
@@ -17,6 +18,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             );
             requestMessage.Headers.Add("Accept", "*/*");
             requestMessage.Headers.Add("Authorization", Token);
+
             var requestJson = new StringContent(transactionJson.Data,
                 Encoding.UTF8,
                 Application.Json

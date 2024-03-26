@@ -11,12 +11,12 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
             Description = string.Empty;
             Amount = new Amount();
             PaymentMethod = new PaymentMethod();
-            NotificationUrls = new List<string>();
+            NotificationUrls = null;
             AuthenticationMethod = new AuthenticationMethod();
-            id = string.Empty;
-            Status = string.Empty;
-            PaymentResponse = new PaymentResponse();
-            Links = new List<Link>();
+            id = null;
+            Status = null;
+            PaymentResponse = null;
+            Links = null;
         }
 
         [JsonProperty("reference_id")]
@@ -38,34 +38,34 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
         [JsonProperty("notification_urls")]
         [JsonPropertyName("notification_urls")]
         [System.Text.Json.Serialization.JsonIgnore]
-        public List<string> NotificationUrls { get; set; }
+        public List<string>? NotificationUrls { get; set; }
 
-        [JsonProperty("AuthenticationMethod")]
-        [JsonPropertyName("AuthenticationMethod")]
+        [JsonProperty("authentication_method")]
+        [JsonPropertyName("authentication_method")]
         public AuthenticationMethod AuthenticationMethod { get; set; }
 
         [JsonProperty("id")]
         [JsonPropertyName("id")]
-        public string id { get; set; }
+        public string? id { get; set; }
 
         [JsonProperty("status")]
         [JsonPropertyName("status")]
-        public string Status { get; set; }
+        public string? Status { get; set; }
 
         [JsonProperty("created_at")]
         [JsonPropertyName("created_at")]
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
         [JsonProperty("paid_at")]
         [JsonPropertyName("paid_at")]
-        public DateTime PaidAt { get; set; }
+        public DateTime? PaidAt { get; set; }
 
         [JsonProperty("payment_response")]
         [JsonPropertyName("payment_response")]
-        public PaymentResponse PaymentResponse { get; set; }
+        public PaymentResponse? PaymentResponse { get; set; }
 
         [JsonProperty("links")]
         [JsonPropertyName("links")]
-        public List<Link> Links { get; set; }
+        public List<Link>? Links { get; set; }
     }
 }

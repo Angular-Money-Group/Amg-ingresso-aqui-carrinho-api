@@ -18,7 +18,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto.Pagbank
             ReferenceId = string.Empty;
             Customer = new Customer();
             Items = new List<Item>();
-            QrCodes = new List<QrCode>();
+            QrCodes = null;
             Shipping = new Shipping();
             NotificationUrls = new List<string>();
             Charges = new List<Charge>();
@@ -39,7 +39,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto.Pagbank
         [JsonProperty("qr_codes")]
         [JsonPropertyName("qr_codes")]
         [System.Text.Json.Serialization.JsonIgnore]
-        public List<QrCode> QrCodes { get; set; }
+        public List<QrCode>? QrCodes { get; set; }
 
         [System.Text.Json.Serialization.JsonIgnore]
         [JsonProperty("shipping")]
@@ -84,6 +84,18 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto.Pagbank
                         UnitAmount = Convert.ToInt32(totalValue)
                     }
                 },
+                Shipping = new Shipping(){
+                    Address = new Model.Pagbank.Address(){
+                        Country = "BRA",
+                        Region = user.Address.State ?? "",
+                        RegionCode = user.Address.State ?? "",
+                        City = user.Address.City ?? "",
+                        PostalCode = user.Address.Cep ?? "",
+                        Street = user.Address.AddressDescription ?? user.Address.Neighborhood ?? "N/a",
+                        Number = user.Address.Number ?? "",
+                        Locality = user.Address.Neighborhood ?? ""
+                    }
+                },
                 ReferenceId = transaction.Id,
                 Charges = new List<Charge>(){
                     new Charge(){
@@ -97,13 +109,14 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto.Pagbank
                         PaymentMethod= new PaymentMethod(){
                             Capture=true,
                             Card= new Card(){
-                                //exp_month=transaction.PaymentMethod.ExpirationDate.Split("/")[0],
-                                //exp_year=transaction.PaymentMethod.ExpirationDate.Split("/")[1],
+                                /*ExpMonth=transaction.PaymentMethod.ExpirationDate.Split("/")[0],
+                                ExpYear=transaction.PaymentMethod.ExpirationDate.Split("/")[1],
                                 Holder=new Holder(){
                                     Name = transaction.PaymentMethod.Holder ?? string.Empty,
                                 },
-                                //number= transaction.PaymentMethod.CardNumber.Trim(),
+                                Number= transaction.PaymentMethod.CardNumber.Trim(),
                                 SecurityCode = transaction.PaymentMethod.SecurityCode ?? string.Empty,
+                                */
                                 Store = false,
                                 Encrypted = transaction.PaymentMethod.EncryptedCard
                             },
@@ -118,7 +131,12 @@ namespace Amg_ingressos_aqui_carrinho_api.Dto.Pagbank
                 }
             };
 
-            return new Request() { Data = System.Text.Json.JsonSerializer.Serialize(request) };
+            var dataJson = JsonConvert.SerializeObject(request,Formatting.None, 
+                            new JsonSerializerSettings { 
+                                NullValueHandling = NullValueHandling.Ignore
+                            });
+
+            return new Request() { Data = dataJson};
         }
     }
 }

@@ -7,11 +7,11 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
     {
         public Card()
         {
-            Number = string.Empty;
-            ExpMonth = string.Empty;
-            ExpYear = string.Empty;
+            Number = null;
+            ExpMonth = null;
+            ExpYear = null;
             SecurityCode = null;
-            Holder = new Holder();
+            Holder = null;
             Encrypted = null;
             Brand = null;
             FirstDigits = null;
@@ -20,15 +20,15 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
 
         [JsonProperty("number")]
         [JsonPropertyName("number")]
-        public string Number { get; set; }
+        public string? Number { get; set; }
 
-        [JsonProperty("expMonth")]
-        [JsonPropertyName("expMonth")]
-        public string ExpMonth { get; set; }
+        [JsonProperty("exp_month")]
+        [JsonPropertyName("exp_month")]
+        public string? ExpMonth { get; set; }
 
-        [JsonProperty("expYear")]
-        [JsonPropertyName("expYear")]
-        public string ExpYear { get; set; }
+        [JsonProperty("exp_year")]
+        [JsonPropertyName("exp_year")]
+        public string? ExpYear { get; set; }
 
         [JsonProperty("security_code")]
         [JsonPropertyName("security_code")]
@@ -36,7 +36,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Model.Pagbank
 
         [JsonProperty("holder")]
         [JsonPropertyName("holder")]
-        public Holder Holder { get; set; }
+        public Holder? Holder { get; set; }
 
         [JsonProperty("store")]
         [JsonPropertyName("store")]
