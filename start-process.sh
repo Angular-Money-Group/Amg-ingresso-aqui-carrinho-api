@@ -17,4 +17,4 @@ docker image tag $aws_account_id.dkr.ecr.$aws_default_region.amazonaws.com/$aws_
 docker stop $container_name
 docker rm $container_name
 #Creating and starting a docker container using a new image
-docker run -d --name $container_name $container_name:latest
+docker run -d -p 3005:80 --name $container_name $container_name:latest
