@@ -1,12 +1,14 @@
 using Amg_ingressos_aqui_carrinho_api.Dto;
 using Amg_ingressos_aqui_carrinho_api.Model;
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Amg_ingressos_aqui_carrinho_api.Controllers
 {
     [Route("v1/checkout")]
     [Produces("application/json")]
+    [Authorize(Policy = "PublicSecure")]
     public class CheckoutController : ControllerBase
     {
         private readonly ILogger<CheckoutController> _logger;
