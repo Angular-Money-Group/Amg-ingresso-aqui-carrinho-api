@@ -1,10 +1,12 @@
 using Amg_ingressos_aqui_carrinho_api.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Amg_ingressos_aqui_carrinho_api.Controllers
 {
     [Route("v1/transaction")]
     [Produces("application/json")]
+    [Authorize(Policy = "PublicSecure")]
     public class TransactionController : ControllerBase
     {
         private readonly ILogger<TransactionController> _logger;
