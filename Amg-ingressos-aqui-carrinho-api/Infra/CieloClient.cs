@@ -18,13 +18,19 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
         private readonly MessageReturn _messageReturn;
         private readonly string _url;
         private readonly ILogger<CieloClient> _logger;
+        private readonly IOperatorRest _operatorRest;
 
-        public CieloClient(IOptions<PaymentSettings> transactionDatabaseSettings, ILogger<CieloClient> logger)
+
+        public CieloClient(
+            IOptions<PaymentSettings> transactionDatabaseSettings, 
+            ILogger<CieloClient> logger,
+            IOperatorRest operatorRest)
         {
             _config = transactionDatabaseSettings;
             _messageReturn = new MessageReturn();
             _url = _config.Value.PagBankSettings.UrlApiHomolog + "/orders";
             _logger = logger;
+            _operatorRest = operatorRest;
         }
 
         public Task<MessageReturn> PaymentCreditCard(Transaction transaction, User user)
@@ -59,7 +65,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                     throw new CreditCardNotValidException(cardIsValid.ReturnMessage);
 
                 Request request = new Request() { Data = System.Text.Json.JsonSerializer.Serialize(transactionToJson) };
-                Response response = new OperatorRest().SendRequestAsync(request, _url, _config.Value.CieloSettings.MerchantIdHomolog);
+                Response response = _operatorRest.SendRequestAsync(request, _url, _config.Value.CieloSettings.MerchantIdHomolog);
 
                 if (string.IsNullOrEmpty(response.Data))
                 {
@@ -146,7 +152,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 };
 
                 Request request = new Request() { Data = System.Text.Json.JsonSerializer.Serialize(transactionToJson) };
-                Response response = new OperatorRest().SendRequestAsync(request, _url, _config.Value.CieloSettings.MerchantIdHomolog);
+                Response response = _operatorRest.SendRequestAsync(request, _url, _config.Value.CieloSettings.MerchantIdHomolog);
 
                 if (string.IsNullOrEmpty(response.Data))
                 {
@@ -220,7 +226,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 var transactionToJson ="";
 
                 Request request = new Request() { Data = System.Text.Json.JsonSerializer.Serialize(transactionToJson) };
-                Response response = new OperatorRest().SendRequestAsync(request, _url, _config.Value.CieloSettings.MerchantIdHomolog);
+                Response response = _operatorRest.SendRequestAsync(request, _url, _config.Value.CieloSettings.MerchantIdHomolog);
 
                 if (!string.IsNullOrEmpty(response.Data))
                 {
@@ -284,7 +290,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 };
 
                 Request request = new Request() { Data = System.Text.Json.JsonSerializer.Serialize(transactionToJson) };
-                Response response = new OperatorRest().SendRequestAsync(request, _url, _config.Value.PagBankSettings.TokenHomolog);
+                Response response = _operatorRest.SendRequestAsync(request, _url, _config.Value.PagBankSettings.TokenHomolog);
 
                 if (!string.IsNullOrEmpty(response.Data))
                 {
@@ -314,7 +320,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             {
                 var url = Settings.CieloZeroAuth;
                 Request request = new Request() { Data = System.Text.Json.JsonSerializer.Serialize(transactionJson) };
-                Response response = new OperatorRest().SendRequestAsync(request, url, _config.Value.CieloSettings.MerchantIdHomolog);
+                Response response = _operatorRest.SendRequestAsync(request, url, _config.Value.CieloSettings.MerchantIdHomolog);
 
                 if (string.IsNullOrEmpty(response.Data))
                     throw new RuleException(response.Message);
@@ -334,7 +340,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             {
                 Request request = new Request() { Data = paymentId };
                 var url = Settings.CieloStatusPayment + paymentId;
-                Response response = new OperatorRest().SendRequestAsync(request, url, _config.Value.PagBankSettings.TokenHomolog);
+                Response response = _operatorRest.SendRequestAsync(request, url, _config.Value.PagBankSettings.TokenHomolog);
 
                 if (string.IsNullOrEmpty(response.Data))
                     _messageReturn.Message = response.Message;

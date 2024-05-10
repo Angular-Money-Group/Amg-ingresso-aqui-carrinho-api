@@ -16,6 +16,7 @@ namespace Amg_ingressos_aqui_carrinho_tests.Services
         private readonly Mock<ILogger<PaymentService>> _loggerMock = new Mock<ILogger<PaymentService>>();
         private readonly Mock<ILogger<CieloClient>> _loggerCieloMock = new Mock<ILogger<CieloClient>>();
         private readonly Mock<ILogger<PagBankClient>> _loggerPagBankMock = new Mock<ILogger<PagBankClient>>();
+        private readonly Mock<ILogger<OperatorRest>> _loggerOperatorRest = new Mock<ILogger<OperatorRest>>();
 
         [SetUp]
         public void SetUp()
@@ -25,7 +26,9 @@ namespace Amg_ingressos_aqui_carrinho_tests.Services
                 _userService.Object,
                 _loggerMock.Object,
                 _loggerCieloMock.Object,
-                _loggerPagBankMock.Object);
+                _loggerPagBankMock.Object,
+                _loggerOperatorRest.Object
+                );
         }
     }
 }

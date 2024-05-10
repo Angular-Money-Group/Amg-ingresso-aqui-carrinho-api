@@ -19,13 +19,18 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
         private readonly MessageReturn _messageReturn;
         private readonly string _url;
         private readonly ILogger<PagBankClient> _logger;
+        private readonly IOperatorRest _operatorRest;
 
-        public PagBankClient(IOptions<PaymentSettings> transactionDatabaseSettings, ILogger<PagBankClient> logger)
+        public PagBankClient(
+            IOptions<PaymentSettings> transactionDatabaseSettings, 
+            ILogger<PagBankClient> logger,
+            IOperatorRest operatorRest)
         {
             _config = transactionDatabaseSettings;
             _messageReturn = new MessageReturn();
             _url = _config.Value.PagBankSettings.UrlApiHomolog + "/orders";
             _logger = logger;
+            _operatorRest = operatorRest;
         }
 
         public Task<MessageReturn> PaymentSlip(Transaction transaction, User user)
@@ -35,7 +40,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             {
                 //cria pedido e paga
                 Request request = new RequestPagBankBoletoDto().TransactionToRequest(transaction, user);
-                Response response = new OperatorRest().SendRequestAsync(request, _url, _config.Value.PagBankSettings.TokenHomolog);
+                Response response = _operatorRest.SendRequestAsync(request, _url, _config.Value.PagBankSettings.TokenHomolog);
 
                 if (string.IsNullOrEmpty(response.Data))
                 {
@@ -65,7 +70,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
 
                 //cria pedido e paga
                 Request request = new RequestPagBankCardDto().TransactionToRequest(transaction, user);
-                Response response = new OperatorRest().SendRequestAsync(request, _url, _config.Value.PagBankSettings.TokenHomolog);
+                Response response = _operatorRest.SendRequestAsync(request, _url, _config.Value.PagBankSettings.TokenHomolog);
 
                 if (string.IsNullOrEmpty(response.Data))
                 {
@@ -102,7 +107,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
 
                 //cria pedido e paga
                 Request request = new RequestPagBankCardDto().TransactionToRequest(transaction, user);
-                Response response = new OperatorRest().SendRequestAsync(request, _url, _config.Value.PagBankSettings.TokenHomolog);
+                Response response = _operatorRest.SendRequestAsync(request, _url, _config.Value.PagBankSettings.TokenHomolog);
 
                 if (string.IsNullOrEmpty(response.Data))
                 {
@@ -137,7 +142,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             {
                 //cria pedido e paga
                 Request request = new RequestPagBankPixDto().TransactionToRequest(transaction, user);
-                Response response = new OperatorRest().SendRequestAsync(request, _url, _config.Value.PagBankSettings.TokenHomolog);
+                Response response = _operatorRest.SendRequestAsync(request, _url, _config.Value.PagBankSettings.TokenHomolog);
 
                 if (!string.IsNullOrEmpty(response.Data))
                 {
@@ -174,7 +179,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             {
                 Request request = new Request() { Data = paymentId };
                 var url = Settings.PagbankStatusPayment + paymentId;
-                Response response = new OperatorRest().SendRequestAsync(request, url, _config.Value.PagBankSettings.TokenHomolog);
+                Response response = _operatorRest.SendRequestAsync(request, url, _config.Value.PagBankSettings.TokenHomolog);
 
                 if (string.IsNullOrEmpty(response.Data))
                     _messageReturn.Message = response.Message;
@@ -188,5 +193,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
                 throw;
             }
         }
+        
     }
 }
