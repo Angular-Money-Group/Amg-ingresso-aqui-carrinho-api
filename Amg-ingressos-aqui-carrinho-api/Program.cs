@@ -119,7 +119,7 @@ var ci = new CultureInfo(defaultDateCulture);
 ci.NumberFormat.NumberDecimalSeparator = ",";
 ci.NumberFormat.CurrencyDecimalSeparator = ",";
 
-builder.Services.AddAuthentication("Bearer")
+/*builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
         options.Authority = "http://localhost:5187/";
@@ -129,7 +129,7 @@ builder.Services.AddAuthentication("Bearer")
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("PublicSecure", policy => policy.RequireClaim("client_id", "seuingressoaqui_client"));
-});
+});*/
 
 
 var app = builder.Build();
