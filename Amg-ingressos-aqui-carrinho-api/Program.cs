@@ -102,6 +102,7 @@ builder.Services.AddScoped<IDbConnection, DbConnection>();
 builder.Services.AddScoped<ITransactionGatewayClient, CieloClient>();
 builder.Services.AddScoped<ITransactionGatewayClient, PagBankClient>();
 builder.Services.AddScoped<IPagbankService, PagbankService>();
+builder.Services.AddScoped<IOperatorRest, OperatorRest>();
 
 builder.Services.AddCors(options =>
 {
