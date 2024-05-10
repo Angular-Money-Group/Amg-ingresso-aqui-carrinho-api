@@ -14,8 +14,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
 
         public Response SendRequestAsync(Request transactionJson, string urlServer, string Token)
         {
-            _logger.LogInformation("Data", transactionJson.Data);
-            _logger.LogInformation("Request", urlServer);
+            _logger.LogInformation("Data {Data}", transactionJson.Data);
+            _logger.LogInformation("Request {Data}", urlServer);
             var httpCliente = new HttpClient();
             var requestMessage = new HttpRequestMessage(
                 HttpMethod.Post,
@@ -41,8 +41,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             {
                 response.Message = jsonContent;
             }
-            _logger.LogInformation("Status code Resposta", httpResponseMessage.StatusCode);
-            _logger.LogInformation("Response", jsonContent);
+            _logger.LogInformation("Status code {Data}", httpResponseMessage.StatusCode);
+            _logger.LogInformation("Response {Data}", jsonContent);
 
             return response;
         }
