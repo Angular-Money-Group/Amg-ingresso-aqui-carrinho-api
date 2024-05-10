@@ -5,7 +5,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-[Authorize(Policy = "PublicSecure")]
+//[Authorize(Policy = "PublicSecure")]
 public class HealthCheckController : ControllerBase
 {
     private static readonly string[] Summaries = new[]

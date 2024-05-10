@@ -8,7 +8,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
 {
     [Route("v1/checkout")]
     [Produces("application/json")]
-    [Authorize(Policy = "PublicSecure")]
+    //[Authorize(Policy = "PublicSecure")]
     public class CheckoutController : ControllerBase
     {
         private readonly ILogger<CheckoutController> _logger;

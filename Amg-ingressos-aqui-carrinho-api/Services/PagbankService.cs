@@ -13,11 +13,17 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         private readonly MessageReturn _messageReturn;
         private readonly IOptions<PaymentSettings> _config;
         private readonly ILogger<PagbankService> _logger;
+        private readonly IOperatorRest _operatorRest;
 
-        public PagbankService(IOptions<PaymentSettings> config, ILogger<PagbankService> logger)
+        public PagbankService(
+            IOptions<PaymentSettings> config, 
+            ILogger<PagbankService> logger,
+            IOperatorRest operatorRest
+            )
         {
             _config = config;
             _messageReturn = new MessageReturn();
+            _operatorRest = operatorRest;
             _logger = logger;
         }
         public async Task<MessageReturn> GeneratePublicKey()
@@ -28,8 +34,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 //cria pedido e paga
                 Request request = new Request() { Data = System.Text.Json.JsonSerializer.Serialize(type) };
                 var url = _config.Value.PagBankSettings.UrlApiHomolog+"/public-keys";
-                Response response = await Task.Run(() => new OperatorRest().SendRequestAsync(request, url, _config.Value.PagBankSettings.TokenHomolog));
-
+                Response response = await Task.Run(() => _operatorRest.SendRequestAsync(request, url, _config.Value.PagBankSettings.TokenHomolog));
                 if (string.IsNullOrEmpty(response.Data))
                 {
                     StringBuilder messagejson = new StringBuilder();
@@ -60,7 +65,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 //cria pedido e paga
                 Request request = new Request() { Data = System.Text.Json.JsonSerializer.Serialize(type) };
                 var url = Settings.PagBankCreateSessionUrl;
-                Response response = await Task.Run(() => new OperatorRest().SendRequestAsync(request, url, _config.Value.PagBankSettings.TokenHomolog));
+                Response response = await Task.Run(() => _operatorRest.SendRequestAsync(request, url, _config.Value.PagBankSettings.TokenHomolog));
 
                 if (string.IsNullOrEmpty(response.Data))
                 {

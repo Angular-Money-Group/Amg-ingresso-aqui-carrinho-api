@@ -6,7 +6,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Controllers
 {
     [Route("v1/PagBank")]
     [Produces("application/json")]
-    [Authorize(Policy = "PublicSecure")]
+    //[Authorize(Policy = "PublicSecure")]
     public class PagBankController : ControllerBase
     {
         private readonly ILogger<TransactionController> _logger;

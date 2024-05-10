@@ -1,16 +1,21 @@
 using System.Text;
 using Amg_ingressos_aqui_carrinho_api.Model;
-using Newtonsoft.Json;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Amg_ingressos_aqui_carrinho_api.Infra
 {
-    public class OperatorRest
+    public class OperatorRest : IOperatorRest
     {
+        private readonly ILogger<OperatorRest> _logger;
+        public OperatorRest(ILogger<OperatorRest> logger)
+        {
+            _logger = logger;
+        }
 
         public Response SendRequestAsync(Request transactionJson, string urlServer, string Token)
         {
-
+            _logger.LogInformation("Data", transactionJson.Data);
+            _logger.LogInformation("Request", urlServer);
             var httpCliente = new HttpClient();
             var requestMessage = new HttpRequestMessage(
                 HttpMethod.Post,
@@ -18,7 +23,6 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             );
             requestMessage.Headers.Add("Accept", "*/*");
             requestMessage.Headers.Add("Authorization", Token);
-
             var requestJson = new StringContent(transactionJson.Data,
                 Encoding.UTF8,
                 Application.Json
@@ -37,6 +41,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Infra
             {
                 response.Message = jsonContent;
             }
+            _logger.LogInformation("Status code Resposta", httpResponseMessage.StatusCode);
+            _logger.LogInformation("Response", jsonContent);
 
             return response;
         }
