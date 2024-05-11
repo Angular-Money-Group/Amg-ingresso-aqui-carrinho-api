@@ -67,6 +67,7 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
         {
             try
             {
+                //lista ingressos
                 var listTicket = new List<Ticket>();
                 transactionDto.TransactionItensDto.ForEach(i =>
                 {
@@ -76,13 +77,13 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                     if (lstTickets == null)
                         throw new RuleException("Erro ao buscar Ingressos");
 
-                    if (!lstTickets.Any() && lstTickets.Count < i.AmountTicket)
+                    if (!lstTickets.Any() && lstTickets.Count(i => i.Status == Enum.StatusTicket.Disponivel) < i.AmountTicket)
                         throw new SaveException("Número de ingressos inválido");
 
                     //pra cada compra carimbar o ticket
                     for (int amount = 0; amount < i.AmountTicket; amount++)
                     {
-                        Ticket ticket = lstTickets.Find(i => !i.IsSold) ?? throw new RuleException("ticket não encontrado.");
+                        Ticket ticket = lstTickets.Find(i => i.Status == Enum.StatusTicket.Disponivel) ?? throw new RuleException("ticket não encontrado.");
 
                         if (ticket.Value <= 0)
                             throw new SaveException("Valor do Ingresso inválido.");
@@ -90,7 +91,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                         //atualiza Ticket
                         ticket.IdUser = transactionDto.IdUser;
                         ticket.Status = Enum.StatusTicket.Reservado;
-                        if (!EditTicketsAsync(ticket).Result)
+                        var result = EditTicketsAsync(ticket);
+                        if (!result.Result)
                             throw new RuleException("Erro ao atualizar ticket");
                         
                         listTicket.Add(ticket);

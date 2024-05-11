@@ -55,9 +55,10 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                 transactionModel.Stage = StageTransaction.Confirm;
 
                 var listTickets = await _ticketService.ReservTicketsAsync(transactionDto);
-                await _transactionService.SaveAsync(transactionModel);
-                await _transactionItenService.ProcessSaveTransactionItens(transactionModel.Id, transactionDto.TransactionItensDto, listTickets);
-
+                if (listTickets.Any()){
+                    await _transactionService.SaveAsync(transactionModel);
+                    await _transactionItenService.ProcessSaveTransactionItens(transactionModel.Id, transactionDto.TransactionItensDto, listTickets);
+                }
                 _messageReturn.Data = transactionModel;
                 return _messageReturn;
             }
@@ -204,7 +205,8 @@ namespace Amg_ingressos_aqui_carrinho_api.Services
                         Status = (int)StatusTicket.Vendido,
                         QrCode = Settings.HostImg + nameImagem
                     };
-                    if (!await _ticketService.EditTicketsAsync(ticket))
+                    var result = await _ticketService.EditTicketsAsync(ticket);
+                    if(!result)
                         throw new RuleException("Erro ao editar ticket");
 
                     var ticketEventDto = await _ticketService.GetTicketByIdDataEventAsync(ticketUserDto.Id);
